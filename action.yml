@@ -1,0 +1,19 @@
+name: 'VirusTotal Action'
+description: 'Scan Files using the VirusTotal API'
+author: 'Shane'
+
+inputs:
+    github_token:
+        description: 'GitHub Token from secrets.GITHUB_TOKEN'
+        required: true
+    vt_api_key:
+        description: 'VirusTotal API Token from secrets'
+        required: true
+    update_release:
+        description: 'Update Release Notes with VT Links'
+        required: false
+        default: 'true'
+
+runs:
+    using: 'node20'
+    main: 'dist/index.js'
