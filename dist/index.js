@@ -38231,9 +38231,13 @@ const src_path = __nccwpck_require__(1017)
         }
 
         const vtApiKey = core.getInput('vt_api_key')
-        console.log('vt_api_key:', vtApiKey)
+        if (!vtApiKey) {
+            core.setFailed('Missing: vt_api_key')
+        }
         const githubToken = core.getInput('github_token')
-        console.log('github_token:', githubToken)
+        if (!githubToken) {
+            core.setFailed('Missing: github_token')
+        }
         const updateRelease = core.getInput('update_release')
         console.log('update_release:', updateRelease)
 
@@ -38300,15 +38304,13 @@ const src_path = __nccwpck_require__(1017)
         }
 
         let body = release.data.body
-        console.log('release.data.body:', body)
-
         body = body.concat('\n\n**VirusTotal Results:**')
         for (const result of results) {
             const parts = result.link.split('/')
             const hash = parts[parts.length - 1]
             body = body.concat(`\n- ${result.name} [${hash}](${result.link})`)
         }
-        console.log('body:', body)
+        console.log(`body:\n\n${body}`)
 
         await octokit.rest.repos.updateRelease({
             owner: github.context.repo.owner,
