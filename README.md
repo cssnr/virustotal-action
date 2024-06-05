@@ -6,7 +6,7 @@ Upload Release Assets to VirusTotal and Optionally Update Release Notes with Lin
 > [!NOTE]  
 > This currently only works on Releases but can be expanded to work on any specified files.  
 > Please submit a [Feature Request](https://github.com/cssnr/virustotal-action/discussions/categories/feature-requests) for new features
-> or [Open an Issue](https://github.com/cssnr/hls-video-downloader/issues) if you find any bugs.
+> or [Open an Issue](https://github.com/cssnr/virustotal-action/issues) if you find any bugs.
 
 ## Inputs
 
@@ -39,7 +39,7 @@ The Update Release option will append text similar to this:
 ## Simple Example
 
 ```yaml
-name: "Test VirusTotal Workflow"
+name: "VirusTotal Example"
 
 on:
   workflow_dispatch:
@@ -67,7 +67,7 @@ It is recommended to run this after all the build/upload jobs have completed.
 Specify any jobs that upload releases in the `needs` for the VirusTotal Action.
 
 ```yaml
-name: "Test VirusTotal Workflow"
+name: "VirusTotal Example"
 
 on:
   workflow_dispatch:
