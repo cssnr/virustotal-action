@@ -22,6 +22,7 @@ for files up to **650MB**.
 |-----------------|----------|---------|---------------------------|
 | github_token:   | Yes      | -       | secrets.GITHUB_TOKEN      |
 | vt_api_key:     | Yes      | -       | VirusTotal API Key        |
+| rate_limit:     | No       | 4       | Set to `0` to disable     |
 | update_release: | No       | true    | Set to `false` to disable |
 
 ```yaml
