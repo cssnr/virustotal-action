@@ -18,11 +18,12 @@ for files up to **650MB**.
 
 ## Inputs
 
-| input           | required | default | description               |
-|-----------------|----------|---------|---------------------------|
-| github_token:   | Yes      | -       | secrets.GITHUB_TOKEN      |
-| vt_api_key:     | Yes      | -       | VirusTotal API Key        |
-| update_release: | No       | true    | Set to `false` to disable |
+| input          | required | default | description                                     |
+|----------------|----------|---------|-------------------------------------------------|
+| github_token   | Yes      | -       | GitHub Token from secrets.GITHUB_TOKEN          |
+| vt_api_key     | Yes      | -       | VirusTotal API Key (must add manually)          |
+| rate_limit     | No       | 4       | API Calls Per Minute. Set to `0` to disable     |
+| update_release | No       | true    | Update Release Notes. Set to `false` to disable |
 
 ```yaml
   - name: "VirusTotal"
@@ -30,6 +31,7 @@ for files up to **650MB**.
     with:
       github_token: ${{ secrets.GITHUB_TOKEN }}
       vt_api_key: ${{ secrets.VT_API_KEY }}
+      rate_limit: 4
       update_release: true
 ```
 
@@ -66,6 +68,7 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           vt_api_key: ${{ secrets.VT_API_KEY }}
+          rate_limit: 4
           update_release: true
 ```
 
@@ -121,6 +124,7 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           vt_api_key: ${{ secrets.VT_API_KEY }}
+          rate_limit: 4
           update_release: true
 ```
 

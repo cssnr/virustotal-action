@@ -1,4 +1,5 @@
 import { downloadAsset, vtUpload } from './vt.js'
+import { RateLimiter } from 'limiter'
 
 const core = require('@actions/core')
 const github = require('@actions/github')
@@ -24,6 +25,8 @@ const path = require('path')
         }
         const updateRelease = core.getInput('update_release')
         console.log('update_release:', updateRelease)
+        const rateLimit = parseInt(core.getInput('rate_limit'))
+        console.log('rate_limit:', rateLimit)
 
         const octokit = github.getOctokit(githubToken)
         // console.log('octokit:', octokit)
@@ -65,8 +68,16 @@ const path = require('path')
             fs.mkdirSync(assetsPath)
         }
 
+        const limiter = new RateLimiter({
+            tokensPerInterval: rateLimit,
+            interval: 'minute',
+        })
         const results = []
         for (const asset of assets.data) {
+            if (rateLimit) {
+                const remainingRequests = await limiter.removeTokens(1)
+                console.log('remainingRequests:', remainingRequests)
+            }
             console.log(`name: ${asset.name}`)
             const filePath = await downloadAsset(asset, assetsPath)
             console.log('filePath:', filePath)
