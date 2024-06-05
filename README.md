@@ -3,15 +3,15 @@
 
 Upload Release Assets to VirusTotal and Optionally Update Release Notes with Links.
 
+A VirusTotal API Key is required. You can get one for free from [virustotal.com](https://www.virustotal.com/gui/sign-in).
+For more information on the VirusTotal API check out [docs.virustotal.com](https://docs.virustotal.com/).
+
 > [!NOTE]  
 > This currently only works on Releases but can be expanded to work on any specified files.  
 > Please submit a [Feature Request](https://github.com/cssnr/virustotal-action/discussions/categories/feature-requests) for new features
 > or [Open an Issue](https://github.com/cssnr/virustotal-action/issues) if you find any bugs.
 
-A VirusTotal API Key is required. You can get one for free from [virustotal.com](https://www.virustotal.com/gui/sign-in).
-For more information on the VirusTotal API check out [docs.virustotal.com](https://docs.virustotal.com/)
-
-The /files/ endpoint is used for files smaller than 32MB, otherwise, the /files/upload_url endpoint is used to support files up to 650MB.
+The /files/ endpoint is used for files under 32MB, otherwise, the /files/upload_url/ endpoint is used providing support for files up to **650MB**.
 
 ## Inputs
 
