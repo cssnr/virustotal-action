@@ -3,6 +3,11 @@
 
 Upload Release Assets to VirusTotal and Optionally Update Release Notes with Links.
 
+> [!NOTE]  
+> This currently only works on Releases but can be expanded to work on any specified files.  
+> Please submit a [Feature Request](https://github.com/cssnr/virustotal-action/discussions/categories/feature-requests) for new features
+> or [Open an Issue](https://github.com/cssnr/hls-video-downloader/issues) if you find any bugs.
+
 ## Inputs
 
 | input           | required | default | description               |
@@ -22,7 +27,7 @@ Upload Release Assets to VirusTotal and Optionally Update Release Notes with Lin
 
 ### Update Release
 
-Updating the Release will append text similiar to the following:
+The Update Release option will append text similar to this:
 
 ---
 **VirusTotal Results:**
