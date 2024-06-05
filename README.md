@@ -8,6 +8,8 @@ Upload Release Assets to VirusTotal and Optionally Update Release Notes with Lin
 > Please submit a [Feature Request](https://github.com/cssnr/virustotal-action/discussions/categories/feature-requests) for new features
 > or [Open an Issue](https://github.com/cssnr/virustotal-action/issues) if you find any bugs.
 
+The /files/ endpoint is used for files smaller than 32MB, otherwise, the /files/upload_url endpoint is used to support files up to 650MB.
+
 ## Inputs
 
 | input           | required | default | description               |
