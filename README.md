@@ -1,6 +1,17 @@
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=cssnr_virustotal-action&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=cssnr_virustotal-action)
 # VirusTotal Action
 
 Upload Release Assets to VirusTotal and Optionally Update Release Notes with Links.
+
+A VirusTotal API Key is required. You can get one for free from [virustotal.com](https://www.virustotal.com/gui/sign-in).
+For more information on the VirusTotal API check out [docs.virustotal.com](https://docs.virustotal.com/).
+
+> [!NOTE]  
+> This currently only works on Releases but can be expanded to work on any specified files.  
+> Please submit a [Feature Request](https://github.com/cssnr/virustotal-action/discussions/categories/feature-requests) for new features
+> or [Open an Issue](https://github.com/cssnr/virustotal-action/issues) if you find any bugs.
+
+The /files/ endpoint is used for files under 32MB, otherwise, the /files/upload_url/ endpoint is used providing support for files up to **650MB**.
 
 ## Inputs
 
@@ -19,10 +30,21 @@ Upload Release Assets to VirusTotal and Optionally Update Release Notes with Lin
       update_release: true
 ```
 
+### Update Release
+
+The Update Release option will append text similar to this:
+
+---
+**VirusTotal Results:**
+- install-linux.deb [ZDAzY2M2ZGQzZmEwZWEwZTI2NjQ5NmVjZDcwZmY0YTY6MTcxNzU2NzI3Ng==](https://www.virustotal.com/gui/file-analysis/ZDAzY2M2ZGQzZmEwZWEwZTI2NjQ5NmVjZDcwZmY0YTY6MTcxNzU2NzI3Ng==)
+- install-macos.pkg [YTkzOGFjMDZhNTI3NmU5MmI4YzQzNzg5ODE3OGRkMzg6MTcxNzU2NzI3OA==](https://www.virustotal.com/gui/file-analysis/YTkzOGFjMDZhNTI3NmU5MmI4YzQzNzg5ODE3OGRkMzg6MTcxNzU2NzI3OA==)
+- install-win.exe [M2JhZDJhMzRhYjcyM2Y0MDFkNjU1OGZlYjFkNjgyMmY6MTcxNzU2NzI4MA==](https://www.virustotal.com/gui/file-analysis/M2JhZDJhMzRhYjcyM2Y0MDFkNjU1OGZlYjFkNjgyMmY6MTcxNzU2NzI4MA==)
+---
+
 ## Simple Example
 
 ```yaml
-name: "Test VirusTotal Workflow"
+name: "VirusTotal Example"
 
 on:
   workflow_dispatch:
@@ -50,7 +72,7 @@ It is recommended to run this after all the build/upload jobs have completed.
 Specify any jobs that upload releases in the `needs` for the VirusTotal Action.
 
 ```yaml
-name: "Test VirusTotal Workflow"
+name: "VirusTotal Example"
 
 on:
   workflow_dispatch:
