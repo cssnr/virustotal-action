@@ -23,7 +23,7 @@ The /files/ endpoint is used for files under 32MB, otherwise, the /files/upload_
 
 ```yaml
   - name: "VirusTotal"
-    uses: cssnr/virustotal-action@master
+    uses: cssnr/virustotal-action@v1
     with:
       github_token: ${{ secrets.GITHUB_TOKEN }}
       vt_api_key: ${{ secrets.VT_API_KEY }}
@@ -59,7 +59,7 @@ jobs:
 
     steps:
       - name: "VirusTotal"
-        uses: cssnr/virustotal-action@master
+        uses: cssnr/virustotal-action@v1
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           vt_api_key: ${{ secrets.VT_API_KEY }}
@@ -68,7 +68,7 @@ jobs:
 
 ## Full Example
 
-It is recommended to run this after all the build/upload jobs have completed. 
+It is recommended to run this after all the build/upload jobs have completed.
 Specify any jobs that upload releases in the `needs` for the VirusTotal Action.
 
 ```yaml
@@ -114,7 +114,7 @@ jobs:
 
     steps:
       - name: "VirusTotal"
-        uses: cssnr/virustotal-action@master
+        uses: cssnr/virustotal-action@v1
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           vt_api_key: ${{ secrets.VT_API_KEY }}

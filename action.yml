@@ -1,6 +1,9 @@
 name: 'VirusTotal Action'
 description: 'Scan Files using the VirusTotal API'
 author: 'Shane'
+branding:
+    icon: 'file-plus'
+    color: 'blue'
 
 inputs:
     github_token:
