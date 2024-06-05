@@ -3,15 +3,18 @@
 
 Upload Release Assets to VirusTotal and Optionally Update Release Notes with Links.
 
-A VirusTotal API Key is required. You can get one for free from [virustotal.com](https://www.virustotal.com/gui/sign-in).
+A VirusTotal API Key is required. You can get one for free from
+[virustotal.com](https://www.virustotal.com/gui/sign-in).
 For more information on the VirusTotal API check out [docs.virustotal.com](https://docs.virustotal.com/).
 
 > [!NOTE]  
 > This currently only works on Releases but can be expanded to work on any specified files.  
-> Please submit a [Feature Request](https://github.com/cssnr/virustotal-action/discussions/categories/feature-requests) for new features
+> Please submit a [Feature Request](https://github.com/cssnr/virustotal-action/discussions/categories/feature-requests)
+> for new features
 > or [Open an Issue](https://github.com/cssnr/virustotal-action/issues) if you find any bugs.
 
-The /files/ endpoint is used for files under 32MB, otherwise, the /files/upload_url/ endpoint is used providing support for files up to **650MB**.
+The /files/ endpoint is used for files under 32MB, otherwise, the /files/upload_url/ endpoint is used providing support
+for files up to **650MB**.
 
 ## Inputs
 
@@ -23,7 +26,7 @@ The /files/ endpoint is used for files under 32MB, otherwise, the /files/upload_
 
 ```yaml
   - name: "VirusTotal"
-    uses: cssnr/virustotal-action@master
+    uses: cssnr/virustotal-action@v1
     with:
       github_token: ${{ secrets.GITHUB_TOKEN }}
       vt_api_key: ${{ secrets.VT_API_KEY }}
@@ -59,7 +62,7 @@ jobs:
 
     steps:
       - name: "VirusTotal"
-        uses: cssnr/virustotal-action@master
+        uses: cssnr/virustotal-action@v1
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           vt_api_key: ${{ secrets.VT_API_KEY }}
@@ -68,7 +71,7 @@ jobs:
 
 ## Full Example
 
-It is recommended to run this after all the build/upload jobs have completed. 
+It is recommended to run this after all the build/upload jobs have completed.
 Specify any jobs that upload releases in the `needs` for the VirusTotal Action.
 
 ```yaml
@@ -114,9 +117,12 @@ jobs:
 
     steps:
       - name: "VirusTotal"
-        uses: cssnr/virustotal-action@master
+        uses: cssnr/virustotal-action@v1
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           vt_api_key: ${{ secrets.VT_API_KEY }}
           update_release: true
 ```
+
+To see this used in a build/release/scan workflow, check out:  
+https://github.com/cssnr/hls-downloader-client/blob/master/.github/workflows/build.yaml
