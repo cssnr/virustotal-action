@@ -38507,46 +38507,52 @@ const src_path = __nccwpck_require__(1017)
 
 ;(async () => {
     try {
-        // console.log('github.context', github.context)
-        // console.log('process.env:', process.env)
+        console.log('-'.repeat(40))
+        console.log('release', github.context.payload.release)
+        console.log('-'.repeat(40))
+
+        // Check Release
         if (github.context.eventName !== 'release') {
             console.log('Skipping non-release:', github.context.eventName)
             return
         }
 
-        const vtApiKey = core.getInput('vt_api_key')
-        if (!vtApiKey) {
-            core.setFailed('Missing: vt_api_key')
-        }
+        // Parse Inputs
         const githubToken = core.getInput('github_token')
         if (!githubToken) {
-            core.setFailed('Missing: github_token')
+            return core.setFailed('Missing: github_token')
+        }
+        const vtApiKey = core.getInput('vt_api_key')
+        if (!vtApiKey) {
+            return core.setFailed('Missing: vt_api_key')
         }
         const updateRelease = core.getInput('update_release')
         console.log('update_release:', updateRelease)
         const rateLimit = parseInt(core.getInput('rate_limit'))
         console.log('rate_limit:', rateLimit)
 
-        const octokit = github.getOctokit(githubToken)
-        // console.log('octokit:', octokit)
-
         const releaseTag = github.context.ref.replace('refs/tags/', '')
-        // const releaseTag = '0.1.12'
         console.log('releaseTag:', releaseTag)
+        console.log('tag_name:', github.context.payload.release.tag_name)
         console.log('GITHUB_REF_NAME:', process.env.GITHUB_REF_NAME)
 
+        const octokit = github.getOctokit(githubToken)
+
+        // Get Release
         const release = await octokit.rest.repos.getReleaseByTag({
             owner: github.context.repo.owner,
             repo: github.context.repo.repo,
             tag: releaseTag,
         })
-        // console.log('release:', release)
+        console.log('-'.repeat(40))
+        console.log('release:', release)
+        console.log('-'.repeat(40))
         if (!release?.data) {
-            console.log('Release Not Found:', release)
-            core.setFailed(`Release Not Found: ${releaseTag}`)
-            return
+            console.log('release:', release)
+            return core.setFailed(`Release Not Found for tag: ${releaseTag}`)
         }
 
+        // Get Assets
         const assets = await octokit.rest.repos.listReleaseAssets({
             owner: github.context.repo.owner,
             repo: github.context.repo.repo,
@@ -38559,6 +38565,7 @@ const src_path = __nccwpck_require__(1017)
             return
         }
 
+        // Create Temp
         console.log('RUNNER_TEMP:', process.env.RUNNER_TEMP)
         const assetsPath = src_path.join(process.env.RUNNER_TEMP, 'assets')
         console.log('assetsPath:', assetsPath)
@@ -38567,6 +38574,7 @@ const src_path = __nccwpck_require__(1017)
             src_fs.mkdirSync(assetsPath)
         }
 
+        // Process Assets
         const limiter = new RateLimiter({
             tokensPerInterval: rateLimit,
             interval: 'minute',
@@ -38593,10 +38601,10 @@ const src_path = __nccwpck_require__(1017)
         console.log('results:', results)
 
         if (updateRelease === 'false') {
-            console.log('Skipping update_release:', updateRelease)
-            return
+            return core.info('Skipping Release Update due to update_release.')
         }
 
+        // Update Release
         let body = release.data.body
         body = body.concat('\n\n**VirusTotal Results:**')
         for (const result of results) {
@@ -38605,16 +38613,15 @@ const src_path = __nccwpck_require__(1017)
             body = body.concat(`\n- ${result.name} [${hash}](${result.link})`)
         }
         console.log(`body:\n\n${body}`)
-
         await octokit.rest.repos.updateRelease({
             owner: github.context.repo.owner,
             repo: github.context.repo.repo,
             release_id: release.data.id,
             body: body,
         })
-    } catch (error) {
-        console.log(error)
-        core.setFailed(error.message)
+    } catch (e) {
+        console.log(e)
+        core.setFailed(e.message)
     }
 })()
 

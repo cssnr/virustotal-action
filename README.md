@@ -46,13 +46,18 @@ The Update Release option will append text similar to this:
 - install-win.exe [M2JhZDJhMzRhYjcyM2Y0MDFkNjU1OGZlYjFkNjgyMmY6MTcxNzU2NzI4MA==](https://www.virustotal.com/gui/file-analysis/M2JhZDJhMzRhYjcyM2Y0MDFkNjU1OGZlYjFkNjgyMmY6MTcxNzU2NzI4MA==)
 ---
 
+## Planned Features
+
+- Add `files` glob to allow processing any specified files/paths.
+- Add release body parsing to properly process new files on `edited` activity.
+- Add options to customize release update format.
+
 ## Simple Example
 
 ```yaml
 name: "VirusTotal Example"
 
 on:
-  workflow_dispatch:
   release:
     types: [ published ]
 
@@ -81,7 +86,6 @@ Specify any jobs that upload releases in the `needs` for the VirusTotal Action.
 name: "VirusTotal Example"
 
 on:
-  workflow_dispatch:
   release:
     types: [ published ]
 
