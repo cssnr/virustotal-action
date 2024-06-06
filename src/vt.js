@@ -11,9 +11,8 @@ export async function downloadAsset(asset, assetsPath) {
     const response = await axios({
         method: 'GET',
         url: asset.browser_download_url,
-        responseType: 'stream',
+        responseType: 'arraybuffer',
     })
-
     // console.log('response:', response)
     // await new Promise((resolve, reject) => {
     //     const writer = fs.createWriteStream(filePath)
@@ -21,7 +20,7 @@ export async function downloadAsset(asset, assetsPath) {
     //     writer.on('finish', resolve)
     //     writer.on('error', reject)
     // })
-    fs.writeFileSync(filePath, Buffer.from(response.data), 'binary')
+    fs.writeFileSync(filePath, response.data)
 
     console.log('wrote:', filePath)
     return filePath
