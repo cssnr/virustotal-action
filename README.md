@@ -20,10 +20,12 @@ for files up to **650MB**.
 
 | input          | required | default | description                                     |
 |----------------|----------|---------|-------------------------------------------------|
-| github_token   | Yes      | -       | GitHub Token from secrets.GITHUB_TOKEN          |
 | vt_api_key     | Yes      | -       | VirusTotal API Key (must add manually)          |
 | rate_limit     | No       | 4       | API Calls Per Minute. Set to `0` to disable     |
 | update_release | No       | true    | Update Release Notes. Set to `false` to disable |
+| github_token   | **No***  | -       | ***Required** for `update_release`              |
+
+In order to Update the Release for `update_release` you **MUST** also provide the `github_token`. 
 
 ```yaml
   - name: "VirusTotal"
@@ -40,10 +42,10 @@ for files up to **650MB**.
 The Update Release option will append text similar to this:
 
 ---
-**VirusTotal Results:**
-- install-linux.deb [ZDAzY2M2ZGQzZmEwZWEwZTI2NjQ5NmVjZDcwZmY0YTY6MTcxNzU2NzI3Ng==](https://www.virustotal.com/gui/file-analysis/ZDAzY2M2ZGQzZmEwZWEwZTI2NjQ5NmVjZDcwZmY0YTY6MTcxNzU2NzI3Ng==)
-- install-macos.pkg [YTkzOGFjMDZhNTI3NmU5MmI4YzQzNzg5ODE3OGRkMzg6MTcxNzU2NzI3OA==](https://www.virustotal.com/gui/file-analysis/YTkzOGFjMDZhNTI3NmU5MmI4YzQzNzg5ODE3OGRkMzg6MTcxNzU2NzI3OA==)
-- install-win.exe [M2JhZDJhMzRhYjcyM2Y0MDFkNjU1OGZlYjFkNjgyMmY6MTcxNzU2NzI4MA==](https://www.virustotal.com/gui/file-analysis/M2JhZDJhMzRhYjcyM2Y0MDFkNjU1OGZlYjFkNjgyMmY6MTcxNzU2NzI4MA==)
+🛡️ **VirusTotal Results:**
+- [install-linux.deb](https://www.virustotal.com/gui/file-analysis/ZDAzY2M2ZGQzZmEwZWEwZTI2NjQ5NmVjZDcwZmY0YTY6MTcxNzU2NzI3Ng==)
+- [install-macos.pkg](https://www.virustotal.com/gui/file-analysis/YTkzOGFjMDZhNTI3NmU5MmI4YzQzNzg5ODE3OGRkMzg6MTcxNzU2NzI3OA==)
+- [install-win.exe](https://www.virustotal.com/gui/file-analysis/M2JhZDJhMzRhYjcyM2Y0MDFkNjU1OGZlYjFkNjgyMmY6MTcxNzU2NzI4MA==)
 ---
 
 ## Planned Features

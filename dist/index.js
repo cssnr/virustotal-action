@@ -38165,13 +38165,16 @@ async function downloadAsset(asset, assetsPath) {
         url: asset.browser_download_url,
         responseType: 'stream',
     })
+
     // console.log('response:', response)
-    await new Promise((resolve, reject) => {
-        const writer = fs.createWriteStream(filePath)
-        response.data.pipe(writer)
-        writer.on('finish', resolve)
-        writer.on('error', reject)
-    })
+    // await new Promise((resolve, reject) => {
+    //     const writer = fs.createWriteStream(filePath)
+    //     response.data.pipe(writer)
+    //     writer.on('finish', resolve)
+    //     writer.on('error', reject)
+    // })
+    fs.writeFileSync(filePath, Buffer.from(response.data), 'binary')
+
     console.log('wrote:', filePath)
     return filePath
 }
@@ -38578,7 +38581,7 @@ const src_path = __nccwpck_require__(1017)
 
         // Update Release
         let body = release.body
-        body = body.concat('\n\n**VirusTotal Results:**')
+        body = body.concat('\n\n🛡️ **VirusTotal Results:**')
         for (const result of results) {
             // const parts = result.link.split('/')
             // const hash = parts[parts.length - 1]

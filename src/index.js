@@ -79,7 +79,7 @@ const path = require('path')
 
         // Update Release
         let body = release.body
-        body = body.concat('\n\n**VirusTotal Results:**')
+        body = body.concat('\n\n🛡️ **VirusTotal Results:**')
         for (const result of results) {
             // const parts = result.link.split('/')
             // const hash = parts[parts.length - 1]

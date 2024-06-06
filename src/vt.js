@@ -13,13 +13,16 @@ export async function downloadAsset(asset, assetsPath) {
         url: asset.browser_download_url,
         responseType: 'stream',
     })
+
     // console.log('response:', response)
-    await new Promise((resolve, reject) => {
-        const writer = fs.createWriteStream(filePath)
-        response.data.pipe(writer)
-        writer.on('finish', resolve)
-        writer.on('error', reject)
-    })
+    // await new Promise((resolve, reject) => {
+    //     const writer = fs.createWriteStream(filePath)
+    //     response.data.pipe(writer)
+    //     writer.on('finish', resolve)
+    //     writer.on('error', reject)
+    // })
+    fs.writeFileSync(filePath, Buffer.from(response.data), 'binary')
+
     console.log('wrote:', filePath)
     return filePath
 }
