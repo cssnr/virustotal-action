@@ -1,4 +1,4 @@
-import { downloadAsset, vtUpload } from './vt.js'
+import { vtUpload } from './vt.js'
 import { RateLimiter } from 'limiter'
 
 const core = require('@actions/core')
@@ -34,7 +34,7 @@ const path = require('path')
         console.log('rate_limit:', rateLimit)
 
         // Set Variables
-        const { owner, repo } = github.context.repo
+        // const { owner, repo } = github.context.repo
         // Note: release from context does not contain updates for re-runs
         // const release = github.context.payload.release
         const release_id = github.context.payload.release.id
@@ -48,8 +48,7 @@ const path = require('path')
 
         // Get Release
         const release = await octokit.rest.repos.getRelease({
-            owner,
-            repo,
+            ...github.context.repo,
             release_id,
         })
         if (!release?.data) {
@@ -59,8 +58,7 @@ const path = require('path')
 
         // Get Assets
         const assets = await octokit.rest.repos.listReleaseAssets({
-            owner,
-            repo,
+            ...github.context.repo,
             release_id,
         })
         if (!assets?.data?.length) {
@@ -85,17 +83,28 @@ const path = require('path')
                 const remainingRequests = await limiter.removeTokens(1)
                 console.log('remainingRequests:', remainingRequests)
             }
-            const filePath = await downloadAsset(asset, assetsPath)
+            // const filePath = await downloadAsset(asset, assetsPath)
+            const filePath = path.join(assetsPath, asset.name)
             console.log('filePath:', filePath)
+            const file = await octokit.rest.repos.getReleaseAsset({
+                ...github.context.repo,
+                asset_id: asset.id,
+                request: {
+                    headers: {
+                        Accept: 'application/octet-stream',
+                    },
+                },
+            })
+            fs.writeFileSync(filePath, file.data)
             const response = await vtUpload(filePath, vtApiKey)
             console.log('response.data.id:', response.data.id)
             const link = `https://www.virustotal.com/gui/file-analysis/${response.data.id}`
             console.log('link:', link)
-            const data = {
+            const result = {
                 name: asset.name,
                 link: link,
             }
-            results.push(data)
+            results.push(result)
         }
         console.log('-'.repeat(40))
         console.log('results:', results)
@@ -112,8 +121,7 @@ const path = require('path')
         console.log('-'.repeat(40))
         console.log(`body:\n${body}`)
         await octokit.rest.repos.updateRelease({
-            owner,
-            repo,
+            ...github.context.repo,
             release_id,
             body,
         })
