@@ -89,14 +89,12 @@ const path = require('path')
             const file = await octokit.rest.repos.getReleaseAsset({
                 ...github.context.repo,
                 asset_id: asset.id,
-                request: {
-                    headers: {
-                        Accept: 'application/octet-stream',
-                    },
+                headers: {
+                    Accept: 'application/octet-stream',
                 },
             })
-            console.log('file.data')
-            console.log(file.data)
+            // console.log('file')
+            // console.log(file)
             fs.writeFileSync(filePath, Buffer.from(file.data))
             const response = await vtUpload(filePath, vtApiKey)
             console.log('response.data.id:', response.data.id)
