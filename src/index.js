@@ -17,6 +17,7 @@ const path = require('path')
             core.info(`Skipping non-release: ${github.context.eventName}`)
             return
         }
+        console.log('tag_name:', github.context.payload.release.tag_name)
 
         // Parse Inputs
         const githubToken = core.getInput('github_token')
@@ -35,6 +36,8 @@ const path = require('path')
         // Set Variables
         const { owner, repo } = github.context.repo
         const release = github.context.payload.release
+        const release_id = github.context.payload.release.id
+        console.log('release_id:', release_id)
         const octokit = github.getOctokit(githubToken)
         const limiter = new RateLimiter({
             tokensPerInterval: rateLimit,
@@ -85,7 +88,7 @@ const path = require('path')
         await octokit.rest.repos.updateRelease({
             owner,
             repo,
-            release_id: release.id,
+            release_id,
             body,
         })
     } catch (e) {

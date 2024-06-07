@@ -38511,6 +38511,7 @@ const src_path = __nccwpck_require__(1017)
             core.info(`Skipping non-release: ${github.context.eventName}`)
             return
         }
+        console.log('tag_name:', github.context.payload.release.tag_name)
 
         // Parse Inputs
         const githubToken = core.getInput('github_token')
@@ -38529,6 +38530,8 @@ const src_path = __nccwpck_require__(1017)
         // Set Variables
         const { owner, repo } = github.context.repo
         const release = github.context.payload.release
+        const release_id = github.context.payload.release.id
+        console.log('release_id:', release_id)
         const octokit = github.getOctokit(githubToken)
         const limiter = new RateLimiter({
             tokensPerInterval: rateLimit,
@@ -38579,7 +38582,7 @@ const src_path = __nccwpck_require__(1017)
         await octokit.rest.repos.updateRelease({
             owner,
             repo,
-            release_id: release.id,
+            release_id,
             body,
         })
     } catch (e) {
