@@ -38591,6 +38591,7 @@ const src_path = __nccwpck_require__(1017)
             }
             results.push(data)
         }
+        console.log('-'.repeat(40))
         console.log('results:', results)
 
         // Update Release
@@ -38602,7 +38603,9 @@ const src_path = __nccwpck_require__(1017)
         for (const result of results) {
             body = body.concat(`\n- [${result.name}](${result.link})`)
         }
+        console.log('-'.repeat(40))
         console.log(`body:\n${body}`)
+        console.log('-'.repeat(40))
         await octokit.rest.repos.updateRelease({
             owner,
             repo,
