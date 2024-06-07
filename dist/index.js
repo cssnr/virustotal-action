@@ -38153,22 +38153,6 @@ __nccwpck_require__.r(__webpack_exports__);
 const axios = __nccwpck_require__(8757)
 const FormData = __nccwpck_require__(4334)
 const fs = __nccwpck_require__(7147)
-const path = __nccwpck_require__(1017)
-
-async function downloadAsset(asset, assetsPath) {
-    // Switch to octokit.rest.repos.getReleaseAsset for use with private repos
-    // console.log('asset:', asset)
-    const filePath = path.join(assetsPath, asset.name)
-    console.log('filePath:', filePath)
-    const response = await axios({
-        method: 'GET',
-        url: asset.browser_download_url,
-        responseType: 'arraybuffer',
-    })
-    fs.writeFileSync(filePath, response.data)
-    console.log('wrote:', filePath)
-    return filePath
-}
 
 async function vtUpload(filePath, apiKey) {
     console.log('vtUpload:', filePath)
@@ -38498,14 +38482,10 @@ class RateLimiter {
 const core = __nccwpck_require__(2186)
 const github = __nccwpck_require__(5438)
 const src_fs = __nccwpck_require__(7147)
-const src_path = __nccwpck_require__(1017)
+const path = __nccwpck_require__(1017)
 
 ;(async () => {
     try {
-        // console.log('-'.repeat(40))
-        // console.log('release', github.context.payload.release)
-        // console.log('-'.repeat(40))
-
         // Check Release
         if (!github.context.payload.release) {
             core.info(`Skipping non-release: ${github.context.eventName}`)
@@ -38528,9 +38508,6 @@ const src_path = __nccwpck_require__(1017)
         console.log('rate_limit:', rateLimit)
 
         // Set Variables
-        const { owner, repo } = github.context.repo
-        // Note: release from context does not contain updates for re-runs
-        // const release = github.context.payload.release
         const release_id = github.context.payload.release.id
         console.log('release_id:', release_id)
         console.log('-'.repeat(40))
@@ -38542,8 +38519,7 @@ const src_path = __nccwpck_require__(1017)
 
         // Get Release
         const release = await octokit.rest.repos.getRelease({
-            owner,
-            repo,
+            ...github.context.repo,
             release_id,
         })
         if (!release?.data) {
@@ -38553,8 +38529,7 @@ const src_path = __nccwpck_require__(1017)
 
         // Get Assets
         const assets = await octokit.rest.repos.listReleaseAssets({
-            owner,
-            repo,
+            ...github.context.repo,
             release_id,
         })
         if (!assets?.data?.length) {
@@ -38564,10 +38539,9 @@ const src_path = __nccwpck_require__(1017)
 
         // Create Temp
         console.log('RUNNER_TEMP:', process.env.RUNNER_TEMP)
-        const assetsPath = src_path.join(process.env.RUNNER_TEMP, 'assets')
+        const assetsPath = path.join(process.env.RUNNER_TEMP, 'assets')
         console.log('assetsPath:', assetsPath)
         if (!src_fs.existsSync(assetsPath)) {
-            console.log('mkdirSync:', assetsPath)
             src_fs.mkdirSync(assetsPath)
         }
 
@@ -38579,17 +38553,26 @@ const src_path = __nccwpck_require__(1017)
                 const remainingRequests = await limiter.removeTokens(1)
                 console.log('remainingRequests:', remainingRequests)
             }
-            const filePath = await downloadAsset(asset, assetsPath)
+            // const filePath = await downloadAsset(asset, assetsPath)
+            const filePath = path.join(assetsPath, asset.name)
             console.log('filePath:', filePath)
+            const file = await octokit.rest.repos.getReleaseAsset({
+                ...github.context.repo,
+                asset_id: asset.id,
+                headers: {
+                    Accept: 'application/octet-stream',
+                },
+            })
+            src_fs.writeFileSync(filePath, Buffer.from(file.data))
             const response = await vtUpload(filePath, vtApiKey)
             console.log('response.data.id:', response.data.id)
             const link = `https://www.virustotal.com/gui/file-analysis/${response.data.id}`
             console.log('link:', link)
-            const data = {
+            const result = {
                 name: asset.name,
                 link: link,
             }
-            results.push(data)
+            results.push(result)
         }
         console.log('-'.repeat(40))
         console.log('results:', results)
@@ -38606,8 +38589,7 @@ const src_path = __nccwpck_require__(1017)
         console.log('-'.repeat(40))
         console.log(`body:\n${body}`)
         await octokit.rest.repos.updateRelease({
-            owner,
-            repo,
+            ...github.context.repo,
             release_id,
             body,
         })
