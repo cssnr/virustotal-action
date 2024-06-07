@@ -38557,13 +38557,13 @@ const src_path = __nccwpck_require__(1017)
             repo,
             release_id,
         })
-        if (!release) {
-            console.log('release:', release)
-            return core.setFailed(`Release Not Found: ${release_id}`)
-        }
         console.log('-'.repeat(40))
         console.log('release:', release)
         console.log('-'.repeat(40))
+        if (!release?.data) {
+            console.log('release:', release)
+            return core.setFailed(`Release Not Found: ${release_id}`)
+        }
 
         // Get Assets
         const assets = await octokit.rest.repos.listReleaseAssets({
@@ -38571,13 +38571,13 @@ const src_path = __nccwpck_require__(1017)
             repo,
             release_id,
         })
-        if (!assets?.length) {
-            console.log('assets:', assets)
-            return core.setFailed('No Assets Found')
-        }
         console.log('-'.repeat(40))
         console.log('assets:', assets)
         console.log('-'.repeat(40))
+        if (!assets?.data?.length) {
+            console.log('assets:', assets)
+            return core.setFailed('No Assets Found')
+        }
 
         // Create Temp
         console.log('RUNNER_TEMP:', process.env.RUNNER_TEMP)
@@ -38590,7 +38590,7 @@ const src_path = __nccwpck_require__(1017)
 
         // Process Assets
         const results = []
-        for (const asset of assets) {
+        for (const asset of assets.data) {
             if (rateLimit) {
                 const remainingRequests = await limiter.removeTokens(1)
                 console.log('remainingRequests:', remainingRequests)
@@ -38614,7 +38614,7 @@ const src_path = __nccwpck_require__(1017)
         if (updateRelease === 'false') {
             return core.info('Skipping Release Update on: update_release')
         }
-        let body = release.body
+        let body = release.data.body
         body = body.concat('\n\n🛡️ **VirusTotal Results:**')
         for (const result of results) {
             body = body.concat(`\n- [${result.name}](${result.link})`)
