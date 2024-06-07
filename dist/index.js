@@ -38589,6 +38589,8 @@ const path = __nccwpck_require__(1017)
                     },
                 },
             })
+            console.log('file.data')
+            console.log(file.data)
             src_fs.writeFileSync(filePath, Buffer.from(file.data))
             const response = await vtUpload(filePath, vtApiKey)
             console.log('response.data.id:', response.data.id)

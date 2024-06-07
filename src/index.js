@@ -95,6 +95,8 @@ const path = require('path')
                     },
                 },
             })
+            console.log('file.data')
+            console.log(file.data)
             fs.writeFileSync(filePath, Buffer.from(file.data))
             const response = await vtUpload(filePath, vtApiKey)
             console.log('response.data.id:', response.data.id)
