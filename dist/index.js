@@ -38545,8 +38545,8 @@ const src_path = __nccwpck_require__(1017)
             owner,
             repo,
             release_id,
-        })
-        if (!release?.data) {
+        }).data
+        if (!release) {
             console.log('release:', release)
             return core.setFailed(`Release Not Found: ${release_id}`)
         }
@@ -38556,8 +38556,8 @@ const src_path = __nccwpck_require__(1017)
             owner,
             repo,
             release_id,
-        })
-        if (!assets.data?.length) {
+        }).data
+        if (!assets?.length) {
             console.log('assets:', assets)
             return core.setFailed('No Assets Found')
         }
