@@ -38156,7 +38156,7 @@ const fs = __nccwpck_require__(7147)
 const path = __nccwpck_require__(1017)
 
 async function downloadAsset(asset, assetsPath) {
-    // consider using octokit.rest.repos.getReleaseAsset
+    // Switch to octokit.rest.repos.getReleaseAsset for use with private repos
     // console.log('asset:', asset)
     const filePath = path.join(assetsPath, asset.name)
     console.log('filePath:', filePath)
@@ -38187,7 +38187,7 @@ async function vtUpload(filePath, apiKey) {
 }
 
 async function vtGetURL(filePath, apiKey) {
-    // this does not consume per-minute api quota, consider using axios
+    // This does not consume per-minute api quota, consider using axios
     const stats = fs.statSync(filePath)
     console.log('stats.size:', stats.size)
     if (stats.size < 32000000) {
@@ -38529,14 +38529,38 @@ const src_path = __nccwpck_require__(1017)
 
         // Set Variables
         const { owner, repo } = github.context.repo
-        const release = github.context.payload.release
+        // Note: release from context does not contain updates for re-runs
+        // const release = github.context.payload.release
         const release_id = github.context.payload.release.id
         console.log('release_id:', release_id)
+
         const octokit = github.getOctokit(githubToken)
         const limiter = new RateLimiter({
             tokensPerInterval: rateLimit,
             interval: 'minute',
         })
+
+        // Get Release
+        const release = await octokit.rest.repos.getRelease({
+            owner,
+            repo,
+            release_id,
+        })
+        if (!release?.data) {
+            console.log('release:', release)
+            return core.setFailed(`Release Not Found: ${release_id}`)
+        }
+
+        // Get Assets
+        const assets = await octokit.rest.repos.listReleaseAssets({
+            owner,
+            repo,
+            release_id,
+        })
+        if (!assets.data?.length) {
+            console.log('assets:', assets)
+            return core.setFailed('No Assets Found')
+        }
 
         // Create Temp
         console.log('RUNNER_TEMP:', process.env.RUNNER_TEMP)
@@ -38574,7 +38598,7 @@ const src_path = __nccwpck_require__(1017)
             return core.info('Skipping Release Update on: update_release')
         }
         let body = release.body
-        body = body.concat('\n\n🛡️ **VirusTotal Results 2:**')
+        body = body.concat('\n\n🛡️ **VirusTotal Results:**')
         for (const result of results) {
             body = body.concat(`\n- [${result.name}](${result.link})`)
         }
@@ -38585,7 +38609,6 @@ const src_path = __nccwpck_require__(1017)
             release_id,
             body,
         })
-        console.log('Finished')
     } catch (e) {
         console.log(e)
         core.setFailed(e.message)

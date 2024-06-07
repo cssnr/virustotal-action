@@ -4,7 +4,7 @@ const fs = require('fs')
 const path = require('path')
 
 export async function downloadAsset(asset, assetsPath) {
-    // consider using octokit.rest.repos.getReleaseAsset
+    // Switch to octokit.rest.repos.getReleaseAsset for use with private repos
     // console.log('asset:', asset)
     const filePath = path.join(assetsPath, asset.name)
     console.log('filePath:', filePath)
@@ -35,7 +35,7 @@ export async function vtUpload(filePath, apiKey) {
 }
 
 async function vtGetURL(filePath, apiKey) {
-    // this does not consume per-minute api quota, consider using axios
+    // This does not consume per-minute api quota, consider using axios
     const stats = fs.statSync(filePath)
     console.log('stats.size:', stats.size)
     if (stats.size < 32000000) {
