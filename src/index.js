@@ -46,6 +46,17 @@ const path = require('path')
             interval: 'minute',
         })
 
+        const releaseTag = github.context.ref.replace('refs/tags/', '')
+        const releaseByTag = await octokit.rest.repos.getReleaseByTag({
+            owner: github.context.repo.owner,
+            repo: github.context.repo.repo,
+            tag: releaseTag,
+        })
+        console.log('-'.repeat(40))
+        console.log('releaseByTag', releaseByTag)
+        console.log('-'.repeat(40))
+        console.log('releaseByTag.data.id', releaseByTag.data.id)
+
         // Get Release
         const release = await octokit.rest.repos.getRelease({
             owner,
