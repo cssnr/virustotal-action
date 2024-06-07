@@ -38574,17 +38574,18 @@ const src_path = __nccwpck_require__(1017)
             return core.info('Skipping Release Update on: update_release')
         }
         let body = release.body
-        body = body.concat('\n\n🛡️ **VirusTotal Results:**')
+        body = body.concat('\n\n🛡️ **VirusTotal Results 2:**')
         for (const result of results) {
             body = body.concat(`\n- [${result.name}](${result.link})`)
         }
-        console.log(`body:\n\n${body}\n`)
+        console.log(`body:\n${body}`)
         await octokit.rest.repos.updateRelease({
             owner,
             repo,
             release_id,
             body,
         })
+        console.log('Finished')
     } catch (e) {
         console.log(e)
         core.setFailed(e.message)
