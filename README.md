@@ -8,22 +8,26 @@ A VirusTotal API Key is required. You can get one for free from
 For more information on the VirusTotal API check out [docs.virustotal.com](https://docs.virustotal.com/).
 
 > [!NOTE]  
-> This currently only works on Releases but can be expanded to work on any specified files.  
+> This currently only works on Releases but can be expanded to work on any files.  
 > Please submit a [Feature Request](https://github.com/cssnr/virustotal-action/discussions/categories/feature-requests)
 > for new features
 > or [Open an Issue](https://github.com/cssnr/virustotal-action/issues) if you find any bugs.
 
 The /files/ endpoint is used for files under 32MB, otherwise, the /files/upload_url/ endpoint is used providing support
-for files up to **650MB**.
+for files up to **650MB**. Therefore, files over 32MB will consume 2 API calls.
 
 ## Inputs
 
 | input          | required | default | description                                     |
 |----------------|----------|---------|-------------------------------------------------|
 | github_token   | Yes      | -       | GitHub Token from secrets.GITHUB_TOKEN          |
-| vt_api_key     | Yes      | -       | VirusTotal API Key (must add manually)          |
+| vt_api_key     | Yes      | -       | VirusTotal API Key from VirusTotal.             |
 | rate_limit     | No       | 4       | API Calls Per Minute. Set to `0` to disable     |
 | update_release | No       | true    | Update Release Notes. Set to `false` to disable |
+
+It is recommended to add API Keys to
+[GitHub Actions Secrets](https://docs.github.com/en/actions/security-guides/using-secrets-in-github-actions).
+The `GITHUB_TOKEN` secret does not have to be manually added and is automatically generated for each workflow run.
 
 ```yaml
   - name: "VirusTotal"
@@ -40,11 +44,19 @@ for files up to **650MB**.
 The Update Release option will append text similar to this:
 
 ---
-**VirusTotal Results:**
-- install-linux.deb [ZDAzY2M2ZGQzZmEwZWEwZTI2NjQ5NmVjZDcwZmY0YTY6MTcxNzU2NzI3Ng==](https://www.virustotal.com/gui/file-analysis/ZDAzY2M2ZGQzZmEwZWEwZTI2NjQ5NmVjZDcwZmY0YTY6MTcxNzU2NzI3Ng==)
-- install-macos.pkg [YTkzOGFjMDZhNTI3NmU5MmI4YzQzNzg5ODE3OGRkMzg6MTcxNzU2NzI3OA==](https://www.virustotal.com/gui/file-analysis/YTkzOGFjMDZhNTI3NmU5MmI4YzQzNzg5ODE3OGRkMzg6MTcxNzU2NzI3OA==)
-- install-win.exe [M2JhZDJhMzRhYjcyM2Y0MDFkNjU1OGZlYjFkNjgyMmY6MTcxNzU2NzI4MA==](https://www.virustotal.com/gui/file-analysis/M2JhZDJhMzRhYjcyM2Y0MDFkNjU1OGZlYjFkNjgyMmY6MTcxNzU2NzI4MA==)
+🛡️ **VirusTotal Results:**
+
+- [install-linux.deb](https://www.virustotal.com/gui/file-analysis/ZDAzY2M2ZGQzZmEwZWEwZTI2NjQ5NmVjZDcwZmY0YTY6MTcxNzU2NzI3Ng==)
+- [install-macos.pkg](https://www.virustotal.com/gui/file-analysis/YTkzOGFjMDZhNTI3NmU5MmI4YzQzNzg5ODE3OGRkMzg6MTcxNzU2NzI3OA==)
+- [install-win.exe](https://www.virustotal.com/gui/file-analysis/M2JhZDJhMzRhYjcyM2Y0MDFkNjU1OGZlYjFkNjgyMmY6MTcxNzU2NzI4MA==)
+
 ---
+
+## Planned Features
+
+- Add `files` glob to allow processing any specified files/paths.
+- Add release body parsing to properly process new files on `edited` activity.
+- Add options to customize release update format.
 
 ## Simple Example
 
@@ -52,7 +64,6 @@ The Update Release option will append text similar to this:
 name: "VirusTotal Example"
 
 on:
-  workflow_dispatch:
   release:
     types: [ published ]
 
@@ -81,7 +92,6 @@ Specify any jobs that upload releases in the `needs` for the VirusTotal Action.
 name: "VirusTotal Example"
 
 on:
-  workflow_dispatch:
   release:
     types: [ published ]
 

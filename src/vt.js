@@ -4,22 +4,16 @@ const fs = require('fs')
 const path = require('path')
 
 export async function downloadAsset(asset, assetsPath) {
+    // Switch to octokit.rest.repos.getReleaseAsset for use with private repos
     // console.log('asset:', asset)
-    // console.log('assetsDir:', assetsDir)
     const filePath = path.join(assetsPath, asset.name)
     console.log('filePath:', filePath)
     const response = await axios({
         method: 'GET',
         url: asset.browser_download_url,
-        responseType: 'stream',
+        responseType: 'arraybuffer',
     })
-    // console.log('response:', response)
-    await new Promise((resolve, reject) => {
-        const writer = fs.createWriteStream(filePath)
-        response.data.pipe(writer)
-        writer.on('finish', resolve)
-        writer.on('error', reject)
-    })
+    fs.writeFileSync(filePath, response.data)
     console.log('wrote:', filePath)
     return filePath
 }
@@ -41,6 +35,7 @@ export async function vtUpload(filePath, apiKey) {
 }
 
 async function vtGetURL(filePath, apiKey) {
+    // This does not consume per-minute api quota, consider using axios
     const stats = fs.statSync(filePath)
     console.log('stats.size:', stats.size)
     if (stats.size < 32000000) {
