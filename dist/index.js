@@ -38573,7 +38573,7 @@ const src_path = __nccwpck_require__(1017)
 
         // Process Assets
         const results = []
-        for (const asset of release.assets) {
+        for (const asset of assets) {
             if (rateLimit) {
                 const remainingRequests = await limiter.removeTokens(1)
                 console.log('remainingRequests:', remainingRequests)
