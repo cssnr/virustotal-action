@@ -95,7 +95,7 @@ const path = require('path')
                     },
                 },
             })
-            fs.writeFileSync(filePath, file.data)
+            fs.writeFileSync(filePath, Buffer.from(file.data))
             const response = await vtUpload(filePath, vtApiKey)
             console.log('response.data.id:', response.data.id)
             const link = `https://www.virustotal.com/gui/file-analysis/${response.data.id}`

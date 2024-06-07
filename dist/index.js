@@ -38589,7 +38589,7 @@ const path = __nccwpck_require__(1017)
                     },
                 },
             })
-            src_fs.writeFileSync(filePath, file.data)
+            src_fs.writeFileSync(filePath, Buffer.from(file.data))
             const response = await vtUpload(filePath, vtApiKey)
             console.log('response.data.id:', response.data.id)
             const link = `https://www.virustotal.com/gui/file-analysis/${response.data.id}`
