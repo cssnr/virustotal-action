@@ -38153,22 +38153,6 @@ __nccwpck_require__.r(__webpack_exports__);
 const axios = __nccwpck_require__(8757)
 const FormData = __nccwpck_require__(4334)
 const fs = __nccwpck_require__(7147)
-// const path = require('path')
-//
-// export async function downloadAsset(asset, assetsPath) {
-//     // Switch to octokit.rest.repos.getReleaseAsset for use with private repos
-//     // console.log('asset:', asset)
-//     const filePath = path.join(assetsPath, asset.name)
-//     console.log('filePath:', filePath)
-//     const response = await axios({
-//         method: 'GET',
-//         url: asset.browser_download_url,
-//         responseType: 'arraybuffer',
-//     })
-//     fs.writeFileSync(filePath, response.data)
-//     console.log('wrote:', filePath)
-//     return filePath
-// }
 
 async function vtUpload(filePath, apiKey) {
     console.log('vtUpload:', filePath)
@@ -38502,10 +38486,6 @@ const path = __nccwpck_require__(1017)
 
 ;(async () => {
     try {
-        // console.log('-'.repeat(40))
-        // console.log('release', github.context.payload.release)
-        // console.log('-'.repeat(40))
-
         // Check Release
         if (!github.context.payload.release) {
             core.info(`Skipping non-release: ${github.context.eventName}`)
@@ -38528,9 +38508,6 @@ const path = __nccwpck_require__(1017)
         console.log('rate_limit:', rateLimit)
 
         // Set Variables
-        // const { owner, repo } = github.context.repo
-        // Note: release from context does not contain updates for re-runs
-        // const release = github.context.payload.release
         const release_id = github.context.payload.release.id
         console.log('release_id:', release_id)
         console.log('-'.repeat(40))
@@ -38565,7 +38542,6 @@ const path = __nccwpck_require__(1017)
         const assetsPath = path.join(process.env.RUNNER_TEMP, 'assets')
         console.log('assetsPath:', assetsPath)
         if (!src_fs.existsSync(assetsPath)) {
-            console.log('mkdirSync:', assetsPath)
             src_fs.mkdirSync(assetsPath)
         }
 
@@ -38587,8 +38563,6 @@ const path = __nccwpck_require__(1017)
                     Accept: 'application/octet-stream',
                 },
             })
-            // console.log('file')
-            // console.log(file)
             src_fs.writeFileSync(filePath, Buffer.from(file.data))
             const response = await vtUpload(filePath, vtApiKey)
             console.log('response.data.id:', response.data.id)

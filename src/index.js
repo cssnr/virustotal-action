@@ -8,10 +8,6 @@ const path = require('path')
 
 ;(async () => {
     try {
-        // console.log('-'.repeat(40))
-        // console.log('release', github.context.payload.release)
-        // console.log('-'.repeat(40))
-
         // Check Release
         if (!github.context.payload.release) {
             core.info(`Skipping non-release: ${github.context.eventName}`)
@@ -34,9 +30,6 @@ const path = require('path')
         console.log('rate_limit:', rateLimit)
 
         // Set Variables
-        // const { owner, repo } = github.context.repo
-        // Note: release from context does not contain updates for re-runs
-        // const release = github.context.payload.release
         const release_id = github.context.payload.release.id
         console.log('release_id:', release_id)
         console.log('-'.repeat(40))
@@ -71,7 +64,6 @@ const path = require('path')
         const assetsPath = path.join(process.env.RUNNER_TEMP, 'assets')
         console.log('assetsPath:', assetsPath)
         if (!fs.existsSync(assetsPath)) {
-            console.log('mkdirSync:', assetsPath)
             fs.mkdirSync(assetsPath)
         }
 
@@ -93,8 +85,6 @@ const path = require('path')
                     Accept: 'application/octet-stream',
                 },
             })
-            // console.log('file')
-            // console.log(file)
             fs.writeFileSync(filePath, Buffer.from(file.data))
             const response = await vtUpload(filePath, vtApiKey)
             console.log('response.data.id:', response.data.id)

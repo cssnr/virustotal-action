@@ -1,22 +1,6 @@
 const axios = require('axios')
 const FormData = require('form-data')
 const fs = require('fs')
-// const path = require('path')
-//
-// export async function downloadAsset(asset, assetsPath) {
-//     // Switch to octokit.rest.repos.getReleaseAsset for use with private repos
-//     // console.log('asset:', asset)
-//     const filePath = path.join(assetsPath, asset.name)
-//     console.log('filePath:', filePath)
-//     const response = await axios({
-//         method: 'GET',
-//         url: asset.browser_download_url,
-//         responseType: 'arraybuffer',
-//     })
-//     fs.writeFileSync(filePath, response.data)
-//     console.log('wrote:', filePath)
-//     return filePath
-// }
 
 export async function vtUpload(filePath, apiKey) {
     console.log('vtUpload:', filePath)
