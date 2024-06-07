@@ -8,9 +8,9 @@ const path = require('path')
 
 ;(async () => {
     try {
-        console.log('-'.repeat(40))
-        console.log('release', github.context.payload.release)
-        console.log('-'.repeat(40))
+        // console.log('-'.repeat(40))
+        // console.log('release', github.context.payload.release)
+        // console.log('-'.repeat(40))
 
         // Check Release
         if (!github.context.payload.release) {
@@ -19,6 +19,10 @@ const path = require('path')
         }
 
         // Parse Inputs
+        const githubToken = core.getInput('github_token')
+        if (!githubToken) {
+            return core.setFailed('Missing: github_token')
+        }
         const vtApiKey = core.getInput('vt_api_key')
         if (!vtApiKey) {
             return core.setFailed('Missing: vt_api_key')
@@ -27,14 +31,15 @@ const path = require('path')
         console.log('update_release:', updateRelease)
         const rateLimit = parseInt(core.getInput('rate_limit'))
         console.log('rate_limit:', rateLimit)
-        const githubToken = core.getInput('github_token')
-        if (!githubToken && updateRelease !== 'false') {
-            return core.setFailed('Update Release Requires: github_token')
-        }
 
         // Set Variables
         const { owner, repo } = github.context.repo
         const release = github.context.payload.release
+        const octokit = github.getOctokit(githubToken)
+        const limiter = new RateLimiter({
+            tokensPerInterval: rateLimit,
+            interval: 'minute',
+        })
 
         // Create Temp
         console.log('RUNNER_TEMP:', process.env.RUNNER_TEMP)
@@ -46,10 +51,6 @@ const path = require('path')
         }
 
         // Process Assets
-        const limiter = new RateLimiter({
-            tokensPerInterval: rateLimit,
-            interval: 'minute',
-        })
         const results = []
         for (const asset of release.assets) {
             if (rateLimit) {
@@ -71,18 +72,13 @@ const path = require('path')
         }
         console.log('results:', results)
 
+        // Update Release
         if (updateRelease === 'false') {
             return core.info('Skipping Release Update on: update_release')
         }
-
-        const octokit = github.getOctokit(githubToken)
-
-        // Update Release
         let body = release.body
         body = body.concat('\n\n🛡️ **VirusTotal Results:**')
         for (const result of results) {
-            // const parts = result.link.split('/')
-            // const hash = parts[parts.length - 1]
             body = body.concat(`\n- [${result.name}](${result.link})`)
         }
         console.log(`body:\n\n${body}\n`)

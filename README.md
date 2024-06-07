@@ -20,12 +20,10 @@ for files up to **650MB**.
 
 | input          | required | default | description                                     |
 |----------------|----------|---------|-------------------------------------------------|
-| vt_api_key     | Yes      | -       | VirusTotal API Key (must add manually)          |
+| github_token   | yes      | -       | GitHub Token from secrets.GITHUB_TOKEN          |
+| vt_api_key     | Yes      | -       | VirusTotal API Key from your Secrets            |
 | rate_limit     | No       | 4       | API Calls Per Minute. Set to `0` to disable     |
 | update_release | No       | true    | Update Release Notes. Set to `false` to disable |
-| github_token   | **No***  | -       | ***Required** for `update_release`              |
-
-In order to Update the Release for `update_release` you **MUST** also provide the `github_token`. 
 
 ```yaml
   - name: "VirusTotal"

@@ -38156,8 +38156,8 @@ const fs = __nccwpck_require__(7147)
 const path = __nccwpck_require__(1017)
 
 async function downloadAsset(asset, assetsPath) {
+    // consider using octokit.rest.repos.getReleaseAsset
     // console.log('asset:', asset)
-    // console.log('assetsDir:', assetsDir)
     const filePath = path.join(assetsPath, asset.name)
     console.log('filePath:', filePath)
     const response = await axios({
@@ -38165,15 +38165,7 @@ async function downloadAsset(asset, assetsPath) {
         url: asset.browser_download_url,
         responseType: 'arraybuffer',
     })
-    // console.log('response:', response)
-    // await new Promise((resolve, reject) => {
-    //     const writer = fs.createWriteStream(filePath)
-    //     response.data.pipe(writer)
-    //     writer.on('finish', resolve)
-    //     writer.on('error', reject)
-    // })
     fs.writeFileSync(filePath, response.data)
-
     console.log('wrote:', filePath)
     return filePath
 }
@@ -38195,6 +38187,7 @@ async function vtUpload(filePath, apiKey) {
 }
 
 async function vtGetURL(filePath, apiKey) {
+    // this does not consume per-minute api quota, consider using axios
     const stats = fs.statSync(filePath)
     console.log('stats.size:', stats.size)
     if (stats.size < 32000000) {
@@ -38509,9 +38502,9 @@ const src_path = __nccwpck_require__(1017)
 
 ;(async () => {
     try {
-        console.log('-'.repeat(40))
-        console.log('release', github.context.payload.release)
-        console.log('-'.repeat(40))
+        // console.log('-'.repeat(40))
+        // console.log('release', github.context.payload.release)
+        // console.log('-'.repeat(40))
 
         // Check Release
         if (!github.context.payload.release) {
@@ -38520,6 +38513,10 @@ const src_path = __nccwpck_require__(1017)
         }
 
         // Parse Inputs
+        const githubToken = core.getInput('github_token')
+        if (!githubToken) {
+            return core.setFailed('Missing: github_token')
+        }
         const vtApiKey = core.getInput('vt_api_key')
         if (!vtApiKey) {
             return core.setFailed('Missing: vt_api_key')
@@ -38528,14 +38525,15 @@ const src_path = __nccwpck_require__(1017)
         console.log('update_release:', updateRelease)
         const rateLimit = parseInt(core.getInput('rate_limit'))
         console.log('rate_limit:', rateLimit)
-        const githubToken = core.getInput('github_token')
-        if (!githubToken && updateRelease !== 'false') {
-            return core.setFailed('Update Release Requires: github_token')
-        }
 
         // Set Variables
         const { owner, repo } = github.context.repo
         const release = github.context.payload.release
+        const octokit = github.getOctokit(githubToken)
+        const limiter = new RateLimiter({
+            tokensPerInterval: rateLimit,
+            interval: 'minute',
+        })
 
         // Create Temp
         console.log('RUNNER_TEMP:', process.env.RUNNER_TEMP)
@@ -38547,10 +38545,6 @@ const src_path = __nccwpck_require__(1017)
         }
 
         // Process Assets
-        const limiter = new RateLimiter({
-            tokensPerInterval: rateLimit,
-            interval: 'minute',
-        })
         const results = []
         for (const asset of release.assets) {
             if (rateLimit) {
@@ -38572,18 +38566,13 @@ const src_path = __nccwpck_require__(1017)
         }
         console.log('results:', results)
 
+        // Update Release
         if (updateRelease === 'false') {
             return core.info('Skipping Release Update on: update_release')
         }
-
-        const octokit = github.getOctokit(githubToken)
-
-        // Update Release
         let body = release.body
         body = body.concat('\n\n🛡️ **VirusTotal Results:**')
         for (const result of results) {
-            // const parts = result.link.split('/')
-            // const hash = parts[parts.length - 1]
             body = body.concat(`\n- [${result.name}](${result.link})`)
         }
         console.log(`body:\n\n${body}\n`)
