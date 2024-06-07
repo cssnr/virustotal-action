@@ -38540,38 +38540,44 @@ const src_path = __nccwpck_require__(1017)
             interval: 'minute',
         })
 
-        const releaseTag = github.context.ref.replace('refs/tags/', '')
-        const releaseByTag = await octokit.rest.repos.getReleaseByTag({
-            owner: github.context.repo.owner,
-            repo: github.context.repo.repo,
-            tag: releaseTag,
-        })
-        console.log('-'.repeat(40))
-        console.log('releaseByTag', releaseByTag)
-        console.log('-'.repeat(40))
-        console.log('releaseByTag.data.id', releaseByTag.data.id)
+        // const releaseTag = github.context.ref.replace('refs/tags/', '')
+        // const releaseByTag = await octokit.rest.repos.getReleaseByTag({
+        //     owner: github.context.repo.owner,
+        //     repo: github.context.repo.repo,
+        //     tag: releaseTag,
+        // })
+        // console.log('-'.repeat(40))
+        // console.log('releaseByTag', releaseByTag)
+        // console.log('-'.repeat(40))
+        // console.log('releaseByTag.data.id', releaseByTag.data.id)
 
         // Get Release
         const release = await octokit.rest.repos.getRelease({
             owner,
             repo,
             release_id,
-        }).data
+        })
         if (!release) {
             console.log('release:', release)
             return core.setFailed(`Release Not Found: ${release_id}`)
         }
+        console.log('-'.repeat(40))
+        console.log('release:', release)
+        console.log('-'.repeat(40))
 
         // Get Assets
         const assets = await octokit.rest.repos.listReleaseAssets({
             owner,
             repo,
             release_id,
-        }).data
+        })
         if (!assets?.length) {
             console.log('assets:', assets)
             return core.setFailed('No Assets Found')
         }
+        console.log('-'.repeat(40))
+        console.log('assets:', assets)
+        console.log('-'.repeat(40))
 
         // Create Temp
         console.log('RUNNER_TEMP:', process.env.RUNNER_TEMP)
