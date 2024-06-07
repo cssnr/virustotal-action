@@ -39,23 +39,12 @@ const path = require('path')
         // const release = github.context.payload.release
         const release_id = github.context.payload.release.id
         console.log('release_id:', release_id)
-
+        console.log('-'.repeat(40))
         const octokit = github.getOctokit(githubToken)
         const limiter = new RateLimiter({
             tokensPerInterval: rateLimit,
             interval: 'minute',
         })
-
-        // const releaseTag = github.context.ref.replace('refs/tags/', '')
-        // const releaseByTag = await octokit.rest.repos.getReleaseByTag({
-        //     owner: github.context.repo.owner,
-        //     repo: github.context.repo.repo,
-        //     tag: releaseTag,
-        // })
-        // console.log('-'.repeat(40))
-        // console.log('releaseByTag', releaseByTag)
-        // console.log('-'.repeat(40))
-        // console.log('releaseByTag.data.id', releaseByTag.data.id)
 
         // Get Release
         const release = await octokit.rest.repos.getRelease({
@@ -63,9 +52,6 @@ const path = require('path')
             repo,
             release_id,
         })
-        console.log('-'.repeat(40))
-        console.log('release:', release)
-        console.log('-'.repeat(40))
         if (!release?.data) {
             console.log('release:', release)
             return core.setFailed(`Release Not Found: ${release_id}`)
@@ -77,12 +63,9 @@ const path = require('path')
             repo,
             release_id,
         })
-        console.log('-'.repeat(40))
-        console.log('assets:', assets)
-        console.log('-'.repeat(40))
         if (!assets?.data?.length) {
             console.log('assets:', assets)
-            return core.setFailed('No Assets Found')
+            return core.setFailed(`No Assets Found for Release: ${release_id}`)
         }
 
         // Create Temp
@@ -97,11 +80,11 @@ const path = require('path')
         // Process Assets
         const results = []
         for (const asset of assets.data) {
+            core.info(`----- Processing Asset: ${asset.name} -----`)
             if (rateLimit) {
                 const remainingRequests = await limiter.removeTokens(1)
                 console.log('remainingRequests:', remainingRequests)
             }
-            console.log(`name: ${asset.name}`)
             const filePath = await downloadAsset(asset, assetsPath)
             console.log('filePath:', filePath)
             const response = await vtUpload(filePath, vtApiKey)
