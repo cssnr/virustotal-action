@@ -38605,7 +38605,6 @@ const src_path = __nccwpck_require__(1017)
         }
         console.log('-'.repeat(40))
         console.log(`body:\n${body}`)
-        console.log('-'.repeat(40))
         await octokit.rest.repos.updateRelease({
             owner,
             repo,

@@ -111,7 +111,6 @@ const path = require('path')
         }
         console.log('-'.repeat(40))
         console.log(`body:\n${body}`)
-        console.log('-'.repeat(40))
         await octokit.rest.repos.updateRelease({
             owner,
             repo,
