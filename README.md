@@ -1,4 +1,7 @@
+[![Tags](https://img.shields.io/github/actions/workflow/status/cssnr/virustotal-action/tags.yaml?logo=github&logoColor=white&label=tags)](https://github.com/cssnr/virustotal-action/actions/workflows/tags.yaml)
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=cssnr_virustotal-action&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=cssnr_virustotal-action)
+[![CSSNR Website](https://img.shields.io/badge/pages-website-blue?logo=github&logoColor=white&color=blue)](https://cssnr.github.io/)
+[![Discord](https://img.shields.io/discord/899171661457293343?logo=discord&logoColor=white&label=discord&color=7289da)](https://discord.gg/wXy6m2X8wY)
 # VirusTotal Action
 
 Upload Release Assets to VirusTotal and Optionally Update Release Notes with Links.
@@ -6,6 +9,12 @@ Upload Release Assets to VirusTotal and Optionally Update Release Notes with Lin
 A VirusTotal API Key is required. You can get one for free from
 [virustotal.com](https://www.virustotal.com/gui/sign-in).
 For more information on the VirusTotal API check out [docs.virustotal.com](https://docs.virustotal.com/).
+
+*   [Inputs](#Inputs)
+*   [Planned Features](#Planned-Features)
+*   [Simple Example](#Simple-Example)
+*   [Full Example](#Full-Example)
+*   [Support](#Support)
 
 > [!NOTE]  
 > This currently only works on Releases but can be expanded to work on any files.  
@@ -140,3 +149,16 @@ jobs:
 
 To see this used in a build/release/scan workflow, check out:  
 https://github.com/cssnr/hls-downloader-client/blob/master/.github/workflows/build.yaml
+
+# Support
+
+For general help or to request a feature, see:
+
+- Q&A Discussion: https://github.com/cssnr/virustotal-action/discussions/categories/q-a
+- Request a Feature: https://github.com/cssnr/virustotal-action/discussions/categories/feature-requests
+
+If you are experiencing an issue/bug or getting unexpected results, you can:
+
+- Report an Issue: https://github.com/cssnr/virustotal-action/issues
+- Chat with us on Discord: https://discord.gg/wXy6m2X8wY
+- Provide General Feedback: [https://cssnr.github.io/feedback/](https://cssnr.github.io/feedback/?app=VirusTotal%20Scan)
