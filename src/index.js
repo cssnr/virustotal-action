@@ -100,7 +100,7 @@ const vtUpload = require('./vt')
         core.setOutput('results', output.join(','))
 
         // Update Release
-        if (updateRelease) {
+        if (!updateRelease) {
             return core.info(
                 `Skipping Release Update Because update_release: ${updateRelease}`
             )
