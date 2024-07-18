@@ -1,30 +1,24 @@
-import { vtUpload } from './vt.js'
-import { RateLimiter } from 'limiter'
-
 const core = require('@actions/core')
 const github = require('@actions/github')
 const fs = require('fs')
 const path = require('path')
+const { RateLimiter } = require('limiter')
+
+const vtUpload = require('./vt')
 
 ;(async () => {
     try {
         // Check Release
         if (!github.context.payload.release) {
-            core.info(`Skipping non-release: ${github.context.eventName}`)
-            return
+            return core.notice(
+                `VT Action Skipped on Non-Release: ${github.context.eventName}`
+            )
         }
-        console.log('tag_name:', github.context.payload.release.tag_name)
 
         // Parse Inputs
-        const githubToken = core.getInput('github_token')
-        if (!githubToken) {
-            return core.setFailed('Missing: github_token')
-        }
-        const vtApiKey = core.getInput('vt_api_key')
-        if (!vtApiKey) {
-            return core.setFailed('Missing: vt_api_key')
-        }
-        const updateRelease = core.getInput('update_release')
+        const githubToken = core.getInput('github_token', { required: true })
+        const vtApiKey = core.getInput('vt_api_key', { required: true })
+        const updateRelease = core.getBooleanInput('update_release')
         console.log('update_release:', updateRelease)
         const rateLimit = parseInt(core.getInput('rate_limit'))
         console.log('rate_limit:', rateLimit)
@@ -32,7 +26,6 @@ const path = require('path')
         // Set Variables
         const release_id = github.context.payload.release.id
         console.log('release_id:', release_id)
-        console.log('-'.repeat(40))
         const octokit = github.getOctokit(githubToken)
         const limiter = new RateLimiter({
             tokensPerInterval: rateLimit,
@@ -75,7 +68,6 @@ const path = require('path')
                 const remainingRequests = await limiter.removeTokens(1)
                 console.log('remainingRequests:', remainingRequests)
             }
-            // const filePath = await downloadAsset(asset, assetsPath)
             const filePath = path.join(assetsPath, asset.name)
             console.log('filePath:', filePath)
             const file = await octokit.rest.repos.getReleaseAsset({
@@ -91,6 +83,7 @@ const path = require('path')
             const link = `https://www.virustotal.com/gui/file-analysis/${response.data.id}`
             console.log('link:', link)
             const result = {
+                id: response.data.id,
                 name: asset.name,
                 link: link,
             }
@@ -99,14 +92,23 @@ const path = require('path')
         console.log('-'.repeat(40))
         console.log('results:', results)
 
+        // Set Output
+        const output = []
+        for (const result of results) {
+            output.push(`${result.name}/${result.id}`)
+        }
+        core.setOutput('results', output.join(','))
+
         // Update Release
-        if (updateRelease === 'false') {
-            return core.info('Skipping Release Update on: update_release')
+        if (!updateRelease) {
+            return core.info(
+                `Skipping Release Update Because update_release: ${updateRelease}`
+            )
         }
         let body = release.data.body
-        body = body.concat('\n\n🛡️ **VirusTotal Results:**')
+        body += '\n\n🛡️ **VirusTotal Results:**'
         for (const result of results) {
-            body = body.concat(`\n- [${result.name}](${result.link})`)
+            body += `\n- [${result.name}](${result.link})`
         }
         console.log('-'.repeat(40))
         console.log(`body:\n${body}`)
