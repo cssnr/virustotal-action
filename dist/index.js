@@ -7983,6 +7983,347 @@ module.exports = function(dst, src) {
 
 /***/ }),
 
+/***/ 4835:
+/***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.performance = void 0;
+var perf_hooks_1 = __nccwpck_require__(4074);
+Object.defineProperty(exports, "performance", ({ enumerable: true, get: function () { return perf_hooks_1.performance; } }));
+//# sourceMappingURL=node.js.map
+
+/***/ }),
+
+/***/ 7340:
+/***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.RateLimiter = void 0;
+const TokenBucket_1 = __nccwpck_require__(5554);
+const clock_1 = __nccwpck_require__(2899);
+/**
+ * A generic rate limiter. Underneath the hood, this uses a token bucket plus
+ * an additional check to limit how many tokens we can remove each interval.
+ *
+ * @param options
+ * @param options.tokensPerInterval Maximum number of tokens that can be
+ *  removed at any given moment and over the course of one interval.
+ * @param options.interval The interval length in milliseconds, or as
+ *  one of the following strings: 'second', 'minute', 'hour', day'.
+ * @param options.fireImmediately Whether or not the promise will resolve
+ *  immediately when rate limiting is in effect (default is false).
+ */
+class RateLimiter {
+    constructor({ tokensPerInterval, interval, fireImmediately }) {
+        this.tokenBucket = new TokenBucket_1.TokenBucket({
+            bucketSize: tokensPerInterval,
+            tokensPerInterval,
+            interval,
+        });
+        // Fill the token bucket to start
+        this.tokenBucket.content = tokensPerInterval;
+        this.curIntervalStart = clock_1.getMilliseconds();
+        this.tokensThisInterval = 0;
+        this.fireImmediately = fireImmediately !== null && fireImmediately !== void 0 ? fireImmediately : false;
+    }
+    /**
+     * Remove the requested number of tokens. If the rate limiter contains enough
+     * tokens and we haven't spent too many tokens in this interval already, this
+     * will happen immediately. Otherwise, the removal will happen when enough
+     * tokens become available.
+     * @param count The number of tokens to remove.
+     * @returns A promise for the remainingTokens count.
+     */
+    async removeTokens(count) {
+        // Make sure the request isn't for more than we can handle
+        if (count > this.tokenBucket.bucketSize) {
+            throw new Error(`Requested tokens ${count} exceeds maximum tokens per interval ${this.tokenBucket.bucketSize}`);
+        }
+        const now = clock_1.getMilliseconds();
+        // Advance the current interval and reset the current interval token count
+        // if needed
+        if (now < this.curIntervalStart || now - this.curIntervalStart >= this.tokenBucket.interval) {
+            this.curIntervalStart = now;
+            this.tokensThisInterval = 0;
+        }
+        // If we don't have enough tokens left in this interval, wait until the
+        // next interval
+        if (count > this.tokenBucket.tokensPerInterval - this.tokensThisInterval) {
+            if (this.fireImmediately) {
+                return -1;
+            }
+            else {
+                const waitMs = Math.ceil(this.curIntervalStart + this.tokenBucket.interval - now);
+                await clock_1.wait(waitMs);
+                const remainingTokens = await this.tokenBucket.removeTokens(count);
+                this.tokensThisInterval += count;
+                return remainingTokens;
+            }
+        }
+        // Remove the requested number of tokens from the token bucket
+        const remainingTokens = await this.tokenBucket.removeTokens(count);
+        this.tokensThisInterval += count;
+        return remainingTokens;
+    }
+    /**
+     * Attempt to remove the requested number of tokens and return immediately.
+     * If the bucket (and any parent buckets) contains enough tokens and we
+     * haven't spent too many tokens in this interval already, this will return
+     * true. Otherwise, false is returned.
+     * @param {Number} count The number of tokens to remove.
+     * @param {Boolean} True if the tokens were successfully removed, otherwise
+     *  false.
+     */
+    tryRemoveTokens(count) {
+        // Make sure the request isn't for more than we can handle
+        if (count > this.tokenBucket.bucketSize)
+            return false;
+        const now = clock_1.getMilliseconds();
+        // Advance the current interval and reset the current interval token count
+        // if needed
+        if (now < this.curIntervalStart || now - this.curIntervalStart >= this.tokenBucket.interval) {
+            this.curIntervalStart = now;
+            this.tokensThisInterval = 0;
+        }
+        // If we don't have enough tokens left in this interval, return false
+        if (count > this.tokenBucket.tokensPerInterval - this.tokensThisInterval)
+            return false;
+        // Try to remove the requested number of tokens from the token bucket
+        const removed = this.tokenBucket.tryRemoveTokens(count);
+        if (removed) {
+            this.tokensThisInterval += count;
+        }
+        return removed;
+    }
+    /**
+     * Returns the number of tokens remaining in the TokenBucket.
+     * @returns {Number} The number of tokens remaining.
+     */
+    getTokensRemaining() {
+        this.tokenBucket.drip();
+        return this.tokenBucket.content;
+    }
+}
+exports.RateLimiter = RateLimiter;
+//# sourceMappingURL=RateLimiter.js.map
+
+/***/ }),
+
+/***/ 5554:
+/***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.TokenBucket = void 0;
+const clock_1 = __nccwpck_require__(2899);
+/**
+ * A hierarchical token bucket for rate limiting. See
+ * http://en.wikipedia.org/wiki/Token_bucket for more information.
+ *
+ * @param options
+ * @param options.bucketSize Maximum number of tokens to hold in the bucket.
+ *  Also known as the burst rate.
+ * @param options.tokensPerInterval Number of tokens to drip into the bucket
+ *  over the course of one interval.
+ * @param options.interval The interval length in milliseconds, or as
+ *  one of the following strings: 'second', 'minute', 'hour', day'.
+ * @param options.parentBucket Optional. A token bucket that will act as
+ *  the parent of this bucket.
+ */
+class TokenBucket {
+    constructor({ bucketSize, tokensPerInterval, interval, parentBucket }) {
+        this.bucketSize = bucketSize;
+        this.tokensPerInterval = tokensPerInterval;
+        if (typeof interval === "string") {
+            switch (interval) {
+                case "sec":
+                case "second":
+                    this.interval = 1000;
+                    break;
+                case "min":
+                case "minute":
+                    this.interval = 1000 * 60;
+                    break;
+                case "hr":
+                case "hour":
+                    this.interval = 1000 * 60 * 60;
+                    break;
+                case "day":
+                    this.interval = 1000 * 60 * 60 * 24;
+                    break;
+                default:
+                    throw new Error("Invalid interval " + interval);
+            }
+        }
+        else {
+            this.interval = interval;
+        }
+        this.parentBucket = parentBucket;
+        this.content = 0;
+        this.lastDrip = clock_1.getMilliseconds();
+    }
+    /**
+     * Remove the requested number of tokens. If the bucket (and any parent
+     * buckets) contains enough tokens this will happen immediately. Otherwise,
+     * the removal will happen when enough tokens become available.
+     * @param count The number of tokens to remove.
+     * @returns A promise for the remainingTokens count.
+     */
+    async removeTokens(count) {
+        // Is this an infinite size bucket?
+        if (this.bucketSize === 0) {
+            return Number.POSITIVE_INFINITY;
+        }
+        // Make sure the bucket can hold the requested number of tokens
+        if (count > this.bucketSize) {
+            throw new Error(`Requested tokens ${count} exceeds bucket size ${this.bucketSize}`);
+        }
+        // Drip new tokens into this bucket
+        this.drip();
+        const comeBackLater = async () => {
+            // How long do we need to wait to make up the difference in tokens?
+            const waitMs = Math.ceil((count - this.content) * (this.interval / this.tokensPerInterval));
+            await clock_1.wait(waitMs);
+            return this.removeTokens(count);
+        };
+        // If we don't have enough tokens in this bucket, come back later
+        if (count > this.content)
+            return comeBackLater();
+        if (this.parentBucket != undefined) {
+            // Remove the requested from the parent bucket first
+            const remainingTokens = await this.parentBucket.removeTokens(count);
+            // Check that we still have enough tokens in this bucket
+            if (count > this.content)
+                return comeBackLater();
+            // Tokens were removed from the parent bucket, now remove them from
+            // this bucket. Note that we look at the current bucket and parent
+            // bucket's remaining tokens and return the smaller of the two values
+            this.content -= count;
+            return Math.min(remainingTokens, this.content);
+        }
+        else {
+            // Remove the requested tokens from this bucket
+            this.content -= count;
+            return this.content;
+        }
+    }
+    /**
+     * Attempt to remove the requested number of tokens and return immediately.
+     * If the bucket (and any parent buckets) contains enough tokens this will
+     * return true, otherwise false is returned.
+     * @param {Number} count The number of tokens to remove.
+     * @param {Boolean} True if the tokens were successfully removed, otherwise
+     *  false.
+     */
+    tryRemoveTokens(count) {
+        // Is this an infinite size bucket?
+        if (!this.bucketSize)
+            return true;
+        // Make sure the bucket can hold the requested number of tokens
+        if (count > this.bucketSize)
+            return false;
+        // Drip new tokens into this bucket
+        this.drip();
+        // If we don't have enough tokens in this bucket, return false
+        if (count > this.content)
+            return false;
+        // Try to remove the requested tokens from the parent bucket
+        if (this.parentBucket && !this.parentBucket.tryRemoveTokens(count))
+            return false;
+        // Remove the requested tokens from this bucket and return
+        this.content -= count;
+        return true;
+    }
+    /**
+     * Add any new tokens to the bucket since the last drip.
+     * @returns {Boolean} True if new tokens were added, otherwise false.
+     */
+    drip() {
+        if (this.tokensPerInterval === 0) {
+            const prevContent = this.content;
+            this.content = this.bucketSize;
+            return this.content > prevContent;
+        }
+        const now = clock_1.getMilliseconds();
+        const deltaMS = Math.max(now - this.lastDrip, 0);
+        this.lastDrip = now;
+        const dripAmount = deltaMS * (this.tokensPerInterval / this.interval);
+        const prevContent = this.content;
+        this.content = Math.min(this.content + dripAmount, this.bucketSize);
+        return Math.floor(this.content) > Math.floor(prevContent);
+    }
+}
+exports.TokenBucket = TokenBucket;
+//# sourceMappingURL=TokenBucket.js.map
+
+/***/ }),
+
+/***/ 2899:
+/***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.wait = exports.getMilliseconds = void 0;
+const just_performance_1 = __nccwpck_require__(4835);
+// generate timestamp or delta
+// see http://nodejs.org/api/process.html#process_process_hrtime
+function hrtime(previousTimestamp) {
+    const clocktime = just_performance_1.performance.now() * 1e-3;
+    let seconds = Math.floor(clocktime);
+    let nanoseconds = Math.floor((clocktime % 1) * 1e9);
+    if (previousTimestamp != undefined) {
+        seconds = seconds - previousTimestamp[0];
+        nanoseconds = nanoseconds - previousTimestamp[1];
+        if (nanoseconds < 0) {
+            seconds--;
+            nanoseconds += 1e9;
+        }
+    }
+    return [seconds, nanoseconds];
+}
+// The current timestamp in whole milliseconds
+function getMilliseconds() {
+    const [seconds, nanoseconds] = hrtime();
+    return seconds * 1e3 + Math.floor(nanoseconds / 1e6);
+}
+exports.getMilliseconds = getMilliseconds;
+// Wait for a specified number of milliseconds before fulfilling the returned promise.
+function wait(ms) {
+    return new Promise((resolve) => setTimeout(resolve, ms));
+}
+exports.wait = wait;
+//# sourceMappingURL=clock.js.map
+
+/***/ }),
+
+/***/ 1291:
+/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
+
+"use strict";
+
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __exportStar = (this && this.__exportStar) || function(m, exports) {
+    for (var p in m) if (p !== "default" && !Object.prototype.hasOwnProperty.call(exports, p)) __createBinding(exports, m, p);
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+__exportStar(__nccwpck_require__(7340), exports);
+__exportStar(__nccwpck_require__(5554), exports);
+//# sourceMappingURL=index.js.map
+
+/***/ }),
+
 /***/ 7426:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
@@ -31515,6 +31856,63 @@ function wrappy (fn, cb) {
 
 /***/ }),
 
+/***/ 6488:
+/***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
+
+const axios = __nccwpck_require__(8757)
+const FormData = __nccwpck_require__(4334)
+const fs = __nccwpck_require__(7147)
+
+/**
+ * https://docs.virustotal.com/reference/files-scan
+ * @function vtUpload
+ * @param {string} filePath
+ * @param {string} apiKey
+ * @return {Promise<*|object>}
+ */
+async function vtUpload(filePath, apiKey) {
+    console.log('vtUpload:', filePath)
+    const form = new FormData()
+    form.append('file', fs.createReadStream(filePath))
+    const url = await vtGetURL(filePath, apiKey)
+    console.log('url:', url)
+    const response = await axios.post(url, form, {
+        headers: { 'x-apikey': apiKey, ...form.getHeaders() },
+    })
+    // console.log('response.data:', response.data)
+    return response.data
+}
+
+/**
+ * https://docs.virustotal.com/reference/files-upload-url
+ * @function vtGetURL
+ * @param {string} filePath
+ * @param {string} apiKey
+ * @return {Promise<*|string>}
+ */
+async function vtGetURL(filePath, apiKey) {
+    // This does not consume per-minute api quota, consider using axios
+    const stats = fs.statSync(filePath)
+    console.log('stats.size:', stats.size)
+    if (stats.size < 32000000) {
+        return 'https://www.virustotal.com/api/v3/files'
+    }
+
+    const response = await axios.get(
+        'https://www.virustotal.com/api/v3/files/upload_url',
+        {
+            headers: { accept: 'application/json', 'x-apikey': apiKey },
+        }
+    )
+    // console.log('response.data:', response.data)
+    return response.data.data
+}
+
+module.exports = vtUpload
+
+
+/***/ }),
+
 /***/ 9975:
 /***/ ((module) => {
 
@@ -38126,383 +38524,35 @@ module.exports = JSON.parse('{"application/1d-interleaved-parityfec":{"source":"
 /******/ 	}
 /******/ 	
 /************************************************************************/
-/******/ 	/* webpack/runtime/make namespace object */
-/******/ 	(() => {
-/******/ 		// define __esModule on exports
-/******/ 		__nccwpck_require__.r = (exports) => {
-/******/ 			if(typeof Symbol !== 'undefined' && Symbol.toStringTag) {
-/******/ 				Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
-/******/ 			}
-/******/ 			Object.defineProperty(exports, '__esModule', { value: true });
-/******/ 		};
-/******/ 	})();
-/******/ 	
 /******/ 	/* webpack/runtime/compat */
 /******/ 	
 /******/ 	if (typeof __nccwpck_require__ !== 'undefined') __nccwpck_require__.ab = __dirname + "/";
 /******/ 	
 /************************************************************************/
 var __webpack_exports__ = {};
-// This entry need to be wrapped in an IIFE because it need to be in strict mode.
+// This entry need to be wrapped in an IIFE because it need to be isolated against other modules in the chunk.
 (() => {
-"use strict";
-// ESM COMPAT FLAG
-__nccwpck_require__.r(__webpack_exports__);
-
-;// CONCATENATED MODULE: ./src/vt.js
-const axios = __nccwpck_require__(8757)
-const FormData = __nccwpck_require__(4334)
-const fs = __nccwpck_require__(7147)
-
-async function vtUpload(filePath, apiKey) {
-    console.log('vtUpload:', filePath)
-    const form = new FormData()
-    form.append('file', fs.createReadStream(filePath))
-    const url = await vtGetURL(filePath, apiKey)
-    console.log('url:', url)
-    const response = await axios.post(url, form, {
-        headers: {
-            'x-apikey': apiKey,
-            ...form.getHeaders(),
-        },
-    })
-    // console.log('response:', response)
-    return response.data
-}
-
-async function vtGetURL(filePath, apiKey) {
-    // This does not consume per-minute api quota, consider using axios
-    const stats = fs.statSync(filePath)
-    console.log('stats.size:', stats.size)
-    if (stats.size < 32000000) {
-        return 'https://www.virustotal.com/api/v3/files'
-    }
-    const options = {
-        method: 'GET',
-        headers: { accept: 'application/json', 'x-apikey': apiKey },
-    }
-    const response = await fetch(
-        'https://www.virustotal.com/api/v3/files/upload_url',
-        options
-    )
-    // console.log('response:', response)
-    const data = await response.json()
-    // console.log('data:', data)
-    return data.data
-}
-
-// EXTERNAL MODULE: external "perf_hooks"
-var external_perf_hooks_ = __nccwpck_require__(4074);
-;// CONCATENATED MODULE: ./node_modules/just-performance/dist/esm/node.js
-
-//# sourceMappingURL=node.js.map
-;// CONCATENATED MODULE: ./node_modules/limiter/dist/esm/clock.js
-
-// generate timestamp or delta
-// see http://nodejs.org/api/process.html#process_process_hrtime
-function hrtime(previousTimestamp) {
-    const clocktime = external_perf_hooks_.performance.now() * 1e-3;
-    let seconds = Math.floor(clocktime);
-    let nanoseconds = Math.floor((clocktime % 1) * 1e9);
-    if (previousTimestamp != undefined) {
-        seconds = seconds - previousTimestamp[0];
-        nanoseconds = nanoseconds - previousTimestamp[1];
-        if (nanoseconds < 0) {
-            seconds--;
-            nanoseconds += 1e9;
-        }
-    }
-    return [seconds, nanoseconds];
-}
-// The current timestamp in whole milliseconds
-function getMilliseconds() {
-    const [seconds, nanoseconds] = hrtime();
-    return seconds * 1e3 + Math.floor(nanoseconds / 1e6);
-}
-// Wait for a specified number of milliseconds before fulfilling the returned promise.
-function wait(ms) {
-    return new Promise((resolve) => setTimeout(resolve, ms));
-}
-//# sourceMappingURL=clock.js.map
-;// CONCATENATED MODULE: ./node_modules/limiter/dist/esm/TokenBucket.js
-
-/**
- * A hierarchical token bucket for rate limiting. See
- * http://en.wikipedia.org/wiki/Token_bucket for more information.
- *
- * @param options
- * @param options.bucketSize Maximum number of tokens to hold in the bucket.
- *  Also known as the burst rate.
- * @param options.tokensPerInterval Number of tokens to drip into the bucket
- *  over the course of one interval.
- * @param options.interval The interval length in milliseconds, or as
- *  one of the following strings: 'second', 'minute', 'hour', day'.
- * @param options.parentBucket Optional. A token bucket that will act as
- *  the parent of this bucket.
- */
-class TokenBucket {
-    constructor({ bucketSize, tokensPerInterval, interval, parentBucket }) {
-        this.bucketSize = bucketSize;
-        this.tokensPerInterval = tokensPerInterval;
-        if (typeof interval === "string") {
-            switch (interval) {
-                case "sec":
-                case "second":
-                    this.interval = 1000;
-                    break;
-                case "min":
-                case "minute":
-                    this.interval = 1000 * 60;
-                    break;
-                case "hr":
-                case "hour":
-                    this.interval = 1000 * 60 * 60;
-                    break;
-                case "day":
-                    this.interval = 1000 * 60 * 60 * 24;
-                    break;
-                default:
-                    throw new Error("Invalid interval " + interval);
-            }
-        }
-        else {
-            this.interval = interval;
-        }
-        this.parentBucket = parentBucket;
-        this.content = 0;
-        this.lastDrip = getMilliseconds();
-    }
-    /**
-     * Remove the requested number of tokens. If the bucket (and any parent
-     * buckets) contains enough tokens this will happen immediately. Otherwise,
-     * the removal will happen when enough tokens become available.
-     * @param count The number of tokens to remove.
-     * @returns A promise for the remainingTokens count.
-     */
-    async removeTokens(count) {
-        // Is this an infinite size bucket?
-        if (this.bucketSize === 0) {
-            return Number.POSITIVE_INFINITY;
-        }
-        // Make sure the bucket can hold the requested number of tokens
-        if (count > this.bucketSize) {
-            throw new Error(`Requested tokens ${count} exceeds bucket size ${this.bucketSize}`);
-        }
-        // Drip new tokens into this bucket
-        this.drip();
-        const comeBackLater = async () => {
-            // How long do we need to wait to make up the difference in tokens?
-            const waitMs = Math.ceil((count - this.content) * (this.interval / this.tokensPerInterval));
-            await wait(waitMs);
-            return this.removeTokens(count);
-        };
-        // If we don't have enough tokens in this bucket, come back later
-        if (count > this.content)
-            return comeBackLater();
-        if (this.parentBucket != undefined) {
-            // Remove the requested from the parent bucket first
-            const remainingTokens = await this.parentBucket.removeTokens(count);
-            // Check that we still have enough tokens in this bucket
-            if (count > this.content)
-                return comeBackLater();
-            // Tokens were removed from the parent bucket, now remove them from
-            // this bucket. Note that we look at the current bucket and parent
-            // bucket's remaining tokens and return the smaller of the two values
-            this.content -= count;
-            return Math.min(remainingTokens, this.content);
-        }
-        else {
-            // Remove the requested tokens from this bucket
-            this.content -= count;
-            return this.content;
-        }
-    }
-    /**
-     * Attempt to remove the requested number of tokens and return immediately.
-     * If the bucket (and any parent buckets) contains enough tokens this will
-     * return true, otherwise false is returned.
-     * @param {Number} count The number of tokens to remove.
-     * @param {Boolean} True if the tokens were successfully removed, otherwise
-     *  false.
-     */
-    tryRemoveTokens(count) {
-        // Is this an infinite size bucket?
-        if (!this.bucketSize)
-            return true;
-        // Make sure the bucket can hold the requested number of tokens
-        if (count > this.bucketSize)
-            return false;
-        // Drip new tokens into this bucket
-        this.drip();
-        // If we don't have enough tokens in this bucket, return false
-        if (count > this.content)
-            return false;
-        // Try to remove the requested tokens from the parent bucket
-        if (this.parentBucket && !this.parentBucket.tryRemoveTokens(count))
-            return false;
-        // Remove the requested tokens from this bucket and return
-        this.content -= count;
-        return true;
-    }
-    /**
-     * Add any new tokens to the bucket since the last drip.
-     * @returns {Boolean} True if new tokens were added, otherwise false.
-     */
-    drip() {
-        if (this.tokensPerInterval === 0) {
-            const prevContent = this.content;
-            this.content = this.bucketSize;
-            return this.content > prevContent;
-        }
-        const now = getMilliseconds();
-        const deltaMS = Math.max(now - this.lastDrip, 0);
-        this.lastDrip = now;
-        const dripAmount = deltaMS * (this.tokensPerInterval / this.interval);
-        const prevContent = this.content;
-        this.content = Math.min(this.content + dripAmount, this.bucketSize);
-        return Math.floor(this.content) > Math.floor(prevContent);
-    }
-}
-//# sourceMappingURL=TokenBucket.js.map
-;// CONCATENATED MODULE: ./node_modules/limiter/dist/esm/RateLimiter.js
-
-
-/**
- * A generic rate limiter. Underneath the hood, this uses a token bucket plus
- * an additional check to limit how many tokens we can remove each interval.
- *
- * @param options
- * @param options.tokensPerInterval Maximum number of tokens that can be
- *  removed at any given moment and over the course of one interval.
- * @param options.interval The interval length in milliseconds, or as
- *  one of the following strings: 'second', 'minute', 'hour', day'.
- * @param options.fireImmediately Whether or not the promise will resolve
- *  immediately when rate limiting is in effect (default is false).
- */
-class RateLimiter {
-    constructor({ tokensPerInterval, interval, fireImmediately }) {
-        this.tokenBucket = new TokenBucket({
-            bucketSize: tokensPerInterval,
-            tokensPerInterval,
-            interval,
-        });
-        // Fill the token bucket to start
-        this.tokenBucket.content = tokensPerInterval;
-        this.curIntervalStart = getMilliseconds();
-        this.tokensThisInterval = 0;
-        this.fireImmediately = fireImmediately !== null && fireImmediately !== void 0 ? fireImmediately : false;
-    }
-    /**
-     * Remove the requested number of tokens. If the rate limiter contains enough
-     * tokens and we haven't spent too many tokens in this interval already, this
-     * will happen immediately. Otherwise, the removal will happen when enough
-     * tokens become available.
-     * @param count The number of tokens to remove.
-     * @returns A promise for the remainingTokens count.
-     */
-    async removeTokens(count) {
-        // Make sure the request isn't for more than we can handle
-        if (count > this.tokenBucket.bucketSize) {
-            throw new Error(`Requested tokens ${count} exceeds maximum tokens per interval ${this.tokenBucket.bucketSize}`);
-        }
-        const now = getMilliseconds();
-        // Advance the current interval and reset the current interval token count
-        // if needed
-        if (now < this.curIntervalStart || now - this.curIntervalStart >= this.tokenBucket.interval) {
-            this.curIntervalStart = now;
-            this.tokensThisInterval = 0;
-        }
-        // If we don't have enough tokens left in this interval, wait until the
-        // next interval
-        if (count > this.tokenBucket.tokensPerInterval - this.tokensThisInterval) {
-            if (this.fireImmediately) {
-                return -1;
-            }
-            else {
-                const waitMs = Math.ceil(this.curIntervalStart + this.tokenBucket.interval - now);
-                await wait(waitMs);
-                const remainingTokens = await this.tokenBucket.removeTokens(count);
-                this.tokensThisInterval += count;
-                return remainingTokens;
-            }
-        }
-        // Remove the requested number of tokens from the token bucket
-        const remainingTokens = await this.tokenBucket.removeTokens(count);
-        this.tokensThisInterval += count;
-        return remainingTokens;
-    }
-    /**
-     * Attempt to remove the requested number of tokens and return immediately.
-     * If the bucket (and any parent buckets) contains enough tokens and we
-     * haven't spent too many tokens in this interval already, this will return
-     * true. Otherwise, false is returned.
-     * @param {Number} count The number of tokens to remove.
-     * @param {Boolean} True if the tokens were successfully removed, otherwise
-     *  false.
-     */
-    tryRemoveTokens(count) {
-        // Make sure the request isn't for more than we can handle
-        if (count > this.tokenBucket.bucketSize)
-            return false;
-        const now = getMilliseconds();
-        // Advance the current interval and reset the current interval token count
-        // if needed
-        if (now < this.curIntervalStart || now - this.curIntervalStart >= this.tokenBucket.interval) {
-            this.curIntervalStart = now;
-            this.tokensThisInterval = 0;
-        }
-        // If we don't have enough tokens left in this interval, return false
-        if (count > this.tokenBucket.tokensPerInterval - this.tokensThisInterval)
-            return false;
-        // Try to remove the requested number of tokens from the token bucket
-        const removed = this.tokenBucket.tryRemoveTokens(count);
-        if (removed) {
-            this.tokensThisInterval += count;
-        }
-        return removed;
-    }
-    /**
-     * Returns the number of tokens remaining in the TokenBucket.
-     * @returns {Number} The number of tokens remaining.
-     */
-    getTokensRemaining() {
-        this.tokenBucket.drip();
-        return this.tokenBucket.content;
-    }
-}
-//# sourceMappingURL=RateLimiter.js.map
-;// CONCATENATED MODULE: ./node_modules/limiter/dist/esm/index.js
-
-
-//# sourceMappingURL=index.js.map
-;// CONCATENATED MODULE: ./src/index.js
-
-
-
 const core = __nccwpck_require__(2186)
 const github = __nccwpck_require__(5438)
-const src_fs = __nccwpck_require__(7147)
+const fs = __nccwpck_require__(7147)
 const path = __nccwpck_require__(1017)
+const { RateLimiter } = __nccwpck_require__(1291)
+
+const vtUpload = __nccwpck_require__(6488)
 
 ;(async () => {
     try {
         // Check Release
         if (!github.context.payload.release) {
-            core.info(`Skipping non-release: ${github.context.eventName}`)
-            return
+            return core.notice(
+                `VT Action Skipped on Non-Release: ${github.context.eventName}`
+            )
         }
-        console.log('tag_name:', github.context.payload.release.tag_name)
 
         // Parse Inputs
-        const githubToken = core.getInput('github_token')
-        if (!githubToken) {
-            return core.setFailed('Missing: github_token')
-        }
-        const vtApiKey = core.getInput('vt_api_key')
-        if (!vtApiKey) {
-            return core.setFailed('Missing: vt_api_key')
-        }
-        const updateRelease = core.getInput('update_release')
+        const githubToken = core.getInput('github_token', { required: true })
+        const vtApiKey = core.getInput('vt_api_key', { required: true })
+        const updateRelease = core.getBooleanInput('update_release')
         console.log('update_release:', updateRelease)
         const rateLimit = parseInt(core.getInput('rate_limit'))
         console.log('rate_limit:', rateLimit)
@@ -38510,7 +38560,6 @@ const path = __nccwpck_require__(1017)
         // Set Variables
         const release_id = github.context.payload.release.id
         console.log('release_id:', release_id)
-        console.log('-'.repeat(40))
         const octokit = github.getOctokit(githubToken)
         const limiter = new RateLimiter({
             tokensPerInterval: rateLimit,
@@ -38541,8 +38590,8 @@ const path = __nccwpck_require__(1017)
         console.log('RUNNER_TEMP:', process.env.RUNNER_TEMP)
         const assetsPath = path.join(process.env.RUNNER_TEMP, 'assets')
         console.log('assetsPath:', assetsPath)
-        if (!src_fs.existsSync(assetsPath)) {
-            src_fs.mkdirSync(assetsPath)
+        if (!fs.existsSync(assetsPath)) {
+            fs.mkdirSync(assetsPath)
         }
 
         // Process Assets
@@ -38553,7 +38602,6 @@ const path = __nccwpck_require__(1017)
                 const remainingRequests = await limiter.removeTokens(1)
                 console.log('remainingRequests:', remainingRequests)
             }
-            // const filePath = await downloadAsset(asset, assetsPath)
             const filePath = path.join(assetsPath, asset.name)
             console.log('filePath:', filePath)
             const file = await octokit.rest.repos.getReleaseAsset({
@@ -38563,12 +38611,13 @@ const path = __nccwpck_require__(1017)
                     Accept: 'application/octet-stream',
                 },
             })
-            src_fs.writeFileSync(filePath, Buffer.from(file.data))
+            fs.writeFileSync(filePath, Buffer.from(file.data))
             const response = await vtUpload(filePath, vtApiKey)
             console.log('response.data.id:', response.data.id)
             const link = `https://www.virustotal.com/gui/file-analysis/${response.data.id}`
             console.log('link:', link)
             const result = {
+                id: response.data.id,
                 name: asset.name,
                 link: link,
             }
@@ -38577,14 +38626,23 @@ const path = __nccwpck_require__(1017)
         console.log('-'.repeat(40))
         console.log('results:', results)
 
+        // Set Output
+        const output = []
+        for (const result of results) {
+            output.push(`${result.name}/${result.id}`)
+        }
+        core.setOutput('results', output.join(','))
+
         // Update Release
-        if (updateRelease === 'false') {
-            return core.info('Skipping Release Update on: update_release')
+        if (updateRelease) {
+            return core.info(
+                `Skipping Release Update Because update_release: ${updateRelease}`
+            )
         }
         let body = release.data.body
-        body = body.concat('\n\n🛡️ **VirusTotal Results:**')
+        body += '\n\n🛡️ **VirusTotal Results:**'
         for (const result of results) {
-            body = body.concat(`\n- [${result.name}](${result.link})`)
+            body += `\n- [${result.name}](${result.link})`
         }
         console.log('-'.repeat(40))
         console.log(`body:\n${body}`)

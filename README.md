@@ -2,6 +2,7 @@
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=cssnr_virustotal-action&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=cssnr_virustotal-action)
 [![CSSNR Website](https://img.shields.io/badge/pages-website-blue?logo=github&logoColor=white&color=blue)](https://cssnr.github.io/)
 [![Discord](https://img.shields.io/discord/899171661457293343?logo=discord&logoColor=white&label=discord&color=7289da)](https://discord.gg/wXy6m2X8wY)
+
 # VirusTotal Action
 
 Upload Release Assets to VirusTotal and Optionally Update Release Notes with Links.
@@ -10,11 +11,12 @@ A VirusTotal API Key is required. You can get one for free from
 [virustotal.com](https://www.virustotal.com/gui/sign-in).
 For more information on the VirusTotal API check out [docs.virustotal.com](https://docs.virustotal.com/).
 
-*   [Inputs](#Inputs)
-*   [Planned Features](#Planned-Features)
-*   [Simple Example](#Simple-Example)
-*   [Full Example](#Full-Example)
-*   [Support](#Support)
+* [Inputs](#Inputs)
+* [Outputs](#Outputs)
+* [Planned Features](#Planned-Features)
+* [Simple Example](#Simple-Example)
+* [Full Example](#Full-Example)
+* [Support](#Support)
 
 > [!NOTE]  
 > This currently only works on Releases but can be expanded to work on any files.  
@@ -61,6 +63,30 @@ The Update Release option will append text similar to this:
 
 ---
 
+## Outputs
+
+| output  | description                         |
+|---------|-------------------------------------|
+| results | Comma Seperated String of `file/id` |
+
+Example Output:
+
+```text
+install-linux.deb/ZDAzY2M2ZGQzZmEwZWEwZTI2NjQ5NmVjZDcwZmY0YTY6MTcxNzU2NzI3Ng==,install-macos.pkg/YTkzOGFjMDZhNTI3NmU5MmI4YzQzNzg5ODE3OGRkMzg6MTcxNzU2NzI3OA==,install-win.exe/M2JhZDJhMzRhYjcyM2Y0MDFkNjU1OGZlYjFkNjgyMmY6MTcxNzU2NzI4MA==
+```
+
+```yaml
+  - name: "VirusTotal"
+    uses: cssnr/virustotal-action@v1
+    id: vt
+    with:
+      github_token: ${{ secrets.GITHUB_TOKEN }}
+      vt_api_key: ${{ secrets.VT_API_KEY }}
+
+  - name: "Echo Results"
+    run: echo ${{ steps.vt.outputs.results }}
+```
+
 ## Planned Features
 
 - Add `files` glob to allow processing any specified files/paths.
@@ -88,8 +114,6 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           vt_api_key: ${{ secrets.VT_API_KEY }}
-          rate_limit: 4
-          update_release: true
 ```
 
 ## Full Example
@@ -152,12 +176,12 @@ https://github.com/cssnr/hls-downloader-client/blob/master/.github/workflows/bui
 
 # Support
 
-For general help or to request a feature, see:
+For general help or to request a feature see:
 
 - Q&A Discussion: https://github.com/cssnr/virustotal-action/discussions/categories/q-a
 - Request a Feature: https://github.com/cssnr/virustotal-action/discussions/categories/feature-requests
 
-If you are experiencing an issue/bug or getting unexpected results, you can:
+If you are experiencing an issue/bug or getting unexpected results you can:
 
 - Report an Issue: https://github.com/cssnr/virustotal-action/issues
 - Chat with us on Discord: https://discord.gg/wXy6m2X8wY

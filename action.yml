@@ -1,26 +1,30 @@
-name: 'VirusTotal Action'
-description: 'Scan Files using the VirusTotal API'
-author: 'Shane'
+name: "VirusTotal Action"
+description: "Scan Files using the VirusTotal API"
+author: "Shane"
 branding:
-    icon: 'shield'
-    color: 'blue'
+  icon: "shield"
+  color: "blue"
 
 inputs:
-    github_token:
-        description: 'GitHub Token from secrets.GITHUB_TOKEN'
-        required: true
-    vt_api_key:
-        description: 'VirusTotal API Token from secrets'
-        required: true
-    rate_limit:
-        description: 'Per Minute Rate Limit for API Calls'
-        required: false
-        default: '4'
-    update_release:
-        description: 'Update Release Notes with VT Links'
-        required: false
-        default: 'true'
+  github_token:
+    description: "GitHub Token from secrets.GITHUB_TOKEN"
+    required: true
+  vt_api_key:
+    description: "VirusTotal API Token from secrets"
+    required: true
+  rate_limit:
+    description: "Per Minute Rate Limit for API Calls"
+    required: false
+    default: "4"
+  update_release:
+    description: "Update Release Notes with VT Links"
+    required: false
+    default: "true"
+
+outputs:
+  results:
+    description: "Generated Docker tags"
 
 runs:
-    using: 'node20'
-    main: 'dist/index.js'
+  using: "node20"
+  main: "dist/index.js"
