@@ -12,6 +12,9 @@ inputs:
   vt_api_key:
     description: "VirusTotal API Token from secrets"
     required: true
+  file_globs:
+    description: "File Globs to Process"
+    required: false
   rate_limit:
     description: "Per Minute Rate Limit for API Calls"
     required: false
@@ -20,9 +23,6 @@ inputs:
     description: "Update Release Notes with VT Links"
     required: false
     default: "true"
-  file_globs:
-    description: "File Globs to Process"
-    required: false
 
 outputs:
   results:
