@@ -20,6 +20,9 @@ inputs:
     description: "Update Release Notes with VT Links"
     required: false
     default: "true"
+  file_globs:
+    description: "File Globs to Process"
+    required: false
 
 outputs:
   results:
