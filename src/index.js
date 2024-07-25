@@ -11,7 +11,7 @@ const vtUpload = require('./vt')
     try {
         // Parse Inputs
         const inputs = parseInputs()
-        console.log('inputs:', inputs)
+        // console.log('inputs:', inputs)
 
         // Set Variables
         const octokit = github.getOctokit(inputs.token)
@@ -23,9 +23,11 @@ const vtUpload = require('./vt')
 
         /** @type {Object[]} */
         let results
-        if (inputs.files) {
+        if (inputs.files?.length) {
+            core.info('Processing Files Glob')
             results = await processFiles(inputs, limiter)
         } else if (release) {
+            core.info('Processing Release Assets')
             results = await processRelease(inputs, limiter, octokit, release)
         } else {
             return core.setFailed('No files or release to process.')
@@ -134,7 +136,7 @@ async function processFiles(inputs, limiter) {
     })
     const files = await globber.glob()
     console.log('files:', files)
-    if (!files) {
+    if (!files.length) {
         throw new Error('No files to process.')
     }
     const results = []
