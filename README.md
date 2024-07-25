@@ -7,17 +7,12 @@
 
 # VirusTotal Action
 
-Upload Release Assets to VirusTotal and Optionally Update Release Notes with Links.
-
-A VirusTotal API Key is required. You can get one for free from
-[virustotal.com](https://www.virustotal.com/gui/sign-in).
-For more information on the VirusTotal API check out [docs.virustotal.com](https://docs.virustotal.com/).
+Upload Release Assets or Specified File Globs to VirusTotal and Optionally Update Release Notes with Links.
 
 * [Inputs](#Inputs)
 * [Outputs](#Outputs)
+* [Examples](#Examples)
 * [Planned Features](#Planned-Features)
-* [Simple Example](#Simple-Example)
-* [Full Example](#Full-Example)
 * [Support](#Support)
 * [Contributing](#Contributing)
 
@@ -32,16 +27,17 @@ for files up to **650MB**. Therefore, files over 32MB will consume 2 API calls.
 
 ## Inputs
 
-| input          | required | default | description                                     |
-|----------------|----------|---------|-------------------------------------------------|
-| github_token   | Yes      | -       | GitHub Token from secrets.GITHUB_TOKEN          |
-| vt_api_key     | Yes      | -       | VirusTotal API Key from VirusTotal.             |
-| rate_limit     | No       | 4       | API Calls Per Minute. Set to `0` to disable     |
-| update_release | No       | true    | Update Release Notes. Set to `false` to disable |
+| input          | required | default | description                                 |
+|----------------|----------|---------|---------------------------------------------|
+| github_token   | Yes      | -       | GitHub Token: `${{ secrets.GITHUB_TOKEN }}` |
+| vt_api_key     | Yes      | -       | VirusTotal API Key from VirusTotal *        |
+| file_globs     | No       | -       | File Globs to Process, newline seperated *  |
+| rate_limit     | No       | 4       | API Calls Per Minute, `0` to disable        |
+| update_release | No       | true    | Update Release Notes, `false` to disable    |
 
-It is recommended to add API Keys to
-[GitHub Actions Secrets](https://docs.github.com/en/actions/security-guides/using-secrets-in-github-actions).
-The `GITHUB_TOKEN` secret does not have to be manually added and is automatically generated for each workflow run.
+**vt_api_key** - Get your API key from: https://www.virustotal.com/gui/my-apikey
+
+**file_globs** - For glob pattern examples, see: https://github.com/actions/toolkit/tree/main/packages/glob#patterns
 
 ```yaml
   - name: "VirusTotal"
@@ -49,8 +45,6 @@ The `GITHUB_TOKEN` secret does not have to be manually added and is automaticall
     with:
       github_token: ${{ secrets.GITHUB_TOKEN }}
       vt_api_key: ${{ secrets.VT_API_KEY }}
-      rate_limit: 4
-      update_release: true
 ```
 
 ### Update Release
@@ -90,13 +84,33 @@ install-linux.deb/ZDAzY2M2ZGQzZmEwZWEwZTI2NjQ5NmVjZDcwZmY0YTY6MTcxNzU2NzI3Ng==,i
     run: echo ${{ steps.vt.outputs.results }}
 ```
 
-## Planned Features
+## Examples
 
-- Add `files` glob to allow processing any specified files/paths.
-- Add release body parsing to properly process new files on `edited` activity.
-- Add options to customize release update format.
+With File Globs:
 
-## Simple Example
+```yaml
+  - name: "VirusTotal"
+    uses: cssnr/virustotal-action@v1
+    with:
+      github_token: ${{ secrets.GITHUB_TOKEN }}
+      vt_api_key: ${{ secrets.VT_API_KEY }}
+      file_globs: artifacts/*
+```
+
+Multiple Globs:
+
+```yaml
+  - name: "VirusTotal"
+    uses: cssnr/virustotal-action@v1
+    with:
+      github_token: ${{ secrets.GITHUB_TOKEN }}
+      vt_api_key: ${{ secrets.VT_API_KEY }}
+      file_globs: |
+        artifacts/*
+        assets/asset.zip
+```
+
+Simple Example:
 
 ```yaml
 name: "VirusTotal Example"
@@ -119,10 +133,7 @@ jobs:
           vt_api_key: ${{ secrets.VT_API_KEY }}
 ```
 
-## Full Example
-
-It is recommended to run this after all the build/upload jobs have completed.
-Specify any jobs that upload releases in the `needs` for the VirusTotal Action.
+Full Example:
 
 ```yaml
 name: "VirusTotal Example"
@@ -176,6 +187,11 @@ jobs:
 
 To see this used in a build/release/scan workflow, check out:  
 https://github.com/cssnr/hls-downloader-client/blob/master/.github/workflows/build.yaml
+
+## Planned Features
+
+- Add release body parsing to properly process new files on `edited` activity.
+- Add options to customize release update format.
 
 # Support
 
