@@ -1,4 +1,5 @@
 [![Tags](https://img.shields.io/github/actions/workflow/status/cssnr/virustotal-action/tags.yaml?logo=github&logoColor=white&label=tags)](https://github.com/cssnr/virustotal-action/actions/workflows/tags.yaml)
+[![Test](https://img.shields.io/github/actions/workflow/status/cssnr/virustotal-action/test.yaml?logo=github&logoColor=white&label=test)](https://github.com/cssnr/virustotal-action/actions/workflows/test.yaml)
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=cssnr_virustotal-action&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=cssnr_virustotal-action)
 [![GitHub Release Version](https://img.shields.io/github/v/release/cssnr/virustotal-action?logo=github)](https://github.com/cssnr/virustotal-action/releases/latest)
 [![GitHub Top Language](https://img.shields.io/github/languages/top/cssnr/virustotal-action?logo=htmx&logoColor=white)](https://github.com/cssnr/virustotal-action)
@@ -17,7 +18,6 @@ Upload Release Assets or Specified File Globs to VirusTotal and Optionally Updat
 * [Contributing](#Contributing)
 
 > [!NOTE]  
-> This currently only works on Releases but can be expanded to work on any files.  
 > Please submit a [Feature Request](https://github.com/cssnr/virustotal-action/discussions/categories/feature-requests)
 > for new features
 > or [Open an Issue](https://github.com/cssnr/virustotal-action/issues) if you find any bugs.
@@ -49,7 +49,7 @@ for files up to **650MB**. Therefore, files over 32MB will consume 2 API calls.
 
 ### Update Release
 
-The Update Release option will append text similar to this:
+The Update Release option will append text similar to this to the release body:
 
 ---
 🛡️ **VirusTotal Results:**
@@ -191,6 +191,7 @@ https://github.com/cssnr/hls-downloader-client/blob/master/.github/workflows/bui
 ## Planned Features
 
 - Add release body parsing to properly process new files on `edited` activity.
+- Add workflow summary to workflow results.
 - Add options to customize release update format.
 
 # Support
