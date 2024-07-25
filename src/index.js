@@ -138,6 +138,10 @@ async function processFiles(inputs, limiter) {
     for (const file of files) {
         const name = file.split('\\').pop().split('/').pop()
         core.info(`--- Processing File: ${name}`)
+        if (inputs.rate) {
+            const remainingRequests = await limiter.removeTokens(1)
+            console.log('remainingRequests:', remainingRequests)
+        }
         const result = await processVt(inputs, name, file)
         // console.log('result:', result)
         results.push(result)
