@@ -21,6 +21,9 @@ const vtUpload = require('./vt')
             interval: 'minute',
         })
 
+        console.log('inputs.files:', inputs.files)
+        console.log('inputs.files?.length:', inputs.files?.length)
+
         /** @type {Object[]} */
         let results
         if (inputs.files?.length) {
