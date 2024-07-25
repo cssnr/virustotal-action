@@ -42342,13 +42342,13 @@ async function getRelease(octokit) {
 
 /**
  * @function parseInputs
- * @return {{rate: number, update: boolean, files: string[]|undefined, key: string, token: string}}
+ * @return {{rate: number, update: boolean, files: string[], key: string, token: string}}
  */
 function parseInputs() {
     const githubToken = core.getInput('github_token', { required: true })
     const vtApiKey = core.getInput('vt_api_key', { required: true })
     const fileGlobs = core.getInput('file_globs')
-    console.log('file_globs:', fileGlobs)
+    console.log(`file_globs: "${fileGlobs}"`)
     const updateRelease = core.getBooleanInput('update_release')
     console.log('update_release:', updateRelease)
     const rateLimit = core.getInput('rate_limit', { required: true })
@@ -42358,7 +42358,7 @@ function parseInputs() {
         key: vtApiKey,
         update: updateRelease,
         rate: parseInt(rateLimit),
-        files: fileGlobs?.split('\n'),
+        files: fileGlobs.split('\n') ? fileGlobs : [],
     }
 }
 
