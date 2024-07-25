@@ -94,7 +94,20 @@ With File Globs:
     with:
       github_token: ${{ secrets.GITHUB_TOKEN }}
       vt_api_key: ${{ secrets.VT_API_KEY }}
-      file_glob: artifacts/*
+      file_globs: artifacts/*
+```
+
+Multiple Globs:
+
+```yaml
+  - name: "VirusTotal"
+    uses: cssnr/virustotal-action@v1
+    with:
+      github_token: ${{ secrets.GITHUB_TOKEN }}
+      vt_api_key: ${{ secrets.VT_API_KEY }}
+      file_globs: |
+        artifacts/*
+        assets/asset.zip
 ```
 
 Simple Example:
