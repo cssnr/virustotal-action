@@ -42171,16 +42171,13 @@ const vtUpload = __nccwpck_require__(6488)
             interval: 'minute',
         })
 
-        console.log('inputs.files:', inputs.files)
-        console.log('inputs.files?.length:', inputs.files?.length)
-
         /** @type {Object[]} */
         let results
         if (inputs.files?.length) {
-            core.info('Processing Files Glob')
+            core.info('\u001b[36mProcessing Files Globs')
             results = await processFiles(inputs, limiter)
         } else if (release) {
-            core.info('Processing Release Assets')
+            core.info('\u001b[36mProcessing Release Assets')
             results = await processRelease(inputs, limiter, octokit, release)
         } else {
             return core.setFailed('No files or release to process.')
@@ -42212,7 +42209,7 @@ const vtUpload = __nccwpck_require__(6488)
             })
         } else {
             core.info(
-                `Skipping Release Update Because not release or not update_release: ${inputs.update}`
+                `\u001b[33mSkipping release update because not release or not update_release`
             )
         }
 
