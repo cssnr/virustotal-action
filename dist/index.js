@@ -42358,7 +42358,7 @@ function parseInputs() {
         key: vtApiKey,
         update: updateRelease,
         rate: parseInt(rateLimit),
-        files: fileGlobs.split('\n') ? fileGlobs : [],
+        files: fileGlobs ? fileGlobs.split('\n') : [],
     }
 }
 
