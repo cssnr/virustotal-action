@@ -22,7 +22,7 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           vt_api_key: ${{ secrets.VT_API_KEY }}
-          file_globs: artifacts/*
+          file_globs: README.md
 
       - name: "Echo Outputs"
         run: echo '${{ steps.vt.outputs.results }}'

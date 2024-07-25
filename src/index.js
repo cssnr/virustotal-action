@@ -134,6 +134,9 @@ async function processFiles(inputs, limiter) {
     })
     const files = await globber.glob()
     console.log('files:', files)
+    if (!files) {
+        throw new Error('No files to process.')
+    }
     const results = []
     for (const file of files) {
         const name = file.split('\\').pop().split('/').pop()
