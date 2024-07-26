@@ -20,8 +20,7 @@ Upload Release Assets or Specified File Globs to VirusTotal and Optionally Updat
 
 > [!NOTE]  
 > Please submit a [Feature Request](https://github.com/cssnr/virustotal-action/discussions/categories/feature-requests)
-> for new features
-> or [Open an Issue](https://github.com/cssnr/virustotal-action/issues) if you find any bugs.
+> for new features or [Open an Issue](https://github.com/cssnr/virustotal-action/issues) if you find any bugs.
 
 The /files/ endpoint is used for files under 32MB, otherwise, the /files/upload_url/ endpoint is used providing support
 for files up to **650MB**. Therefore, files over 32MB will consume 2 API calls.
