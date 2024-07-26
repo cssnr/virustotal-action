@@ -17,7 +17,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: "Test Local Action"
-        id: vt
+        id: test
         uses: ./
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
@@ -25,7 +25,12 @@ jobs:
           file_globs: README.md
 
       - name: "Echo Outputs"
-        run: echo '${{ steps.vt.outputs.results }}'
+        run: |
+          echo '${{ steps.test.outputs.results }}'
+          if [ -z '${{ steps.test.outputs.results }}' ];then
+            echo "No Output"
+            exit 1
+          fi
 
   lint:
     name: "Lint"
