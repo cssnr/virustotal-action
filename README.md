@@ -12,12 +12,12 @@
 
 Upload Release Assets or Specified File Globs to VirusTotal and Optionally Update Release Notes with Links.
 
--   [Inputs](#Inputs)
--   [Outputs](#Outputs)
--   [Examples](#Examples)
--   [Planned Features](#Planned-Features)
--   [Support](#Support)
--   [Contributing](#Contributing)
+- [Inputs](#Inputs)
+- [Outputs](#Outputs)
+- [Examples](#Examples)
+- [Planned Features](#Planned-Features)
+- [Support](#Support)
+- [Contributing](#Contributing)
 
 > [!NOTE]  
 > Please submit a [Feature Request](https://github.com/cssnr/virustotal-action/discussions/categories/feature-requests)
@@ -44,8 +44,8 @@ for files up to **650MB**. Therefore, files over 32MB will consume 2 API calls.
 - name: 'VirusTotal'
   uses: cssnr/virustotal-action@v1
   with:
-      github_token: ${{ secrets.GITHUB_TOKEN }}
-      vt_api_key: ${{ secrets.VT_API_KEY }}
+    github_token: ${{ secrets.GITHUB_TOKEN }}
+    vt_api_key: ${{ secrets.VT_API_KEY }}
 ```
 
 ### Update Release
@@ -56,9 +56,9 @@ The Update Release option will append text similar to this to the release body:
 
 🛡️ **VirusTotal Results:**
 
--   [install-linux.deb](https://www.virustotal.com/gui/file-analysis/ZDAzY2M2ZGQzZmEwZWEwZTI2NjQ5NmVjZDcwZmY0YTY6MTcxNzU2NzI3Ng==)
--   [install-macos.pkg](https://www.virustotal.com/gui/file-analysis/YTkzOGFjMDZhNTI3NmU5MmI4YzQzNzg5ODE3OGRkMzg6MTcxNzU2NzI3OA==)
--   [install-win.exe](https://www.virustotal.com/gui/file-analysis/M2JhZDJhMzRhYjcyM2Y0MDFkNjU1OGZlYjFkNjgyMmY6MTcxNzU2NzI4MA==)
+- [install-linux.deb](https://www.virustotal.com/gui/file-analysis/ZDAzY2M2ZGQzZmEwZWEwZTI2NjQ5NmVjZDcwZmY0YTY6MTcxNzU2NzI3Ng==)
+- [install-macos.pkg](https://www.virustotal.com/gui/file-analysis/YTkzOGFjMDZhNTI3NmU5MmI4YzQzNzg5ODE3OGRkMzg6MTcxNzU2NzI3OA==)
+- [install-win.exe](https://www.virustotal.com/gui/file-analysis/M2JhZDJhMzRhYjcyM2Y0MDFkNjU1OGZlYjFkNjgyMmY6MTcxNzU2NzI4MA==)
 
 ---
 
@@ -79,8 +79,8 @@ install-linux.deb/ZDAzY2M2ZGQzZmEwZWEwZTI2NjQ5NmVjZDcwZmY0YTY6MTcxNzU2NzI3Ng==,i
   uses: cssnr/virustotal-action@v1
   id: vt
   with:
-      github_token: ${{ secrets.GITHUB_TOKEN }}
-      vt_api_key: ${{ secrets.VT_API_KEY }}
+    github_token: ${{ secrets.GITHUB_TOKEN }}
+    vt_api_key: ${{ secrets.VT_API_KEY }}
 
 - name: 'Echo Results'
   run: echo ${{ steps.vt.outputs.results }}
@@ -94,9 +94,9 @@ With File Globs:
 - name: 'VirusTotal'
   uses: cssnr/virustotal-action@v1
   with:
-      github_token: ${{ secrets.GITHUB_TOKEN }}
-      vt_api_key: ${{ secrets.VT_API_KEY }}
-      file_globs: artifacts/*
+    github_token: ${{ secrets.GITHUB_TOKEN }}
+    vt_api_key: ${{ secrets.VT_API_KEY }}
+    file_globs: artifacts/*
 ```
 
 Multiple Globs:
@@ -105,11 +105,11 @@ Multiple Globs:
 - name: 'VirusTotal'
   uses: cssnr/virustotal-action@v1
   with:
-      github_token: ${{ secrets.GITHUB_TOKEN }}
-      vt_api_key: ${{ secrets.VT_API_KEY }}
-      file_globs: |
-          artifacts/*
-          assets/asset.zip
+    github_token: ${{ secrets.GITHUB_TOKEN }}
+    vt_api_key: ${{ secrets.VT_API_KEY }}
+    file_globs: |
+      artifacts/*
+      assets/asset.zip
 ```
 
 Simple Example:
@@ -118,21 +118,21 @@ Simple Example:
 name: 'VirusTotal Example'
 
 on:
-    release:
-        types: [published]
+  release:
+    types: [published]
 
 jobs:
-    test:
-        name: 'Test'
-        runs-on: ubuntu-latest
-        timeout-minutes: 5
+  test:
+    name: 'Test'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
 
-        steps:
-            - name: 'VirusTotal'
-              uses: cssnr/virustotal-action@v1
-              with:
-                  github_token: ${{ secrets.GITHUB_TOKEN }}
-                  vt_api_key: ${{ secrets.VT_API_KEY }}
+    steps:
+      - name: 'VirusTotal'
+        uses: cssnr/virustotal-action@v1
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          vt_api_key: ${{ secrets.VT_API_KEY }}
 ```
 
 Full Example:
@@ -141,50 +141,50 @@ Full Example:
 name: 'VirusTotal Example'
 
 on:
-    release:
-        types: [published]
+  release:
+    types: [published]
 
 jobs:
-    windows:
-        name: 'Windows Build'
-        runs-on: windows-latest
-        timeout-minutes: 5
+  windows:
+    name: 'Windows Build'
+    runs-on: windows-latest
+    timeout-minutes: 5
 
-        steps:
-            - name: 'Checkout'
-              uses: actions/checkout@v4
+    steps:
+      - name: 'Checkout'
+        uses: actions/checkout@v4
 
-            - name: 'Build'
-              uses: Minionguyjpro/Inno-Setup-Action@v1.2.2
-              with:
-                  path: client.iss
-                  options: '/DMyAppVersion=${{ github.ref_name }}'
+      - name: 'Build'
+        uses: Minionguyjpro/Inno-Setup-Action@v1.2.2
+        with:
+          path: client.iss
+          options: '/DMyAppVersion=${{ github.ref_name }}'
 
-            - name: 'Upload to Release'
-              uses: svenstaro/upload-release-action@v2
-              if: ${{ github.event_name == 'release' }}
-              with:
-                  repo_token: ${{ secrets.GITHUB_TOKEN }}
-                  file: out/*
-                  tag: ${{ github.ref }}
-                  overwrite: true
-                  file_glob: true
-
-    virustotal:
-        name: 'VirusTotal Scan'
-        runs-on: ubuntu-latest
-        needs: [windows]
-        timeout-minutes: 5
+      - name: 'Upload to Release'
+        uses: svenstaro/upload-release-action@v2
         if: ${{ github.event_name == 'release' }}
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: out/*
+          tag: ${{ github.ref }}
+          overwrite: true
+          file_glob: true
 
-        steps:
-            - name: 'VirusTotal'
-              uses: cssnr/virustotal-action@v1
-              with:
-                  github_token: ${{ secrets.GITHUB_TOKEN }}
-                  vt_api_key: ${{ secrets.VT_API_KEY }}
-                  rate_limit: 4
-                  update_release: true
+  virustotal:
+    name: 'VirusTotal Scan'
+    runs-on: ubuntu-latest
+    needs: [windows]
+    timeout-minutes: 5
+    if: ${{ github.event_name == 'release' }}
+
+    steps:
+      - name: 'VirusTotal'
+        uses: cssnr/virustotal-action@v1
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          vt_api_key: ${{ secrets.VT_API_KEY }}
+          rate_limit: 4
+          update_release: true
 ```
 
 To see this used in a build/release/scan workflow, check out:  
@@ -192,22 +192,22 @@ https://github.com/cssnr/hls-downloader-client/blob/master/.github/workflows/bui
 
 ## Planned Features
 
--   Add release body parsing to properly process new files on `edited` activity.
--   Add workflow summary to workflow results.
--   Add options to customize release update format.
+- Add release body parsing to properly process new files on `edited` activity.
+- Add workflow summary to workflow results.
+- Add options to customize release update format.
 
 # Support
 
 For general help or to request a feature see:
 
--   Q&A Discussion: https://github.com/cssnr/virustotal-action/discussions/categories/q-a
--   Request a Feature: https://github.com/cssnr/virustotal-action/discussions/categories/feature-requests
+- Q&A Discussion: https://github.com/cssnr/virustotal-action/discussions/categories/q-a
+- Request a Feature: https://github.com/cssnr/virustotal-action/discussions/categories/feature-requests
 
 If you are experiencing an issue/bug or getting unexpected results you can:
 
--   Report an Issue: https://github.com/cssnr/virustotal-action/issues
--   Chat with us on Discord: https://discord.gg/wXy6m2X8wY
--   Provide General Feedback: [https://cssnr.github.io/feedback/](https://cssnr.github.io/feedback/?app=VirusTotal%20Scan)
+- Report an Issue: https://github.com/cssnr/virustotal-action/issues
+- Chat with us on Discord: https://discord.gg/wXy6m2X8wY
+- Provide General Feedback: [https://cssnr.github.io/feedback/](https://cssnr.github.io/feedback/?app=VirusTotal%20Scan)
 
 # Contributing
 
@@ -215,12 +215,13 @@ Currently, the best way to contribute to this project is to star this project on
 
 Additionally, you can support other GitHub Actions I have published:
 
--   [VirusTotal Action](https://github.com/cssnr/virustotal-action)
--   [Update Version Tags Action](https://github.com/cssnr/update-version-tags-action)
--   [Update JSON Value Action](https://github.com/cssnr/update-json-value-action)
--   [Parse Issue Form Action](https://github.com/cssnr/parse-issue-form-action)
--   [Mirror Repository Action](https://github.com/cssnr/mirror-repository-action)
--   [Portainer Stack Deploy](https://github.com/cssnr/portainer-stack-deploy-action)
--   [Mozilla Addon Update Action](https://github.com/cssnr/mozilla-addon-update-action)
+- [VirusTotal Action](https://github.com/cssnr/virustotal-action)
+- [Update Version Tags Action](https://github.com/cssnr/update-version-tags-action)
+- [Update JSON Value Action](https://github.com/cssnr/update-json-value-action)
+- [Parse Issue Form Action](https://github.com/cssnr/parse-issue-form-action)
+- [Mirror Repository Action](https://github.com/cssnr/mirror-repository-action)
+- [Stack Deploy Action](https://github.com/cssnr/stack-deploy-action)
+- [Portainer Stack Deploy](https://github.com/cssnr/portainer-stack-deploy-action)
+- [Mozilla Addon Update Action](https://github.com/cssnr/mozilla-addon-update-action)
 
 For a full list of current projects to support visit: [https://cssnr.github.io/](https://cssnr.github.io/)

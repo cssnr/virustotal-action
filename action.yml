@@ -1,5 +1,5 @@
 name: "VirusTotal Action"
-description: "Scan Files using the VirusTotal API"
+description: "Scan Files for Malware using the Virus Total API"
 author: "Shane"
 branding:
   icon: "shield"
