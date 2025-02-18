@@ -44126,20 +44126,25 @@ const vtUpload = __nccwpck_require__(9431)
         if (inputs.summary) {
             core.info('📝 Writing Job Summary')
             const inputs_table = detailsTable('Inputs', 'Input', 'Value', {
-                vt_api_key: inputs.key,
                 file_globs: inputs.files.join(','),
                 rate_limit: inputs.rate,
                 update_release: inputs.update,
                 summary: inputs.summary,
             })
             core.summary.addRaw('### VirusTotal Action\n')
-            core.summary.addRaw(`Results Coming Soon...\n\n`)
+            core.summary.addRaw(`Results Details Coming Soon...\n\n`)
             // if (results) {
             //     core.summary.addRaw(
             //         detailsTable('Results', 'Tag', 'Result', results),
             //         true
             //     )
             // }
+            if (results) {
+                core.summary.addDetails(
+                    '<strong>Results</strong>',
+                    `\n\n\`\`\`json\n${JSON.stringify(results, null, 2)}\n\`\`\`\n\n`
+                )
+            }
             core.summary.addRaw(inputs_table, true)
             core.summary.addRaw(
                 '\n[View Documentation](https://github.com/cssnr/virustotal-action?tab=readme-ov-file#readme) | '
