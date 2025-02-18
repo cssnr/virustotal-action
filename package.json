@@ -10,12 +10,15 @@
     "@actions/github": "^6.0.0",
     "@actions/glob": "^0.4.0",
     "axios": "^1.7.9",
-    "form-data": "^4.0.1",
+    "form-data": "^4.0.2",
     "limiter": "^2.1.0"
   },
   "devDependencies": {
+    "@eslint/js": "^9.20.0",
     "@vercel/ncc": "^0.38.3",
     "eslint": "^9.20.1",
-    "prettier": "^3.5.0"
+    "eslint-config-prettier": "^10.0.1",
+    "eslint-plugin-prettier": "^5.2.3",
+    "prettier": "^3.5.1"
   }
 }

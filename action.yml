@@ -6,27 +6,32 @@ branding:
   color: "blue"
 
 inputs:
-  github_token:
-    description: "GitHub Token from secrets.GITHUB_TOKEN"
-    required: true
   vt_api_key:
-    description: "VirusTotal API Token from secrets"
+    description: "VirusTotal API Key"
     required: true
   file_globs:
     description: "File Globs to Process"
     required: false
   rate_limit:
-    description: "Per Minute Rate Limit for API Calls"
+    description: "API Calls Per Minute"
     required: false
     default: "4"
   update_release:
-    description: "Update Release Notes with VT Links"
+    description: "Update Release Notes"
     required: false
     default: "true"
+  summary:
+    description: "Add Summary to Job"
+    required: false
+    default: "true"
+  github_token:
+    description: "Only for external or PAT"
+    required: false
+    default: ${{ github.token }}
 
 outputs:
   results:
-    description: "Generated Docker tags"
+    description: "Comma Seperated String of file/id"
 
 runs:
   using: "node20"

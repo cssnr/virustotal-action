@@ -10,8 +10,6 @@
 
 # VirusTotal Action
 
-Upload Release Assets or Specified File Globs to VirusTotal and Optionally Update Release Notes with Links.
-
 - [Inputs](#Inputs)
 - [Outputs](#Outputs)
 - [Examples](#Examples)
@@ -19,38 +17,40 @@ Upload Release Assets or Specified File Globs to VirusTotal and Optionally Updat
 - [Support](#Support)
 - [Contributing](#Contributing)
 
-> [!NOTE]  
-> Please submit a [Feature Request](https://github.com/cssnr/virustotal-action/discussions/categories/feature-requests)
-> for new features or [Open an Issue](https://github.com/cssnr/virustotal-action/issues) if you find any bugs.
+Upload Release Assets or Specified File Globs to VirusTotal and Optionally Update Release Notes with Links.
 
 The /files/ endpoint is used for files under 32MB, otherwise, the /files/upload_url/ endpoint is used providing support
 for files up to **650MB**. Therefore, files over 32MB will consume 2 API calls.
 
+> [!NOTE]  
+> Please submit a [Feature Request](https://github.com/cssnr/virustotal-action/discussions/categories/feature-requests)
+> for new features or [Open an Issue](https://github.com/cssnr/virustotal-action/issues) if you find any bugs.
+
 ## Inputs
 
-| input          | required | default | description                                 |
-| -------------- | -------- | ------- | ------------------------------------------- |
-| github_token   | Yes      | -       | GitHub Token: `${{ secrets.GITHUB_TOKEN }}` |
-| vt_api_key     | Yes      | -       | VirusTotal API Key from VirusTotal \*       |
-| file_globs     | No       | -       | File Globs to Process, newline seperated \* |
-| rate_limit     | No       | 4       | API Calls Per Minute, `0` to disable        |
-| update_release | No       | true    | Update Release Notes, `false` to disable    |
+| input          | required | default        | description              |
+| -------------- | -------- | -------------- | ------------------------ |
+| vt_api_key     | **Yes**  | -              | VirusTotal API Key \*    |
+| file_globs     | No       | -              | File Globs to Process \* |
+| rate_limit     | No       | `4`            | API Calls Per Minute \*  |
+| update_release | No       | `true`         | Update Release Notes     |
+| summary        | No       | `true`         | Add Summary to Job \*    |
+| github_token   | No       | `github.token` | Only for external or PAT |
 
 **vt_api_key** - Get your API key from: https://www.virustotal.com/gui/my-apikey
 
-**file_globs** - For glob pattern examples, see: https://github.com/actions/toolkit/tree/main/packages/glob#patterns
+**file_globs** - For glob pattern [examples](#examples), see https://github.com/actions/toolkit/tree/main/packages/glob#patterns
+
+**rate_limit** - Rate limit for file uploads. Set to `0` to disable if you know what you are doing.
 
 ```yaml
 - name: 'VirusTotal'
   uses: cssnr/virustotal-action@v1
   with:
-    github_token: ${{ secrets.GITHUB_TOKEN }}
     vt_api_key: ${{ secrets.VT_API_KEY }}
 ```
 
-### Update Release
-
-The Update Release option will append text similar to this to the release body:
+<details><summary>📜 View Example Release Notes Update</summary>
 
 ---
 
@@ -61,6 +61,18 @@ The Update Release option will append text similar to this to the release body:
 - [install-win.exe](https://www.virustotal.com/gui/file-analysis/M2JhZDJhMzRhYjcyM2Y0MDFkNjU1OGZlYjFkNjgyMmY6MTcxNzU2NzI4MA==)
 
 ---
+
+</details>
+
+<details><summary>📜 View Example Job Summary</summary>
+
+---
+
+Coming Soon...
+
+---
+
+</details>
 
 ## Outputs
 
@@ -74,12 +86,13 @@ Example Output:
 install-linux.deb/ZDAzY2M2ZGQzZmEwZWEwZTI2NjQ5NmVjZDcwZmY0YTY6MTcxNzU2NzI3Ng==,install-macos.pkg/YTkzOGFjMDZhNTI3NmU5MmI4YzQzNzg5ODE3OGRkMzg6MTcxNzU2NzI3OA==,install-win.exe/M2JhZDJhMzRhYjcyM2Y0MDFkNjU1OGZlYjFkNjgyMmY6MTcxNzU2NzI4MA==
 ```
 
+Using Output:
+
 ```yaml
 - name: 'VirusTotal'
   uses: cssnr/virustotal-action@v1
   id: vt
   with:
-    github_token: ${{ secrets.GITHUB_TOKEN }}
     vt_api_key: ${{ secrets.VT_API_KEY }}
 
 - name: 'Echo Results'
@@ -94,7 +107,6 @@ With File Globs:
 - name: 'VirusTotal'
   uses: cssnr/virustotal-action@v1
   with:
-    github_token: ${{ secrets.GITHUB_TOKEN }}
     vt_api_key: ${{ secrets.VT_API_KEY }}
     file_globs: artifacts/*
 ```
@@ -105,7 +117,6 @@ Multiple Globs:
 - name: 'VirusTotal'
   uses: cssnr/virustotal-action@v1
   with:
-    github_token: ${{ secrets.GITHUB_TOKEN }}
     vt_api_key: ${{ secrets.VT_API_KEY }}
     file_globs: |
       artifacts/*
@@ -131,7 +142,6 @@ jobs:
       - name: 'VirusTotal'
         uses: cssnr/virustotal-action@v1
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
           vt_api_key: ${{ secrets.VT_API_KEY }}
 ```
 
@@ -181,7 +191,6 @@ jobs:
       - name: 'VirusTotal'
         uses: cssnr/virustotal-action@v1
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
           vt_api_key: ${{ secrets.VT_API_KEY }}
           rate_limit: 4
           update_release: true
