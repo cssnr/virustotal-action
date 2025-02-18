@@ -39,7 +39,8 @@ for files up to **650MB**. Therefore, files over 32MB will consume 2 API calls.
 
 **vt_api_key** - Get your API key from: https://www.virustotal.com/gui/my-apikey
 
-**file_globs** - For glob pattern [examples](#examples), see https://github.com/actions/toolkit/tree/main/packages/glob#patterns
+**file_globs** - If provided, will process matching files instead of release assets.
+For glob pattern [examples](#examples), see https://github.com/actions/toolkit/tree/main/packages/glob#patterns
 
 **rate_limit** - Rate limit for file uploads. Set to `0` to disable if you know what you are doing.
 
@@ -202,8 +203,8 @@ https://github.com/cssnr/hls-downloader-client/blob/master/.github/workflows/bui
 ## Planned Features
 
 - Add release body parsing to properly process new files on `edited` activity.
-- Add workflow summary to workflow results.
-- Add options to customize release update format.
+- Add options to customize release update/output format.
+- Add option to apply file_globs to release assets.
 
 # Support
 

@@ -44132,10 +44132,9 @@ const vtUpload = __nccwpck_require__(9431)
                 summary: inputs.summary,
             })
             core.summary.addRaw('### VirusTotal Action\n')
-            // core.summary.addRaw(`Results Details Coming Soon...\n\n`)
             const results_table = resultsTable(results)
-            core.summary.addRaw('_Note: The `link` is manually generated_\n')
             core.summary.addRaw(results_table, true)
+            // core.summary.addRaw('_Note: The `link` is manually generated_\n')
             core.summary.addDetails(
                 '<strong>Results</strong>',
                 `\n\n\`\`\`json\n${JSON.stringify(results, null, 2)}\n\`\`\`\n\n`
@@ -44327,10 +44326,10 @@ function detailsTable(summary, h1, h2, details) {
  * @return String
  */
 function resultsTable(results) {
-    const table = [`<table><tr><th>File</th><th>Link</th></tr>`]
+    const table = [`<table><tr><th>File</th><th>ID</th></tr>`]
     for (const result of results) {
         table.push(
-            `<tr><td><code>${result.name}</code></td><td>${result.link}</td></tr>`
+            `<tr><td><a href="${result.link}">${result.name}</a></td><td>${result.id}</td></tr>`
         )
     }
     return table.join('') + '</table>'
