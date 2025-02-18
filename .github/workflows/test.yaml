@@ -34,7 +34,12 @@ jobs:
         run: |
           echo "results: '${{ steps.test.outputs.results }}'"
           if [ -z '${{ steps.test.outputs.results }}' ];then
-            echo "No Output"
+            echo "Missing output: results"
+            exit 1
+          fi
+          echo "json: '${{ steps.test.outputs.json }}'"
+          if [ -z '${{ steps.test.outputs.json }}' ];then
+            echo "Missing output: json"
             exit 1
           fi
 

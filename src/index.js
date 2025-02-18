@@ -64,6 +64,7 @@ const vtUpload = require('./vt')
             output.push(`${result.name}/${result.id}`)
         }
         core.setOutput('results', output.join(','))
+        core.setOutput('json', JSON.stringify(results))
 
         // Summary
         if (inputs.summary) {
@@ -81,6 +82,10 @@ const vtUpload = require('./vt')
             core.summary.addDetails(
                 '<strong>Results</strong>',
                 `\n\n\`\`\`json\n${JSON.stringify(results, null, 2)}\n\`\`\`\n\n`
+            )
+            core.summary.addDetails(
+                '<strong>Outputs</strong>',
+                `\n\n\`\`\`text\n${output.join('\n')}\n\`\`\`\n\n`
             )
             core.summary.addRaw(inputs_table, true)
             core.summary.addRaw(

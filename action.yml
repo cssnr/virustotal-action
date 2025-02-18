@@ -32,6 +32,8 @@ inputs:
 outputs:
   results:
     description: "Comma Seperated String of file/id"
+  json:
+    description: "JSON Object List Results String"
 
 runs:
   using: "node20"
