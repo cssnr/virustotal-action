@@ -76,14 +76,13 @@ const vtUpload = require('./vt')
             })
             core.summary.addRaw('### VirusTotal Action\n')
             // core.summary.addRaw(`Results Details Coming Soon...\n\n`)
-            if (results) {
-                const results_table = resultsTable(results)
-                core.summary.addRaw(results_table, true)
-                core.summary.addDetails(
-                    '<strong>Results</strong>',
-                    `\n\n\`\`\`json\n${JSON.stringify(results, null, 2)}\n\`\`\`\n\n`
-                )
-            }
+            const results_table = resultsTable(results)
+            core.summary.addRaw('_Note: The `link` is manually generated_\n')
+            core.summary.addRaw(results_table, true)
+            core.summary.addDetails(
+                '<strong>Results</strong>',
+                `\n\n\`\`\`json\n${JSON.stringify(results, null, 2)}\n\`\`\`\n\n`
+            )
             core.summary.addRaw(inputs_table, true)
             core.summary.addRaw(
                 '\n[View Documentation](https://github.com/cssnr/virustotal-action?tab=readme-ov-file#readme) | '
@@ -272,7 +271,7 @@ function detailsTable(summary, h1, h2, details) {
  */
 function resultsTable(results) {
     const table = [`<table><tr><th>File</th><th>Link</th></tr>`]
-    for (const result of Object.entries(results)) {
+    for (const result of results) {
         table.push(
             `<tr><td><code>${result.name}</code></td><td>${result.link}</td></tr>`
         )
