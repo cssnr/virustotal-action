@@ -75,14 +75,10 @@ const vtUpload = require('./vt')
                 summary: inputs.summary,
             })
             core.summary.addRaw('### VirusTotal Action\n')
-            core.summary.addRaw(`Results Details Coming Soon...\n\n`)
-            // if (results) {
-            //     core.summary.addRaw(
-            //         detailsTable('Results', 'Tag', 'Result', results),
-            //         true
-            //     )
-            // }
+            // core.summary.addRaw(`Results Details Coming Soon...\n\n`)
             if (results) {
+                const results_table = resultsTable(results)
+                core.summary.addRaw(results_table, true)
                 core.summary.addDetails(
                     '<strong>Results</strong>',
                     `\n\n\`\`\`json\n${JSON.stringify(results, null, 2)}\n\`\`\`\n\n`
@@ -265,6 +261,15 @@ function detailsTable(summary, h1, h2, details) {
     for (const [key, object] of Object.entries(details)) {
         const value = object.toString() || '-'
         table.push(`<tr><td>${key}</td><td><code>${value}</code></td></tr>`)
+    }
+    return table.join('') + '</table></details>'
+}
+
+function resultsTable(results) {
+    const table = [`<table><tr><th>File</th><th>Link</th></tr>`]
+    for (const [key, object] of Object.entries(results)) {
+        const value = object.toString()
+        table.push(`<tr><td><code>${key}</code></td><td>${value}</td></tr>`)
     }
     return table.join('') + '</table></details>'
 }
