@@ -44322,13 +44322,19 @@ function detailsTable(summary, h1, h2, details) {
     return table.join('') + '</table></details>'
 }
 
+/**
+ * @function inputsTable
+ * @param {Object} results
+ * @return String
+ */
 function resultsTable(results) {
     const table = [`<table><tr><th>File</th><th>Link</th></tr>`]
-    for (const [key, object] of Object.entries(results)) {
-        const value = object.toString()
-        table.push(`<tr><td><code>${key}</code></td><td>${value}</td></tr>`)
+    for (const result of Object.entries(results)) {
+        table.push(
+            `<tr><td><code>${result.name}</code></td><td>${result.link}</td></tr>`
+        )
     }
-    return table.join('') + '</table></details>'
+    return table.join('') + '</table>'
 }
 
 module.exports = __webpack_exports__;
