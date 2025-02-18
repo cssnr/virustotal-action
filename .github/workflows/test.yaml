@@ -6,6 +6,9 @@ on:
   push:
     branches: [master]
 
+env:
+  FILE_GLOBS: README.md
+
 jobs:
   test:
     name: "Test"
@@ -16,19 +19,27 @@ jobs:
       - name: "Checkout"
         uses: actions/checkout@v4
 
+      #- name: "Debug event.json"
+      #  run: |
+      #    cat "${GITHUB_EVENT_PATH}"
+
       - name: "Test Local Action"
         id: test
         uses: ./
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
           vt_api_key: ${{ secrets.VT_API_KEY }}
-          file_globs: README.md
+          file_globs: ${{ env.FILE_GLOBS }}
 
       - name: "Validate Outputs"
         run: |
-          echo '${{ steps.test.outputs.results }}'
+          echo "results: '${{ steps.test.outputs.results }}'"
           if [ -z '${{ steps.test.outputs.results }}' ];then
-            echo "No Output"
+            echo "Missing output: results"
+            exit 1
+          fi
+          echo "json: '${{ steps.test.outputs.json }}'"
+          if [ -z '${{ steps.test.outputs.json }}' ];then
+            echo "Missing output: json"
             exit 1
           fi
 
@@ -41,7 +52,7 @@ jobs:
       - name: "Checkout"
         uses: actions/checkout@v4
 
-      - name: "Setup Node"
+      - name: "Setup Node 20"
         uses: actions/setup-node@v4
         with:
           node-version: 20
@@ -60,7 +71,7 @@ jobs:
       - name: "Checkout"
         uses: actions/checkout@v4
 
-      - name: "Setup Node"
+      - name: "Setup Node 20"
         uses: actions/setup-node@v4
         with:
           node-version: 20
