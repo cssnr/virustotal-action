@@ -44136,13 +44136,14 @@ const vtUpload = __nccwpck_require__(9431)
             const results_table = resultsTable(results)
             core.summary.addRaw(results_table, true)
             // core.summary.addRaw('_Note: The `link` is manually generated_\n')
+            // core.summary.addDetails(
+            //     '<strong>Results</strong>',
+            //     `\n\n\`\`\`json\n${JSON.stringify(results, null, 2)}\n\`\`\`\n\n`
+            // )
             core.summary.addDetails(
                 '<strong>Results</strong>',
-                `\n\n\`\`\`json\n${JSON.stringify(results, null, 2)}\n\`\`\`\n\n`
-            )
-            core.summary.addDetails(
-                '<strong>Outputs</strong>',
-                `\n\n\`\`\`text\n${output.join('\n')}\n\`\`\`\n\n`
+                `\n\n\`\`\`json\n${JSON.stringify(results, null, 2)}\n\`\`\`\n\n` +
+                    `\n\n\`\`\`text\n${output.join('\n')}\n\`\`\`\n\n`
             )
             core.summary.addRaw(inputs_table, true)
             core.summary.addRaw(
