@@ -1,4 +1,4 @@
-[![Tags](https://img.shields.io/github/actions/workflow/status/cssnr/virustotal-action/tags.yaml?logo=github&logoColor=white&label=tags)](https://github.com/cssnr/virustotal-action/actions/workflows/tags.yaml)
+[![Release](https://img.shields.io/github/actions/workflow/status/cssnr/virustotal-action/release.yaml?logo=github&logoColor=white&label=release)](https://github.com/cssnr/virustotal-action/actions/workflows/release.yaml)
 [![Test](https://img.shields.io/github/actions/workflow/status/cssnr/virustotal-action/test.yaml?logo=github&logoColor=white&label=test)](https://github.com/cssnr/virustotal-action/actions/workflows/test.yaml)
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=cssnr_virustotal-action&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=cssnr_virustotal-action)
 [![GitHub Release Version](https://img.shields.io/github/v/release/cssnr/virustotal-action?logo=github)](https://github.com/cssnr/virustotal-action/releases/latest)
@@ -34,7 +34,7 @@ for files up to **650MB**. Therefore, files over 32MB will consume 2 API calls.
 | file_globs     | No       | -              | File Globs to Process \* |
 | rate_limit     | No       | `4`            | API Calls Per Minute \*  |
 | update_release | No       | `true`         | Update Release Notes \*  |
-| summary        | No       | `true`         | Add Summary to Job       |
+| summary        | No       | `true`         | Add Summary to Job \*    |
 | github_token   | No       | `github.token` | Only for external or PAT |
 
 **vt_api_key** - Get your API key from: https://www.virustotal.com/gui/my-apikey
@@ -270,7 +270,7 @@ https://github.com/cssnr/hls-downloader-client/blob/master/.github/workflows/bui
 
 ## Planned Features
 
-- Add release body parsing to properly process new files on `edited` activity.
+- Add release body parsing to properly process new files on edited activity.
 - Add options to customize release update/output format.
 - Add option to apply file_globs to release assets.
 - Refactor vt.js as a Class to clean up index.js.
@@ -294,13 +294,14 @@ Currently, the best way to contribute to this project is to star this project on
 
 Additionally, you can support other GitHub Actions I have published:
 
-- [VirusTotal Action](https://github.com/cssnr/virustotal-action)
-- [Update Version Tags Action](https://github.com/cssnr/update-version-tags-action)
-- [Update JSON Value Action](https://github.com/cssnr/update-json-value-action)
-- [Parse Issue Form Action](https://github.com/cssnr/parse-issue-form-action)
-- [Mirror Repository Action](https://github.com/cssnr/mirror-repository-action)
-- [Stack Deploy Action](https://github.com/cssnr/stack-deploy-action)
-- [Portainer Stack Deploy](https://github.com/cssnr/portainer-stack-deploy-action)
-- [Mozilla Addon Update Action](https://github.com/cssnr/mozilla-addon-update-action)
+- [Stack Deploy Action](https://github.com/cssnr/stack-deploy-action?tab=readme-ov-file#readme)
+- [Portainer Stack Deploy](https://github.com/cssnr/portainer-stack-deploy-action?tab=readme-ov-file#readme)
+- [VirusTotal Action](https://github.com/cssnr/virustotal-action?tab=readme-ov-file#readme)
+- [Mirror Repository Action](https://github.com/cssnr/mirror-repository-action?tab=readme-ov-file#readme)
+- [Update Version Tags Action](https://github.com/cssnr/update-version-tags-action?tab=readme-ov-file#readme)
+- [Update JSON Value Action](https://github.com/cssnr/update-json-value-action?tab=readme-ov-file#readme)
+- [Parse Issue Form Action](https://github.com/cssnr/parse-issue-form-action?tab=readme-ov-file#readme)
+- [Mozilla Addon Update Action](https://github.com/cssnr/mozilla-addon-update-action?tab=readme-ov-file#readme)
+- [Cloudflare Purge Cache Action](https://github.com/cssnr/cloudflare-purge-cache-action?tab=readme-ov-file#readme)
 
 For a full list of current projects to support visit: [https://cssnr.github.io/](https://cssnr.github.io/)
