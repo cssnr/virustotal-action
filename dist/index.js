@@ -44141,7 +44141,7 @@ const vtUpload = __nccwpck_require__(9431)
             //     `\n\n\`\`\`json\n${JSON.stringify(results, null, 2)}\n\`\`\`\n\n`
             // )
             core.summary.addDetails(
-                '<strong>Results</strong>',
+                '<strong>Outputs</strong>',
                 `\n\n\`\`\`json\n${JSON.stringify(results, null, 2)}\n\`\`\`\n\n` +
                     `\n\n\`\`\`text\n${output.join('\n')}\n\`\`\`\n\n`
             )

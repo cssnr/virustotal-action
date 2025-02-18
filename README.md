@@ -66,17 +66,21 @@ For glob pattern [examples](#examples), see https://github.com/actions/toolkit/t
 
 ---
 
-<table><tr><th>File</th><th>ID</th></tr><tr><td><a href="https://www.virustotal.com/gui/file-analysis/Y2FkNzQzZjdjMjBhM2E3YWZlZWM3ZGRmOTI2YmUzZWE6MTczOTkwODg2MA==">README.md</a></td><td>Y2FkNzQzZjdjMjBhM2E3YWZlZWM3ZGRmOTI2YmUzZWE6MTczOTkwODg2MA==</td></tr></table>
-<details><summary><strong>Results</strong></summary>
+<table><tr><th>File</th><th>ID</th></tr><tr><td><a href="https://www.virustotal.com/gui/file-analysis/YmUxOTlhMzgxZTVkZjUzY2M2OTRkODgyY2YyNmNiNzE6MTczOTkxMzYzNA==">README.md</a></td><td>YmUxOTlhMzgxZTVkZjUzY2M2OTRkODgyY2YyNmNiNzE6MTczOTkxMzYzNA==</td></tr></table>
+<details><summary><strong>Outputs</strong></summary>
 
 ```json
 [
   {
-    "id": "Y2FkNzQzZjdjMjBhM2E3YWZlZWM3ZGRmOTI2YmUzZWE6MTczOTkwODg2MA==",
+    "id": "YmUxOTlhMzgxZTVkZjUzY2M2OTRkODgyY2YyNmNiNzE6MTczOTkxMzYzNA==",
     "name": "README.md",
-    "link": "https://www.virustotal.com/gui/file-analysis/Y2FkNzQzZjdjMjBhM2E3YWZlZWM3ZGRmOTI2YmUzZWE6MTczOTkwODg2MA=="
+    "link": "https://www.virustotal.com/gui/file-analysis/YmUxOTlhMzgxZTVkZjUzY2M2OTRkODgyY2YyNmNiNzE6MTczOTkxMzYzNA=="
   }
 ]
+```
+
+```text
+README.md/YmUxOTlhMzgxZTVkZjUzY2M2OTRkODgyY2YyNmNiNzE6MTczOTkxMzYzNA==
 ```
 
 </details>
