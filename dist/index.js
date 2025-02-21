@@ -44069,8 +44069,10 @@ const vtUpload = __nccwpck_require__(9431)
         core.info('🏳️ Starting VirusTotal Action')
 
         // Parse Inputs
+        core.startGroup('Inputs')
         const inputs = parseInputs()
         // console.log('inputs:', inputs)
+        core.endGroup() // Inputs
 
         // Set Variables
         const octokit = github.getOctokit(inputs.token)
@@ -44092,8 +44094,10 @@ const vtUpload = __nccwpck_require__(9431)
         } else {
             return core.setFailed('No files or release to process.')
         }
-        console.log('-'.repeat(40))
-        console.log('results:', results)
+        // console.log('-'.repeat(40))
+        core.startGroup('Results')
+        console.log(results)
+        core.endGroup() // Results
 
         // Update Release
         if (release && inputs.update) {
@@ -44123,7 +44127,7 @@ const vtUpload = __nccwpck_require__(9431)
         core.setOutput('results', output.join(','))
         core.setOutput('json', JSON.stringify(results))
 
-        // Summary
+        // Job Summary
         if (inputs.summary) {
             core.info('📝 Writing Job Summary')
             const inputs_table = detailsTable('Inputs', 'Input', 'Value', {
@@ -44153,8 +44157,6 @@ const vtUpload = __nccwpck_require__(9431)
                 '[Report an Issue or Request a Feature](https://github.com/cssnr/virustotal-action/issues)'
             )
             await core.summary.write()
-        } else {
-            core.info('⏩ Skipping Job Summary')
         }
 
         core.info('✅ \u001b[32;1mFinished Success')
@@ -44236,7 +44238,8 @@ async function processFiles(inputs, limiter) {
     const results = []
     for (const file of files) {
         const name = file.split('\\').pop().split('/').pop()
-        core.info(`--- Processing File: ${name}`)
+        // core.info(`--- Processing File: ${name}`)
+        core.startGroup(`Processing: ${name}`)
         if (inputs.rate) {
             const remainingRequests = await limiter.removeTokens(1)
             console.log('remainingRequests:', remainingRequests)
@@ -44244,6 +44247,7 @@ async function processFiles(inputs, limiter) {
         const result = await processVt(inputs, name, file)
         // console.log('result:', result)
         results.push(result)
+        core.endGroup() // Processing
     }
     return results
 }

@@ -6,9 +6,6 @@ on:
   push:
     branches: [master]
 
-env:
-  FILE_GLOBS: README.md
-
 jobs:
   test:
     name: "Test"
@@ -28,7 +25,9 @@ jobs:
         uses: ./
         with:
           vt_api_key: ${{ secrets.VT_API_KEY }}
-          file_globs: ${{ env.FILE_GLOBS }}
+          file_globs: |
+            README.md
+            .gitignore
 
       - name: "Validate Outputs"
         run: |
