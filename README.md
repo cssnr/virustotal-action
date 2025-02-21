@@ -66,25 +66,32 @@ For glob pattern [examples](#examples), see https://github.com/actions/toolkit/t
 
 ---
 
-<table><tr><th>File</th><th>ID</th></tr><tr><td><a href="https://www.virustotal.com/gui/file-analysis/YmUxOTlhMzgxZTVkZjUzY2M2OTRkODgyY2YyNmNiNzE6MTczOTkxMzYzNA==">README.md</a></td><td>YmUxOTlhMzgxZTVkZjUzY2M2OTRkODgyY2YyNmNiNzE6MTczOTkxMzYzNA==</td></tr></table>
+<table><tr><th>File</th><th>ID</th></tr><tr><td><a href="https://www.virustotal.com/gui/file-analysis/ZWFkNTUwMDlhYTM4MTU3MzljYWE1NWRlMjQ5MzE5Y2E6MTc0MDE3NDA5Ng==">README.md</a></td><td>ZWFkNTUwMDlhYTM4MTU3MzljYWE1NWRlMjQ5MzE5Y2E6MTc0MDE3NDA5Ng==</td></tr><tr><td><a href="https://www.virustotal.com/gui/file-analysis/ZTM4MjBkOGFhYmRhNjBiMTY0MTEwZjZkNDE1YjViODc6MTc0MDE3NDA5Ng==">.gitignore</a></td><td>ZTM4MjBkOGFhYmRhNjBiMTY0MTEwZjZkNDE1YjViODc6MTc0MDE3NDA5Ng==</td></tr></table>
 <details><summary><strong>Outputs</strong></summary>
 
 ```json
 [
   {
-    "id": "YmUxOTlhMzgxZTVkZjUzY2M2OTRkODgyY2YyNmNiNzE6MTczOTkxMzYzNA==",
+    "id": "ZWFkNTUwMDlhYTM4MTU3MzljYWE1NWRlMjQ5MzE5Y2E6MTc0MDE3NDA5Ng==",
     "name": "README.md",
-    "link": "https://www.virustotal.com/gui/file-analysis/YmUxOTlhMzgxZTVkZjUzY2M2OTRkODgyY2YyNmNiNzE6MTczOTkxMzYzNA=="
+    "link": "https://www.virustotal.com/gui/file-analysis/ZWFkNTUwMDlhYTM4MTU3MzljYWE1NWRlMjQ5MzE5Y2E6MTc0MDE3NDA5Ng=="
+  },
+  {
+    "id": "ZTM4MjBkOGFhYmRhNjBiMTY0MTEwZjZkNDE1YjViODc6MTc0MDE3NDA5Ng==",
+    "name": ".gitignore",
+    "link": "https://www.virustotal.com/gui/file-analysis/ZTM4MjBkOGFhYmRhNjBiMTY0MTEwZjZkNDE1YjViODc6MTc0MDE3NDA5Ng=="
   }
 ]
 ```
 
 ```text
-README.md/YmUxOTlhMzgxZTVkZjUzY2M2OTRkODgyY2YyNmNiNzE6MTczOTkxMzYzNA==
+README.md/ZWFkNTUwMDlhYTM4MTU3MzljYWE1NWRlMjQ5MzE5Y2E6MTc0MDE3NDA5Ng==
+.gitignore/ZTM4MjBkOGFhYmRhNjBiMTY0MTEwZjZkNDE1YjViODc6MTc0MDE3NDA5Ng==
 ```
 
 </details>
-<details><summary><strong>Inputs</strong></summary><table><tr><th>Input</th><th>Value</th></tr><tr><td>file_globs</td><td><code>README.md</code></td></tr><tr><td>rate_limit</td><td><code>4</code></td></tr><tr><td>update_release</td><td><code>true</code></td></tr><tr><td>summary</td><td><code>true</code></td></tr></table></details>
+<details><summary>Inputs</summary><table><tr><th>Input</th><th>Value</th></tr><tr><td>file_globs</td><td><code>README.md,.gitignore</code></td></tr><tr><td>rate_limit</td><td><code>4</code></td></tr><tr><td>update_release</td><td><code>true</code></td></tr><tr><td>summary</td><td><code>true</code></td></tr></table>
+</details>
 
 ---
 

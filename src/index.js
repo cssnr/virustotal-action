@@ -44,15 +44,14 @@ const vtUpload = require('./vt')
 
         // Update Release
         if (release && inputs.update) {
-            // core.info(`📢 Updating Release: ${release.id}`)
-            core.startGroup(`Updating Release: ${release.id}`)
-
+            core.startGroup('Updating Release')
+            core.info(`📢 Appending to Release ID: ${release.id}`)
             let body = release.body
             body += '\n\n🛡️ **VirusTotal Results:**'
             for (const result of results) {
                 body += `\n- [${result.name}](${result.link})`
             }
-            console.log(`body:\n${body}`)
+            console.log(body)
             await octokit.rest.repos.updateRelease({
                 ...github.context.repo,
                 release_id: release.id,
@@ -206,7 +205,7 @@ async function getRelease(octokit) {
     if (!release_id) {
         return
     }
-    core.info(`Release ID: ${release_id}`)
+    core.info(`Found Release ID: ${release_id}`)
     const release = await octokit.rest.repos.getRelease({
         ...github.context.repo,
         release_id,
