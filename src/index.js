@@ -9,10 +9,10 @@ const vtUpload = require('./vt')
 
 ;(async () => {
     try {
-        core.info('🏳️ Starting VirusTotal Action')
+        // core.info('🏳️ Starting VirusTotal Action')
 
         // Parse Inputs
-        core.startGroup('Inputs')
+        core.startGroup('🏳️ Starting VirusTotal Action')
         const inputs = parseInputs()
         // console.log('inputs:', inputs)
         core.endGroup() // Inputs
