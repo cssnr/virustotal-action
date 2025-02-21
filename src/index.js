@@ -12,7 +12,7 @@ const vtUpload = require('./vt')
         // core.info('🏳️ Starting VirusTotal Action')
 
         // Parse Inputs
-        core.startGroup('🏳️ Starting VirusTotal Action')
+        core.startGroup('Starting VirusTotal Action')
         const inputs = parseInputs()
         // console.log('inputs:', inputs)
         core.endGroup() // Inputs

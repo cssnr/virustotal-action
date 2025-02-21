@@ -44069,7 +44069,7 @@ const vtUpload = __nccwpck_require__(9431)
         // core.info('🏳️ Starting VirusTotal Action')
 
         // Parse Inputs
-        core.startGroup('🏳️ Starting VirusTotal Action')
+        core.startGroup('Starting VirusTotal Action')
         const inputs = parseInputs()
         // console.log('inputs:', inputs)
         core.endGroup() // Inputs
