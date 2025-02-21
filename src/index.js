@@ -239,26 +239,6 @@ function parseInputs() {
 
 /**
  * @function inputsTable
- * @param {String} summary
- * @param {String} h1
- * @param {String} h2
- * @param {Object} details
- * @return String
- */
-function detailsTable(summary, h1, h2, details) {
-    const table = [
-        `<details><summary><strong>${summary}</strong></summary>`,
-        `<table><tr><th>${h1}</th><th>${h2}</th></tr>`,
-    ]
-    for (const [key, object] of Object.entries(details)) {
-        const value = object.toString() || '-'
-        table.push(`<tr><td>${key}</td><td><code>${value}</code></td></tr>`)
-    }
-    return table.join('') + '</table></details>'
-}
-
-/**
- * @function inputsTable
  * @param {Object} results
  * @return String
  */
@@ -280,7 +260,7 @@ function resultsTable(results) {
  * @return {Promise<void>}
  */
 async function writeSummary(inputs, results, output) {
-    core.summary.addRaw('### VirusTotal Action\n')
+    core.summary.addRaw('## VirusTotal Action\n')
     const results_table = resultsTable(results)
     core.summary.addRaw(results_table, true)
 
