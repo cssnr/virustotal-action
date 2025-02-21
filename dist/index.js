@@ -44086,10 +44086,10 @@ const vtUpload = __nccwpck_require__(9431)
         /** @type {Object[]} */
         let results
         if (inputs.files?.length) {
-            core.info('📁 Processing File Globs')
+            // core.info('📁 Processing File Globs')
             results = await processFiles(inputs, limiter)
         } else if (release) {
-            core.info('🗄️ Processing Release Assets')
+            // core.info('🗄️ Processing Release Assets')
             results = await processRelease(inputs, limiter, octokit, release)
         } else {
             return core.setFailed('No files or release to process.')
@@ -44175,6 +44175,8 @@ const vtUpload = __nccwpck_require__(9431)
  * @return {Promise<Object[{id, name, link}]>}
  */
 async function processRelease(inputs, limiter, octokit, release) {
+    core.startGroup('Processing Release Assets')
+
     // Get Assets
     const assets = await octokit.rest.repos.listReleaseAssets({
         ...github.context.repo,
@@ -44194,14 +44196,13 @@ async function processRelease(inputs, limiter, octokit, release) {
         fs.mkdirSync(assetsPath)
     }
 
-    core.startGroup('Release Assets')
     console.log(assets.data)
-    core.endGroup() // Results
+    core.endGroup() // Assets
 
     // Process Assets
     const results = []
     for (const asset of assets.data) {
-        core.startGroup(`Processing Asset: ${asset.name}`)
+        core.startGroup(`Processing: ${asset.name}`)
         // core.info(`--- Processing Asset: ${asset.name}`)
         if (inputs.rate) {
             const remainingRequests = await limiter.removeTokens(1)
@@ -44220,7 +44221,7 @@ async function processRelease(inputs, limiter, octokit, release) {
         const result = await processVt(inputs, asset.name, filePath)
         console.log('result:', result)
         results.push(result)
-        core.endGroup() // Asset
+        core.endGroup() // Processing
     }
     return results
 }
@@ -44237,7 +44238,7 @@ async function processFiles(inputs, limiter) {
         matchDirectories: false,
     })
     const files = await globber.glob()
-    core.startGroup('Resolved Files')
+    core.startGroup('Processing File Globs')
     console.log('files:', files)
     core.endGroup() // Files
     if (!files.length) {
