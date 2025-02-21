@@ -44,19 +44,21 @@ const vtUpload = require('./vt')
 
         // Update Release
         if (release && inputs.update) {
-            core.info(`📢 Updating Release: ${release.id}`)
+            // core.info(`📢 Updating Release: ${release.id}`)
+            core.startGroup(`Updating Release: ${release.id}`)
+
             let body = release.body
             body += '\n\n🛡️ **VirusTotal Results:**'
             for (const result of results) {
                 body += `\n- [${result.name}](${result.link})`
             }
-            console.log('-'.repeat(40))
             console.log(`body:\n${body}`)
             await octokit.rest.repos.updateRelease({
                 ...github.context.repo,
                 release_id: release.id,
                 body,
             })
+            core.endGroup() // Release
         } else {
             core.info('⏩ \u001b[33;1mSkipping Release Update')
         }
@@ -238,21 +240,6 @@ function parseInputs() {
 }
 
 /**
- * @function inputsTable
- * @param {Object} results
- * @return String
- */
-function resultsTable(results) {
-    const table = [`<table><tr><th>File</th><th>ID</th></tr>`]
-    for (const result of results) {
-        table.push(
-            `<tr><td><a href="${result.link}">${result.name}</a></td><td>${result.id}</td></tr>`
-        )
-    }
-    return table.join('') + '</table>'
-}
-
-/**
  * @function writeSummary
  * @param {Object} inputs
  * @param {Object} results
@@ -261,8 +248,21 @@ function resultsTable(results) {
  */
 async function writeSummary(inputs, results, output) {
     core.summary.addRaw('## VirusTotal Action\n')
-    const results_table = resultsTable(results)
-    core.summary.addRaw(results_table, true)
+
+    const results_table = []
+    for (const result of results) {
+        results_table.push([
+            { data: `<a href="${result.link}">${result.name}</a>` },
+            { data: result.id },
+        ])
+    }
+    core.summary.addTable([
+        [
+            { data: 'File', header: true },
+            { data: 'ID', header: true },
+        ],
+        ...results_table,
+    ])
 
     core.summary.addDetails(
         '<strong>Outputs</strong>',

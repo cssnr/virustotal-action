@@ -44101,19 +44101,21 @@ const vtUpload = __nccwpck_require__(9431)
 
         // Update Release
         if (release && inputs.update) {
-            core.info(`📢 Updating Release: ${release.id}`)
+            // core.info(`📢 Updating Release: ${release.id}`)
+            core.startGroup(`Updating Release: ${release.id}`)
+
             let body = release.body
             body += '\n\n🛡️ **VirusTotal Results:**'
             for (const result of results) {
                 body += `\n- [${result.name}](${result.link})`
             }
-            console.log('-'.repeat(40))
             console.log(`body:\n${body}`)
             await octokit.rest.repos.updateRelease({
                 ...github.context.repo,
                 release_id: release.id,
                 body,
             })
+            core.endGroup() // Release
         } else {
             core.info('⏩ \u001b[33;1mSkipping Release Update')
         }
@@ -44295,41 +44297,6 @@ function parseInputs() {
 }
 
 /**
- * @function inputsTable
- * @param {String} summary
- * @param {String} h1
- * @param {String} h2
- * @param {Object} details
- * @return String
- */
-function detailsTable(summary, h1, h2, details) {
-    const table = [
-        `<details><summary><strong>${summary}</strong></summary>`,
-        `<table><tr><th>${h1}</th><th>${h2}</th></tr>`,
-    ]
-    for (const [key, object] of Object.entries(details)) {
-        const value = object.toString() || '-'
-        table.push(`<tr><td>${key}</td><td><code>${value}</code></td></tr>`)
-    }
-    return table.join('') + '</table></details>'
-}
-
-/**
- * @function inputsTable
- * @param {Object} results
- * @return String
- */
-function resultsTable(results) {
-    const table = [`<table><tr><th>File</th><th>ID</th></tr>`]
-    for (const result of results) {
-        table.push(
-            `<tr><td><a href="${result.link}">${result.name}</a></td><td>${result.id}</td></tr>`
-        )
-    }
-    return table.join('') + '</table>'
-}
-
-/**
  * @function writeSummary
  * @param {Object} inputs
  * @param {Object} results
@@ -44337,9 +44304,22 @@ function resultsTable(results) {
  * @return {Promise<void>}
  */
 async function writeSummary(inputs, results, output) {
-    core.summary.addRaw('### VirusTotal Action\n')
-    const results_table = resultsTable(results)
-    core.summary.addRaw(results_table, true)
+    core.summary.addRaw('## VirusTotal Action\n')
+
+    const results_table = []
+    for (const result of results) {
+        results_table.push([
+            { data: `<a href="${result.link}">${result.name}</a>` },
+            { data: result.id },
+        ])
+    }
+    core.summary.addTable([
+        [
+            { data: 'File', header: true },
+            { data: 'ID', header: true },
+        ],
+        ...results_table,
+    ])
 
     core.summary.addDetails(
         '<strong>Outputs</strong>',
