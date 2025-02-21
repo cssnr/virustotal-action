@@ -44218,7 +44218,7 @@ async function processRelease(inputs, limiter, octokit, release) {
         })
         fs.writeFileSync(filePath, Buffer.from(file.data))
         const result = await processVt(inputs, asset.name, filePath)
-        console.log('result:', result) // TODO: Uncommented this
+        console.log('result:', result)
         results.push(result)
         core.endGroup() // Asset
     }
