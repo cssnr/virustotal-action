@@ -137,10 +137,15 @@ async function processRelease(inputs, limiter, octokit, release) {
         fs.mkdirSync(assetsPath)
     }
 
+    core.startGroup('Release Assets')
+    console.log(assets.data)
+    core.endGroup() // Results
+
     // Process Assets
     const results = []
     for (const asset of assets.data) {
-        core.info(`--- Processing Asset: ${asset.name}`)
+        core.startGroup(`Processing Asset: ${asset.name}`)
+        // core.info(`--- Processing Asset: ${asset.name}`)
         if (inputs.rate) {
             const remainingRequests = await limiter.removeTokens(1)
             console.log('remainingRequests:', remainingRequests)
@@ -156,8 +161,9 @@ async function processRelease(inputs, limiter, octokit, release) {
         })
         fs.writeFileSync(filePath, Buffer.from(file.data))
         const result = await processVt(inputs, asset.name, filePath)
-        // console.log('result:', result)
+        console.log('result:', result)
         results.push(result)
+        core.endGroup() // Asset
     }
     return results
 }
@@ -174,7 +180,9 @@ async function processFiles(inputs, limiter) {
         matchDirectories: false,
     })
     const files = await globber.glob()
+    core.startGroup('Resolved Files')
     console.log('files:', files)
+    core.endGroup() // Files
     if (!files.length) {
         throw new Error('No files to process.')
     }
@@ -217,10 +225,11 @@ async function processVt(inputs, name, filePath) {
  */
 async function getRelease(octokit) {
     const release_id = github.context.payload.release?.id
-    console.log('release_id:', release_id)
+    // console.log('release_id:', release_id)
     if (!release_id) {
         return
     }
+    core.info(`Release ID: ${release_id}`)
     const release = await octokit.rest.repos.getRelease({
         ...github.context.repo,
         release_id,
