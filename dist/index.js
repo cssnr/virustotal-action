@@ -44117,7 +44117,7 @@ const vtUpload = __nccwpck_require__(9431)
             })
             core.endGroup() // Release
         } else {
-            core.info('⏩ \u001b[33;1mSkipping Release Update')
+            core.info('⏩ \u001b[33mSkipping Release Update')
         }
 
         // Set Output
@@ -44178,7 +44178,7 @@ async function processRelease(inputs, limiter, octokit, release) {
     // Process Assets
     const results = []
     for (const asset of assets.data) {
-        core.startGroup(`Processing: ${asset.name}`)
+        core.startGroup(`Processing: \u001b[36m${asset.name}`)
         // core.info(`--- Processing Asset: ${asset.name}`)
         if (inputs.rate) {
             const remainingRequests = await limiter.removeTokens(1)
@@ -44224,7 +44224,7 @@ async function processFiles(inputs, limiter) {
     for (const file of files) {
         const name = file.split('\\').pop().split('/').pop()
         // core.info(`--- Processing File: ${name}`)
-        core.startGroup(`Processing: ${name}`)
+        core.startGroup(`Processing: \u001b[36m${name}`)
         if (inputs.rate) {
             const remainingRequests = await limiter.removeTokens(1)
             console.log('remainingRequests:', remainingRequests)
@@ -44323,7 +44323,7 @@ async function writeSummary(inputs, results, output) {
 
     core.summary.addDetails(
         '<strong>Outputs</strong>',
-        `\n\n\`\`\`json\n${JSON.stringify(results, null, 2)}\n\`\`\`\n\n` +
+        `\n\n\`\`\`json\n${JSON.stringify(results, null, 2)}\n\`\`\`` +
             `\n\n\`\`\`text\n${output.join('\n')}\n\`\`\`\n\n`
     )
 
