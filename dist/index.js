@@ -44337,32 +44337,35 @@ function resultsTable(results) {
  * @return {Promise<void>}
  */
 async function writeSummary(inputs, results, output) {
-    const inputs_table = detailsTable('Inputs', 'Input', 'Value', {
-        file_globs: inputs.files.join(','),
-        rate_limit: inputs.rate,
-        update_release: inputs.update,
-        summary: inputs.summary,
-    })
     core.summary.addRaw('### VirusTotal Action\n')
     const results_table = resultsTable(results)
     core.summary.addRaw(results_table, true)
-    // core.summary.addRaw('_Note: The `link` is manually generated_\n')
-    // core.summary.addDetails(
-    //     '<strong>Results</strong>',
-    //     `\n\n\`\`\`json\n${JSON.stringify(results, null, 2)}\n\`\`\`\n\n`
-    // )
+
     core.summary.addDetails(
         '<strong>Outputs</strong>',
         `\n\n\`\`\`json\n${JSON.stringify(results, null, 2)}\n\`\`\`\n\n` +
             `\n\n\`\`\`text\n${output.join('\n')}\n\`\`\`\n\n`
     )
-    core.summary.addRaw(inputs_table, true)
-    core.summary.addRaw(
-        '\n[View Documentation](https://github.com/cssnr/virustotal-action?tab=readme-ov-file#readme) | '
-    )
-    core.summary.addRaw(
-        '[Report an Issue or Request a Feature](https://github.com/cssnr/virustotal-action/issues)'
-    )
+
+    core.summary.addRaw('<details><summary>Inputs</summary>')
+    core.summary.addTable([
+        [
+            { data: 'Input', header: true },
+            { data: 'Value', header: true },
+        ],
+        [
+            { data: 'file_globs' },
+            { data: `<code>${inputs.files.join(',')}</code>` },
+        ],
+        [{ data: 'rate_limit' }, { data: `<code>${inputs.rate}</code>` }],
+        [{ data: 'update_release' }, { data: `<code>${inputs.update}</code>` }],
+        [{ data: 'summary' }, { data: `<code>${inputs.summary}</code>` }],
+    ])
+    core.summary.addRaw('</details>\n')
+
+    const text = 'View Documentation, Report Issues or Request Features'
+    const link = 'https://github.com/cssnr/virustotal-action'
+    core.summary.addRaw(`\n[${text}](${link}?tab=readme-ov-file#readme)\n\n---`)
     await core.summary.write()
 }
 
