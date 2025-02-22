@@ -50,7 +50,7 @@ const vtUpload = require('./vt')
             for (const result of results) {
                 body += `\n- [${result.name}](${result.link})`
             }
-            console.log(body)
+            console.log(`\n${body}\n`)
             await octokit.rest.repos.updateRelease({
                 ...github.context.repo,
                 release_id: release.id,
@@ -214,7 +214,14 @@ async function getRelease(octokit) {
 
 /**
  * @function parseInputs
- * @return {{token: string, key: string, files: string[], rate: number, update: boolean, summary: boolean}}
+ * @return {{
+ *   token: string,
+ *   key: string,
+ *   files: string[],
+ *   rate: number,
+ *   update: boolean,
+ *   summary: boolean
+ * }}
  */
 function parseInputs() {
     const githubToken = core.getInput('github_token', { required: true })
