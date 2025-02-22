@@ -44102,7 +44102,7 @@ const vtUpload = __nccwpck_require__(9431)
         // Update Release
         if (release && inputs.update) {
             core.startGroup('Updating Release')
-            core.info(`📢 Appending to Release ID: ${release.id}`)
+            core.info(`Updating Release ID: ${release.id}\n\n`)
             let body = release.body
             body += '\n\n🛡️ **VirusTotal Results:**'
             for (const result of results) {
@@ -44262,7 +44262,7 @@ async function getRelease(octokit) {
     if (!release_id) {
         return
     }
-    core.info(`Found Release ID: ${release_id}`)
+    core.info(`Found Release ID: \u001b[32m${release_id}`)
     const release = await octokit.rest.repos.getRelease({
         ...github.context.repo,
         release_id,
