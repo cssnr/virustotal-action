@@ -44101,8 +44101,7 @@ const vtUpload = __nccwpck_require__(9431)
 
         // Update Release
         if (release && inputs.update) {
-            core.startGroup('Updating Release')
-            core.info(`Updating Release ID: ${release.id}\n\n`)
+            core.startGroup(`Updating Release ${release.id}`)
             let body = release.body
             body += '\n\n🛡️ **VirusTotal Results:**'
             for (const result of results) {
