@@ -12,8 +12,10 @@ const vtUpload = require('./vt')
         core.info('🏳️ Starting VirusTotal Action')
 
         // Parse Inputs
+        core.startGroup('Parsed Inputs')
         const inputs = parseInputs()
         // console.log('inputs:', inputs)
+        core.endGroup() // Inputs
 
         // Set Variables
         const octokit = github.getOctokit(inputs.token)
@@ -27,34 +29,36 @@ const vtUpload = require('./vt')
         /** @type {Object[]} */
         let results
         if (inputs.files?.length) {
-            core.info('📁 Processing File Globs')
+            // core.info('📁 Processing File Globs')
             results = await processFiles(inputs, limiter)
         } else if (release) {
-            core.info('🗄️ Processing Release Assets')
+            // core.info('🗄️ Processing Release Assets')
             results = await processRelease(inputs, limiter, octokit, release)
         } else {
             return core.setFailed('No files or release to process.')
         }
-        console.log('-'.repeat(40))
-        console.log('results:', results)
+        // console.log('-'.repeat(40))
+        core.startGroup('Results')
+        console.log(results)
+        core.endGroup() // Results
 
         // Update Release
         if (release && inputs.update) {
-            core.info(`📢 Updating Release: ${release.id}`)
+            core.startGroup(`Updating Release ${release.id}`)
             let body = release.body
             body += '\n\n🛡️ **VirusTotal Results:**'
             for (const result of results) {
                 body += `\n- [${result.name}](${result.link})`
             }
-            console.log('-'.repeat(40))
-            console.log(`body:\n${body}`)
+            console.log(`\n${body}\n`)
             await octokit.rest.repos.updateRelease({
                 ...github.context.repo,
                 release_id: release.id,
                 body,
             })
+            core.endGroup() // Release
         } else {
-            core.info('⏩ \u001b[33;1mSkipping Release Update')
+            core.info('⏩ \u001b[33mSkipping Release Update')
         }
 
         // Set Output
@@ -66,43 +70,20 @@ const vtUpload = require('./vt')
         core.setOutput('results', output.join(','))
         core.setOutput('json', JSON.stringify(results))
 
-        // Summary
+        // Job Summary
         if (inputs.summary) {
             core.info('📝 Writing Job Summary')
-            const inputs_table = detailsTable('Inputs', 'Input', 'Value', {
-                file_globs: inputs.files.join(','),
-                rate_limit: inputs.rate,
-                update_release: inputs.update,
-                summary: inputs.summary,
-            })
-            core.summary.addRaw('### VirusTotal Action\n')
-            const results_table = resultsTable(results)
-            core.summary.addRaw(results_table, true)
-            // core.summary.addRaw('_Note: The `link` is manually generated_\n')
-            // core.summary.addDetails(
-            //     '<strong>Results</strong>',
-            //     `\n\n\`\`\`json\n${JSON.stringify(results, null, 2)}\n\`\`\`\n\n`
-            // )
-            core.summary.addDetails(
-                '<strong>Outputs</strong>',
-                `\n\n\`\`\`json\n${JSON.stringify(results, null, 2)}\n\`\`\`\n\n` +
-                    `\n\n\`\`\`text\n${output.join('\n')}\n\`\`\`\n\n`
-            )
-            core.summary.addRaw(inputs_table, true)
-            core.summary.addRaw(
-                '\n[View Documentation](https://github.com/cssnr/virustotal-action?tab=readme-ov-file#readme) | '
-            )
-            core.summary.addRaw(
-                '[Report an Issue or Request a Feature](https://github.com/cssnr/virustotal-action/issues)'
-            )
-            await core.summary.write()
-        } else {
-            core.info('⏩ Skipping Job Summary')
+            await writeSummary(inputs, results, output)
         }
 
         core.info('✅ \u001b[32;1mFinished Success')
     } catch (e) {
+        core.endGroup()
         console.log(e)
+        if (e.response) {
+            console.log(`\u001b[31m Error: ${e.response.statusText}`)
+            console.log(e.response.data)
+        }
         core.setFailed(e.message)
     }
 })()
@@ -116,6 +97,8 @@ const vtUpload = require('./vt')
  * @return {Promise<Object[{id, name, link}]>}
  */
 async function processRelease(inputs, limiter, octokit, release) {
+    core.startGroup('Processing Release Assets')
+
     // Get Assets
     const assets = await octokit.rest.repos.listReleaseAssets({
         ...github.context.repo,
@@ -135,10 +118,14 @@ async function processRelease(inputs, limiter, octokit, release) {
         fs.mkdirSync(assetsPath)
     }
 
+    console.log(assets.data)
+    core.endGroup() // Assets
+
     // Process Assets
     const results = []
     for (const asset of assets.data) {
-        core.info(`--- Processing Asset: ${asset.name}`)
+        core.startGroup(`Processing: \u001b[36m${asset.name}`)
+        // core.info(`--- Processing Asset: ${asset.name}`)
         if (inputs.rate) {
             const remainingRequests = await limiter.removeTokens(1)
             console.log('remainingRequests:', remainingRequests)
@@ -154,8 +141,9 @@ async function processRelease(inputs, limiter, octokit, release) {
         })
         fs.writeFileSync(filePath, Buffer.from(file.data))
         const result = await processVt(inputs, asset.name, filePath)
-        // console.log('result:', result)
+        console.log('result:', result)
         results.push(result)
+        core.endGroup() // Processing
     }
     return results
 }
@@ -172,14 +160,17 @@ async function processFiles(inputs, limiter) {
         matchDirectories: false,
     })
     const files = await globber.glob()
+    core.startGroup('Processing File Globs')
     console.log('files:', files)
+    core.endGroup() // Files
     if (!files.length) {
         throw new Error('No files to process.')
     }
     const results = []
     for (const file of files) {
         const name = file.split('\\').pop().split('/').pop()
-        core.info(`--- Processing File: ${name}`)
+        // core.info(`--- Processing File: ${name}`)
+        core.startGroup(`Processing: \u001b[36m${name}`)
         if (inputs.rate) {
             const remainingRequests = await limiter.removeTokens(1)
             console.log('remainingRequests:', remainingRequests)
@@ -187,6 +178,7 @@ async function processFiles(inputs, limiter) {
         const result = await processVt(inputs, name, file)
         // console.log('result:', result)
         results.push(result)
+        core.endGroup() // Processing
     }
     return results
 }
@@ -213,10 +205,11 @@ async function processVt(inputs, name, filePath) {
  */
 async function getRelease(octokit) {
     const release_id = github.context.payload.release?.id
-    console.log('release_id:', release_id)
+    // console.log('release_id:', release_id)
     if (!release_id) {
         return
     }
+    core.info(`Found Release ID: \u001b[32m${release_id}`)
     const release = await octokit.rest.repos.getRelease({
         ...github.context.repo,
         release_id,
@@ -226,7 +219,14 @@ async function getRelease(octokit) {
 
 /**
  * @function parseInputs
- * @return {{token: string, key: string, files: string[], rate: number, update: boolean, summary: boolean}}
+ * @return {{
+ *   token: string,
+ *   key: string,
+ *   files: string[],
+ *   rate: number,
+ *   update: boolean,
+ *   summary: boolean
+ * }}
  */
 function parseInputs() {
     const githubToken = core.getInput('github_token', { required: true })
@@ -250,36 +250,54 @@ function parseInputs() {
 }
 
 /**
- * @function inputsTable
- * @param {String} summary
- * @param {String} h1
- * @param {String} h2
- * @param {Object} details
- * @return String
- */
-function detailsTable(summary, h1, h2, details) {
-    const table = [
-        `<details><summary><strong>${summary}</strong></summary>`,
-        `<table><tr><th>${h1}</th><th>${h2}</th></tr>`,
-    ]
-    for (const [key, object] of Object.entries(details)) {
-        const value = object.toString() || '-'
-        table.push(`<tr><td>${key}</td><td><code>${value}</code></td></tr>`)
-    }
-    return table.join('') + '</table></details>'
-}
-
-/**
- * @function inputsTable
+ * @function writeSummary
+ * @param {Object} inputs
  * @param {Object} results
- * @return String
+ * @param {Array} output
+ * @return {Promise<void>}
  */
-function resultsTable(results) {
-    const table = [`<table><tr><th>File</th><th>ID</th></tr>`]
+async function writeSummary(inputs, results, output) {
+    core.summary.addRaw('## VirusTotal Action\n')
+
+    const results_table = []
     for (const result of results) {
-        table.push(
-            `<tr><td><a href="${result.link}">${result.name}</a></td><td>${result.id}</td></tr>`
-        )
+        results_table.push([
+            { data: `<a href="${result.link}">${result.name}</a>` },
+            { data: result.id },
+        ])
     }
-    return table.join('') + '</table>'
+    core.summary.addTable([
+        [
+            { data: 'File', header: true },
+            { data: 'ID', header: true },
+        ],
+        ...results_table,
+    ])
+
+    core.summary.addDetails(
+        '<strong>Outputs</strong>',
+        `\n\n\`\`\`json\n${JSON.stringify(results, null, 2)}\n\`\`\`` +
+            `\n\n\`\`\`text\n${output.join('\n')}\n\`\`\`\n\n`
+    )
+
+    core.summary.addRaw('<details><summary>Inputs</summary>')
+    core.summary.addTable([
+        [
+            { data: 'Input', header: true },
+            { data: 'Value', header: true },
+        ],
+        [
+            { data: 'file_globs' },
+            { data: `<code>${inputs.files.join(',')}</code>` },
+        ],
+        [{ data: 'rate_limit' }, { data: `<code>${inputs.rate}</code>` }],
+        [{ data: 'update_release' }, { data: `<code>${inputs.update}</code>` }],
+        [{ data: 'summary' }, { data: `<code>${inputs.summary}</code>` }],
+    ])
+    core.summary.addRaw('</details>\n')
+
+    const text = 'View Documentation, Report Issues or Request Features'
+    const link = 'https://github.com/cssnr/virustotal-action'
+    core.summary.addRaw(`\n[${text}](${link}?tab=readme-ov-file#readme)\n\n---`)
+    await core.summary.write()
 }

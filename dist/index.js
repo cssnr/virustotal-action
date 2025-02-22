@@ -2148,7 +2148,7 @@ function hashFiles(patterns, currentWorkspace = '', options, verbose = false) {
             followSymbolicLinks = options.followSymbolicLinks;
         }
         const globber = yield create(patterns, { followSymbolicLinks });
-        return internal_hash_files_1.hashFiles(globber, currentWorkspace, verbose);
+        return (0, internal_hash_files_1.hashFiles)(globber, currentWorkspace, verbose);
     });
 }
 exports.hashFiles = hashFiles;
@@ -2163,7 +2163,11 @@ exports.hashFiles = hashFiles;
 
 var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
     if (k2 === undefined) k2 = k;
-    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
 }) : (function(o, m, k, k2) {
     if (k2 === undefined) k2 = k;
     o[k2] = m[k];
@@ -2176,7 +2180,7 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 var __importStar = (this && this.__importStar) || function (mod) {
     if (mod && mod.__esModule) return mod;
     var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
     __setModuleDefault(result, mod);
     return result;
 };
@@ -2191,7 +2195,8 @@ function getOptions(copy) {
         followSymbolicLinks: true,
         implicitDescendants: true,
         matchDirectories: true,
-        omitBrokenSymbolicLinks: true
+        omitBrokenSymbolicLinks: true,
+        excludeHiddenFiles: false
     };
     if (copy) {
         if (typeof copy.followSymbolicLinks === 'boolean') {
@@ -2210,6 +2215,10 @@ function getOptions(copy) {
             result.omitBrokenSymbolicLinks = copy.omitBrokenSymbolicLinks;
             core.debug(`omitBrokenSymbolicLinks '${result.omitBrokenSymbolicLinks}'`);
         }
+        if (typeof copy.excludeHiddenFiles === 'boolean') {
+            result.excludeHiddenFiles = copy.excludeHiddenFiles;
+            core.debug(`excludeHiddenFiles '${result.excludeHiddenFiles}'`);
+        }
     }
     return result;
 }
@@ -2225,7 +2234,11 @@ exports.getOptions = getOptions;
 
 var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
     if (k2 === undefined) k2 = k;
-    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
 }) : (function(o, m, k, k2) {
     if (k2 === undefined) k2 = k;
     o[k2] = m[k];
@@ -2238,7 +2251,7 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 var __importStar = (this && this.__importStar) || function (mod) {
     if (mod && mod.__esModule) return mod;
     var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
     __setModuleDefault(result, mod);
     return result;
 };
@@ -2292,19 +2305,21 @@ class DefaultGlobber {
         return this.searchPaths.slice();
     }
     glob() {
-        var e_1, _a;
+        var _a, e_1, _b, _c;
         return __awaiter(this, void 0, void 0, function* () {
             const result = [];
             try {
-                for (var _b = __asyncValues(this.globGenerator()), _c; _c = yield _b.next(), !_c.done;) {
-                    const itemPath = _c.value;
+                for (var _d = true, _e = __asyncValues(this.globGenerator()), _f; _f = yield _e.next(), _a = _f.done, !_a; _d = true) {
+                    _c = _f.value;
+                    _d = false;
+                    const itemPath = _c;
                     result.push(itemPath);
                 }
             }
             catch (e_1_1) { e_1 = { error: e_1_1 }; }
             finally {
                 try {
-                    if (_c && !_c.done && (_a = _b.return)) yield _a.call(_b);
+                    if (!_d && !_a && (_b = _e.return)) yield _b.call(_e);
                 }
                 finally { if (e_1) throw e_1.error; }
             }
@@ -2360,6 +2375,10 @@ class DefaultGlobber {
                 );
                 // Broken symlink, or symlink cycle detected, or no longer exists
                 if (!stats) {
+                    continue;
+                }
+                // Hidden file or directory?
+                if (options.excludeHiddenFiles && path.basename(item.path).match(/^\./)) {
                     continue;
                 }
                 // Directory
@@ -2467,7 +2486,11 @@ exports.DefaultGlobber = DefaultGlobber;
 
 var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
     if (k2 === undefined) k2 = k;
-    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
 }) : (function(o, m, k, k2) {
     if (k2 === undefined) k2 = k;
     o[k2] = m[k];
@@ -2480,7 +2503,7 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 var __importStar = (this && this.__importStar) || function (mod) {
     if (mod && mod.__esModule) return mod;
     var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
     __setModuleDefault(result, mod);
     return result;
 };
@@ -2509,19 +2532,21 @@ const stream = __importStar(__nccwpck_require__(2203));
 const util = __importStar(__nccwpck_require__(9023));
 const path = __importStar(__nccwpck_require__(6928));
 function hashFiles(globber, currentWorkspace, verbose = false) {
-    var e_1, _a;
-    var _b;
+    var _a, e_1, _b, _c;
+    var _d;
     return __awaiter(this, void 0, void 0, function* () {
         const writeDelegate = verbose ? core.info : core.debug;
         let hasMatch = false;
         const githubWorkspace = currentWorkspace
             ? currentWorkspace
-            : (_b = process.env['GITHUB_WORKSPACE']) !== null && _b !== void 0 ? _b : process.cwd();
+            : (_d = process.env['GITHUB_WORKSPACE']) !== null && _d !== void 0 ? _d : process.cwd();
         const result = crypto.createHash('sha256');
         let count = 0;
         try {
-            for (var _c = __asyncValues(globber.globGenerator()), _d; _d = yield _c.next(), !_d.done;) {
-                const file = _d.value;
+            for (var _e = true, _f = __asyncValues(globber.globGenerator()), _g; _g = yield _f.next(), _a = _g.done, !_a; _e = true) {
+                _c = _g.value;
+                _e = false;
+                const file = _c;
                 writeDelegate(file);
                 if (!file.startsWith(`${githubWorkspace}${path.sep}`)) {
                     writeDelegate(`Ignore '${file}' since it is not under GITHUB_WORKSPACE.`);
@@ -2544,7 +2569,7 @@ function hashFiles(globber, currentWorkspace, verbose = false) {
         catch (e_1_1) { e_1 = { error: e_1_1 }; }
         finally {
             try {
-                if (_d && !_d.done && (_a = _c.return)) yield _a.call(_c);
+                if (!_e && !_a && (_b = _f.return)) yield _b.call(_f);
             }
             finally { if (e_1) throw e_1.error; }
         }
@@ -2584,7 +2609,7 @@ var MatchKind;
     MatchKind[MatchKind["File"] = 2] = "File";
     /** Matched */
     MatchKind[MatchKind["All"] = 3] = "All";
-})(MatchKind = exports.MatchKind || (exports.MatchKind = {}));
+})(MatchKind || (exports.MatchKind = MatchKind = {}));
 //# sourceMappingURL=internal-match-kind.js.map
 
 /***/ }),
@@ -2596,7 +2621,11 @@ var MatchKind;
 
 var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
     if (k2 === undefined) k2 = k;
-    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
 }) : (function(o, m, k, k2) {
     if (k2 === undefined) k2 = k;
     o[k2] = m[k];
@@ -2609,7 +2638,7 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 var __importStar = (this && this.__importStar) || function (mod) {
     if (mod && mod.__esModule) return mod;
     var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
     __setModuleDefault(result, mod);
     return result;
 };
@@ -2659,8 +2688,8 @@ exports.dirname = dirname;
  * or `C:` are expanded based on the current working directory.
  */
 function ensureAbsoluteRoot(root, itemPath) {
-    assert_1.default(root, `ensureAbsoluteRoot parameter 'root' must not be empty`);
-    assert_1.default(itemPath, `ensureAbsoluteRoot parameter 'itemPath' must not be empty`);
+    (0, assert_1.default)(root, `ensureAbsoluteRoot parameter 'root' must not be empty`);
+    (0, assert_1.default)(itemPath, `ensureAbsoluteRoot parameter 'itemPath' must not be empty`);
     // Already rooted
     if (hasAbsoluteRoot(itemPath)) {
         return itemPath;
@@ -2670,7 +2699,7 @@ function ensureAbsoluteRoot(root, itemPath) {
         // Check for itemPath like C: or C:foo
         if (itemPath.match(/^[A-Z]:[^\\/]|^[A-Z]:$/i)) {
             let cwd = process.cwd();
-            assert_1.default(cwd.match(/^[A-Z]:\\/i), `Expected current directory to start with an absolute drive root. Actual '${cwd}'`);
+            (0, assert_1.default)(cwd.match(/^[A-Z]:\\/i), `Expected current directory to start with an absolute drive root. Actual '${cwd}'`);
             // Drive letter matches cwd? Expand to cwd
             if (itemPath[0].toUpperCase() === cwd[0].toUpperCase()) {
                 // Drive only, e.g. C:
@@ -2695,11 +2724,11 @@ function ensureAbsoluteRoot(root, itemPath) {
         // Check for itemPath like \ or \foo
         else if (normalizeSeparators(itemPath).match(/^\\$|^\\[^\\]/)) {
             const cwd = process.cwd();
-            assert_1.default(cwd.match(/^[A-Z]:\\/i), `Expected current directory to start with an absolute drive root. Actual '${cwd}'`);
+            (0, assert_1.default)(cwd.match(/^[A-Z]:\\/i), `Expected current directory to start with an absolute drive root. Actual '${cwd}'`);
             return `${cwd[0]}:\\${itemPath.substr(1)}`;
         }
     }
-    assert_1.default(hasAbsoluteRoot(root), `ensureAbsoluteRoot parameter 'root' must have an absolute root`);
+    (0, assert_1.default)(hasAbsoluteRoot(root), `ensureAbsoluteRoot parameter 'root' must have an absolute root`);
     // Otherwise ensure root ends with a separator
     if (root.endsWith('/') || (IS_WINDOWS && root.endsWith('\\'))) {
         // Intentionally empty
@@ -2716,7 +2745,7 @@ exports.ensureAbsoluteRoot = ensureAbsoluteRoot;
  * `\\hello\share` and `C:\hello` (and using alternate separator).
  */
 function hasAbsoluteRoot(itemPath) {
-    assert_1.default(itemPath, `hasAbsoluteRoot parameter 'itemPath' must not be empty`);
+    (0, assert_1.default)(itemPath, `hasAbsoluteRoot parameter 'itemPath' must not be empty`);
     // Normalize separators
     itemPath = normalizeSeparators(itemPath);
     // Windows
@@ -2733,7 +2762,7 @@ exports.hasAbsoluteRoot = hasAbsoluteRoot;
  * `\`, `\hello`, `\\hello\share`, `C:`, and `C:\hello` (and using alternate separator).
  */
 function hasRoot(itemPath) {
-    assert_1.default(itemPath, `isRooted parameter 'itemPath' must not be empty`);
+    (0, assert_1.default)(itemPath, `isRooted parameter 'itemPath' must not be empty`);
     // Normalize separators
     itemPath = normalizeSeparators(itemPath);
     // Windows
@@ -2801,7 +2830,11 @@ exports.safeTrimTrailingSeparator = safeTrimTrailingSeparator;
 
 var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
     if (k2 === undefined) k2 = k;
-    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
 }) : (function(o, m, k, k2) {
     if (k2 === undefined) k2 = k;
     o[k2] = m[k];
@@ -2814,7 +2847,7 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 var __importStar = (this && this.__importStar) || function (mod) {
     if (mod && mod.__esModule) return mod;
     var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
     __setModuleDefault(result, mod);
     return result;
 };
@@ -2839,7 +2872,7 @@ class Path {
         this.segments = [];
         // String
         if (typeof itemPath === 'string') {
-            assert_1.default(itemPath, `Parameter 'itemPath' must not be empty`);
+            (0, assert_1.default)(itemPath, `Parameter 'itemPath' must not be empty`);
             // Normalize slashes and trim unnecessary trailing slash
             itemPath = pathHelper.safeTrimTrailingSeparator(itemPath);
             // Not rooted
@@ -2866,24 +2899,24 @@ class Path {
         // Array
         else {
             // Must not be empty
-            assert_1.default(itemPath.length > 0, `Parameter 'itemPath' must not be an empty array`);
+            (0, assert_1.default)(itemPath.length > 0, `Parameter 'itemPath' must not be an empty array`);
             // Each segment
             for (let i = 0; i < itemPath.length; i++) {
                 let segment = itemPath[i];
                 // Must not be empty
-                assert_1.default(segment, `Parameter 'itemPath' must not contain any empty segments`);
+                (0, assert_1.default)(segment, `Parameter 'itemPath' must not contain any empty segments`);
                 // Normalize slashes
                 segment = pathHelper.normalizeSeparators(itemPath[i]);
                 // Root segment
                 if (i === 0 && pathHelper.hasRoot(segment)) {
                     segment = pathHelper.safeTrimTrailingSeparator(segment);
-                    assert_1.default(segment === pathHelper.dirname(segment), `Parameter 'itemPath' root segment contains information for multiple segments`);
+                    (0, assert_1.default)(segment === pathHelper.dirname(segment), `Parameter 'itemPath' root segment contains information for multiple segments`);
                     this.segments.push(segment);
                 }
                 // All other segments
                 else {
                     // Must not contain slash
-                    assert_1.default(!segment.includes(path.sep), `Parameter 'itemPath' contains unexpected path separators`);
+                    (0, assert_1.default)(!segment.includes(path.sep), `Parameter 'itemPath' contains unexpected path separators`);
                     this.segments.push(segment);
                 }
             }
@@ -2921,7 +2954,11 @@ exports.Path = Path;
 
 var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
     if (k2 === undefined) k2 = k;
-    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
 }) : (function(o, m, k, k2) {
     if (k2 === undefined) k2 = k;
     o[k2] = m[k];
@@ -2934,7 +2971,7 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 var __importStar = (this && this.__importStar) || function (mod) {
     if (mod && mod.__esModule) return mod;
     var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
     __setModuleDefault(result, mod);
     return result;
 };
@@ -3022,7 +3059,11 @@ exports.partialMatch = partialMatch;
 
 var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
     if (k2 === undefined) k2 = k;
-    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
 }) : (function(o, m, k, k2) {
     if (k2 === undefined) k2 = k;
     o[k2] = m[k];
@@ -3035,7 +3076,7 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 var __importStar = (this && this.__importStar) || function (mod) {
     if (mod && mod.__esModule) return mod;
     var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
     __setModuleDefault(result, mod);
     return result;
 };
@@ -3067,9 +3108,9 @@ class Pattern {
         else {
             // Convert to pattern
             segments = segments || [];
-            assert_1.default(segments.length, `Parameter 'segments' must not empty`);
+            (0, assert_1.default)(segments.length, `Parameter 'segments' must not empty`);
             const root = Pattern.getLiteral(segments[0]);
-            assert_1.default(root && pathHelper.hasAbsoluteRoot(root), `Parameter 'segments' first element must be a root path`);
+            (0, assert_1.default)(root && pathHelper.hasAbsoluteRoot(root), `Parameter 'segments' first element must be a root path`);
             pattern = new internal_path_1.Path(segments).toString().trim();
             if (patternOrNegate) {
                 pattern = `!${pattern}`;
@@ -3163,13 +3204,13 @@ class Pattern {
      */
     static fixupPattern(pattern, homedir) {
         // Empty
-        assert_1.default(pattern, 'pattern cannot be empty');
+        (0, assert_1.default)(pattern, 'pattern cannot be empty');
         // Must not contain `.` segment, unless first segment
         // Must not contain `..` segment
         const literalSegments = new internal_path_1.Path(pattern).segments.map(x => Pattern.getLiteral(x));
-        assert_1.default(literalSegments.every((x, i) => (x !== '.' || i === 0) && x !== '..'), `Invalid pattern '${pattern}'. Relative pathing '.' and '..' is not allowed.`);
+        (0, assert_1.default)(literalSegments.every((x, i) => (x !== '.' || i === 0) && x !== '..'), `Invalid pattern '${pattern}'. Relative pathing '.' and '..' is not allowed.`);
         // Must not contain globs in root, e.g. Windows UNC path \\foo\b*r
-        assert_1.default(!pathHelper.hasRoot(pattern) || literalSegments[0], `Invalid pattern '${pattern}'. Root segment must not contain globs.`);
+        (0, assert_1.default)(!pathHelper.hasRoot(pattern) || literalSegments[0], `Invalid pattern '${pattern}'. Root segment must not contain globs.`);
         // Normalize slashes
         pattern = pathHelper.normalizeSeparators(pattern);
         // Replace leading `.` segment
@@ -3179,8 +3220,8 @@ class Pattern {
         // Replace leading `~` segment
         else if (pattern === '~' || pattern.startsWith(`~${path.sep}`)) {
             homedir = homedir || os.homedir();
-            assert_1.default(homedir, 'Unable to determine HOME directory');
-            assert_1.default(pathHelper.hasAbsoluteRoot(homedir), `Expected HOME directory to be a rooted path. Actual '${homedir}'`);
+            (0, assert_1.default)(homedir, 'Unable to determine HOME directory');
+            (0, assert_1.default)(pathHelper.hasAbsoluteRoot(homedir), `Expected HOME directory to be a rooted path. Actual '${homedir}'`);
             pattern = Pattern.globEscape(homedir) + pattern.substr(1);
         }
         // Replace relative drive root, e.g. pattern is C: or C:foo
@@ -5302,18 +5343,18 @@ var __copyProps = (to, from, except, desc) => {
 var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
 
 // pkg/dist-src/index.js
-var dist_src_exports = {};
-__export(dist_src_exports, {
+var index_exports = {};
+__export(index_exports, {
   GraphqlResponseError: () => GraphqlResponseError,
   graphql: () => graphql2,
   withCustomRequest: () => withCustomRequest
 });
-module.exports = __toCommonJS(dist_src_exports);
+module.exports = __toCommonJS(index_exports);
 var import_request3 = __nccwpck_require__(8636);
 var import_universal_user_agent = __nccwpck_require__(3843);
 
 // pkg/dist-src/version.js
-var VERSION = "7.1.0";
+var VERSION = "7.1.1";
 
 // pkg/dist-src/with-defaults.js
 var import_request2 = __nccwpck_require__(8636);
@@ -5361,8 +5402,7 @@ function graphql(request2, query, options) {
       );
     }
     for (const key in options) {
-      if (!FORBIDDEN_VARIABLE_OPTIONS.includes(key))
-        continue;
+      if (!FORBIDDEN_VARIABLE_OPTIONS.includes(key)) continue;
       return Promise.reject(
         new Error(
           `[@octokit/graphql] "${key}" cannot be used as variable name`
@@ -12701,347 +12741,6 @@ var bind = __nccwpck_require__(7564);
 /** @type {import('.')} */
 module.exports = bind.call(call, $hasOwn);
 
-
-/***/ }),
-
-/***/ 5103:
-/***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.performance = void 0;
-var perf_hooks_1 = __nccwpck_require__(2987);
-Object.defineProperty(exports, "performance", ({ enumerable: true, get: function () { return perf_hooks_1.performance; } }));
-//# sourceMappingURL=node.js.map
-
-/***/ }),
-
-/***/ 4042:
-/***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.RateLimiter = void 0;
-const TokenBucket_1 = __nccwpck_require__(271);
-const clock_1 = __nccwpck_require__(322);
-/**
- * A generic rate limiter. Underneath the hood, this uses a token bucket plus
- * an additional check to limit how many tokens we can remove each interval.
- *
- * @param options
- * @param options.tokensPerInterval Maximum number of tokens that can be
- *  removed at any given moment and over the course of one interval.
- * @param options.interval The interval length in milliseconds, or as
- *  one of the following strings: 'second', 'minute', 'hour', day'.
- * @param options.fireImmediately Whether or not the promise will resolve
- *  immediately when rate limiting is in effect (default is false).
- */
-class RateLimiter {
-    constructor({ tokensPerInterval, interval, fireImmediately }) {
-        this.tokenBucket = new TokenBucket_1.TokenBucket({
-            bucketSize: tokensPerInterval,
-            tokensPerInterval,
-            interval,
-        });
-        // Fill the token bucket to start
-        this.tokenBucket.content = tokensPerInterval;
-        this.curIntervalStart = clock_1.getMilliseconds();
-        this.tokensThisInterval = 0;
-        this.fireImmediately = fireImmediately !== null && fireImmediately !== void 0 ? fireImmediately : false;
-    }
-    /**
-     * Remove the requested number of tokens. If the rate limiter contains enough
-     * tokens and we haven't spent too many tokens in this interval already, this
-     * will happen immediately. Otherwise, the removal will happen when enough
-     * tokens become available.
-     * @param count The number of tokens to remove.
-     * @returns A promise for the remainingTokens count.
-     */
-    async removeTokens(count) {
-        // Make sure the request isn't for more than we can handle
-        if (count > this.tokenBucket.bucketSize) {
-            throw new Error(`Requested tokens ${count} exceeds maximum tokens per interval ${this.tokenBucket.bucketSize}`);
-        }
-        const now = clock_1.getMilliseconds();
-        // Advance the current interval and reset the current interval token count
-        // if needed
-        if (now < this.curIntervalStart || now - this.curIntervalStart >= this.tokenBucket.interval) {
-            this.curIntervalStart = now;
-            this.tokensThisInterval = 0;
-        }
-        // If we don't have enough tokens left in this interval, wait until the
-        // next interval
-        if (count > this.tokenBucket.tokensPerInterval - this.tokensThisInterval) {
-            if (this.fireImmediately) {
-                return -1;
-            }
-            else {
-                const waitMs = Math.ceil(this.curIntervalStart + this.tokenBucket.interval - now);
-                await clock_1.wait(waitMs);
-                const remainingTokens = await this.tokenBucket.removeTokens(count);
-                this.tokensThisInterval += count;
-                return remainingTokens;
-            }
-        }
-        // Remove the requested number of tokens from the token bucket
-        const remainingTokens = await this.tokenBucket.removeTokens(count);
-        this.tokensThisInterval += count;
-        return remainingTokens;
-    }
-    /**
-     * Attempt to remove the requested number of tokens and return immediately.
-     * If the bucket (and any parent buckets) contains enough tokens and we
-     * haven't spent too many tokens in this interval already, this will return
-     * true. Otherwise, false is returned.
-     * @param {Number} count The number of tokens to remove.
-     * @param {Boolean} True if the tokens were successfully removed, otherwise
-     *  false.
-     */
-    tryRemoveTokens(count) {
-        // Make sure the request isn't for more than we can handle
-        if (count > this.tokenBucket.bucketSize)
-            return false;
-        const now = clock_1.getMilliseconds();
-        // Advance the current interval and reset the current interval token count
-        // if needed
-        if (now < this.curIntervalStart || now - this.curIntervalStart >= this.tokenBucket.interval) {
-            this.curIntervalStart = now;
-            this.tokensThisInterval = 0;
-        }
-        // If we don't have enough tokens left in this interval, return false
-        if (count > this.tokenBucket.tokensPerInterval - this.tokensThisInterval)
-            return false;
-        // Try to remove the requested number of tokens from the token bucket
-        const removed = this.tokenBucket.tryRemoveTokens(count);
-        if (removed) {
-            this.tokensThisInterval += count;
-        }
-        return removed;
-    }
-    /**
-     * Returns the number of tokens remaining in the TokenBucket.
-     * @returns {Number} The number of tokens remaining.
-     */
-    getTokensRemaining() {
-        this.tokenBucket.drip();
-        return this.tokenBucket.content;
-    }
-}
-exports.RateLimiter = RateLimiter;
-//# sourceMappingURL=RateLimiter.js.map
-
-/***/ }),
-
-/***/ 271:
-/***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.TokenBucket = void 0;
-const clock_1 = __nccwpck_require__(322);
-/**
- * A hierarchical token bucket for rate limiting. See
- * http://en.wikipedia.org/wiki/Token_bucket for more information.
- *
- * @param options
- * @param options.bucketSize Maximum number of tokens to hold in the bucket.
- *  Also known as the burst rate.
- * @param options.tokensPerInterval Number of tokens to drip into the bucket
- *  over the course of one interval.
- * @param options.interval The interval length in milliseconds, or as
- *  one of the following strings: 'second', 'minute', 'hour', day'.
- * @param options.parentBucket Optional. A token bucket that will act as
- *  the parent of this bucket.
- */
-class TokenBucket {
-    constructor({ bucketSize, tokensPerInterval, interval, parentBucket }) {
-        this.bucketSize = bucketSize;
-        this.tokensPerInterval = tokensPerInterval;
-        if (typeof interval === "string") {
-            switch (interval) {
-                case "sec":
-                case "second":
-                    this.interval = 1000;
-                    break;
-                case "min":
-                case "minute":
-                    this.interval = 1000 * 60;
-                    break;
-                case "hr":
-                case "hour":
-                    this.interval = 1000 * 60 * 60;
-                    break;
-                case "day":
-                    this.interval = 1000 * 60 * 60 * 24;
-                    break;
-                default:
-                    throw new Error("Invalid interval " + interval);
-            }
-        }
-        else {
-            this.interval = interval;
-        }
-        this.parentBucket = parentBucket;
-        this.content = 0;
-        this.lastDrip = clock_1.getMilliseconds();
-    }
-    /**
-     * Remove the requested number of tokens. If the bucket (and any parent
-     * buckets) contains enough tokens this will happen immediately. Otherwise,
-     * the removal will happen when enough tokens become available.
-     * @param count The number of tokens to remove.
-     * @returns A promise for the remainingTokens count.
-     */
-    async removeTokens(count) {
-        // Is this an infinite size bucket?
-        if (this.bucketSize === 0) {
-            return Number.POSITIVE_INFINITY;
-        }
-        // Make sure the bucket can hold the requested number of tokens
-        if (count > this.bucketSize) {
-            throw new Error(`Requested tokens ${count} exceeds bucket size ${this.bucketSize}`);
-        }
-        // Drip new tokens into this bucket
-        this.drip();
-        const comeBackLater = async () => {
-            // How long do we need to wait to make up the difference in tokens?
-            const waitMs = Math.ceil((count - this.content) * (this.interval / this.tokensPerInterval));
-            await clock_1.wait(waitMs);
-            return this.removeTokens(count);
-        };
-        // If we don't have enough tokens in this bucket, come back later
-        if (count > this.content)
-            return comeBackLater();
-        if (this.parentBucket != undefined) {
-            // Remove the requested from the parent bucket first
-            const remainingTokens = await this.parentBucket.removeTokens(count);
-            // Check that we still have enough tokens in this bucket
-            if (count > this.content)
-                return comeBackLater();
-            // Tokens were removed from the parent bucket, now remove them from
-            // this bucket. Note that we look at the current bucket and parent
-            // bucket's remaining tokens and return the smaller of the two values
-            this.content -= count;
-            return Math.min(remainingTokens, this.content);
-        }
-        else {
-            // Remove the requested tokens from this bucket
-            this.content -= count;
-            return this.content;
-        }
-    }
-    /**
-     * Attempt to remove the requested number of tokens and return immediately.
-     * If the bucket (and any parent buckets) contains enough tokens this will
-     * return true, otherwise false is returned.
-     * @param {Number} count The number of tokens to remove.
-     * @param {Boolean} True if the tokens were successfully removed, otherwise
-     *  false.
-     */
-    tryRemoveTokens(count) {
-        // Is this an infinite size bucket?
-        if (!this.bucketSize)
-            return true;
-        // Make sure the bucket can hold the requested number of tokens
-        if (count > this.bucketSize)
-            return false;
-        // Drip new tokens into this bucket
-        this.drip();
-        // If we don't have enough tokens in this bucket, return false
-        if (count > this.content)
-            return false;
-        // Try to remove the requested tokens from the parent bucket
-        if (this.parentBucket && !this.parentBucket.tryRemoveTokens(count))
-            return false;
-        // Remove the requested tokens from this bucket and return
-        this.content -= count;
-        return true;
-    }
-    /**
-     * Add any new tokens to the bucket since the last drip.
-     * @returns {Boolean} True if new tokens were added, otherwise false.
-     */
-    drip() {
-        if (this.tokensPerInterval === 0) {
-            const prevContent = this.content;
-            this.content = this.bucketSize;
-            return this.content > prevContent;
-        }
-        const now = clock_1.getMilliseconds();
-        const deltaMS = Math.max(now - this.lastDrip, 0);
-        this.lastDrip = now;
-        const dripAmount = deltaMS * (this.tokensPerInterval / this.interval);
-        const prevContent = this.content;
-        this.content = Math.min(this.content + dripAmount, this.bucketSize);
-        return Math.floor(this.content) > Math.floor(prevContent);
-    }
-}
-exports.TokenBucket = TokenBucket;
-//# sourceMappingURL=TokenBucket.js.map
-
-/***/ }),
-
-/***/ 322:
-/***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.wait = exports.getMilliseconds = void 0;
-const just_performance_1 = __nccwpck_require__(5103);
-// generate timestamp or delta
-// see http://nodejs.org/api/process.html#process_process_hrtime
-function hrtime(previousTimestamp) {
-    const clocktime = just_performance_1.performance.now() * 1e-3;
-    let seconds = Math.floor(clocktime);
-    let nanoseconds = Math.floor((clocktime % 1) * 1e9);
-    if (previousTimestamp != undefined) {
-        seconds = seconds - previousTimestamp[0];
-        nanoseconds = nanoseconds - previousTimestamp[1];
-        if (nanoseconds < 0) {
-            seconds--;
-            nanoseconds += 1e9;
-        }
-    }
-    return [seconds, nanoseconds];
-}
-// The current timestamp in whole milliseconds
-function getMilliseconds() {
-    const [seconds, nanoseconds] = hrtime();
-    return seconds * 1e3 + Math.floor(nanoseconds / 1e6);
-}
-exports.getMilliseconds = getMilliseconds;
-// Wait for a specified number of milliseconds before fulfilling the returned promise.
-function wait(ms) {
-    return new Promise((resolve) => setTimeout(resolve, ms));
-}
-exports.wait = wait;
-//# sourceMappingURL=clock.js.map
-
-/***/ }),
-
-/***/ 724:
-/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
-
-"use strict";
-
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __exportStar = (this && this.__exportStar) || function(m, exports) {
-    for (var p in m) if (p !== "default" && !Object.prototype.hasOwnProperty.call(exports, p)) __createBinding(exports, m, p);
-};
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-__exportStar(__nccwpck_require__(4042), exports);
-__exportStar(__nccwpck_require__(271), exports);
-//# sourceMappingURL=index.js.map
 
 /***/ }),
 
@@ -39248,6 +38947,347 @@ module.exports = parseParams
 
 /***/ }),
 
+/***/ 4579:
+/***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.RateLimiter = void 0;
+const TokenBucket_js_1 = __nccwpck_require__(5338);
+const clock_js_1 = __nccwpck_require__(1495);
+/**
+ * A generic rate limiter. Underneath the hood, this uses a token bucket plus
+ * an additional check to limit how many tokens we can remove each interval.
+ *
+ * @param options
+ * @param options.tokensPerInterval Maximum number of tokens that can be
+ *  removed at any given moment and over the course of one interval.
+ * @param options.interval The interval length in milliseconds, or as
+ *  one of the following strings: 'second', 'minute', 'hour', day'.
+ * @param options.fireImmediately Whether or not the promise will resolve
+ *  immediately when rate limiting is in effect (default is false).
+ */
+class RateLimiter {
+    tokenBucket;
+    curIntervalStart;
+    tokensThisInterval;
+    fireImmediately;
+    constructor({ tokensPerInterval, interval, fireImmediately }) {
+        this.tokenBucket = new TokenBucket_js_1.TokenBucket({
+            bucketSize: tokensPerInterval,
+            tokensPerInterval,
+            interval,
+        });
+        // Fill the token bucket to start
+        this.tokenBucket.content = tokensPerInterval;
+        this.curIntervalStart = (0, clock_js_1.getMilliseconds)();
+        this.tokensThisInterval = 0;
+        this.fireImmediately = fireImmediately ?? false;
+    }
+    /**
+     * Remove the requested number of tokens. If the rate limiter contains enough
+     * tokens and we haven't spent too many tokens in this interval already, this
+     * will happen immediately. Otherwise, the removal will happen when enough
+     * tokens become available.
+     * @param count The number of tokens to remove.
+     * @returns A promise for the remainingTokens count.
+     */
+    async removeTokens(count) {
+        // Make sure the request isn't for more than we can handle
+        if (count > this.tokenBucket.bucketSize) {
+            throw new Error(`Requested tokens ${count} exceeds maximum tokens per interval ${this.tokenBucket.bucketSize}`);
+        }
+        const now = (0, clock_js_1.getMilliseconds)();
+        // Advance the current interval and reset the current interval token count
+        // if needed
+        if (now < this.curIntervalStart || now - this.curIntervalStart >= this.tokenBucket.interval) {
+            this.curIntervalStart = now;
+            this.tokensThisInterval = 0;
+        }
+        // If we don't have enough tokens left in this interval, wait until the
+        // next interval
+        if (count > this.tokenBucket.tokensPerInterval - this.tokensThisInterval) {
+            if (this.fireImmediately) {
+                return -1;
+            }
+            else {
+                const waitMs = Math.ceil(this.curIntervalStart + this.tokenBucket.interval - now);
+                await (0, clock_js_1.wait)(waitMs);
+                const remainingTokens = await this.tokenBucket.removeTokens(count);
+                this.tokensThisInterval += count;
+                return remainingTokens;
+            }
+        }
+        // Remove the requested number of tokens from the token bucket
+        const remainingTokens = await this.tokenBucket.removeTokens(count);
+        this.tokensThisInterval += count;
+        return remainingTokens;
+    }
+    /**
+     * Attempt to remove the requested number of tokens and return immediately.
+     * If the bucket (and any parent buckets) contains enough tokens and we
+     * haven't spent too many tokens in this interval already, this will return
+     * true. Otherwise, false is returned.
+     * @param {Number} count The number of tokens to remove.
+     * @param {Boolean} True if the tokens were successfully removed, otherwise
+     *  false.
+     */
+    tryRemoveTokens(count) {
+        // Make sure the request isn't for more than we can handle
+        if (count > this.tokenBucket.bucketSize)
+            return false;
+        const now = (0, clock_js_1.getMilliseconds)();
+        // Advance the current interval and reset the current interval token count
+        // if needed
+        if (now < this.curIntervalStart || now - this.curIntervalStart >= this.tokenBucket.interval) {
+            this.curIntervalStart = now;
+            this.tokensThisInterval = 0;
+        }
+        // If we don't have enough tokens left in this interval, return false
+        if (count > this.tokenBucket.tokensPerInterval - this.tokensThisInterval)
+            return false;
+        // Try to remove the requested number of tokens from the token bucket
+        const removed = this.tokenBucket.tryRemoveTokens(count);
+        if (removed) {
+            this.tokensThisInterval += count;
+        }
+        return removed;
+    }
+    /**
+     * Returns the number of tokens remaining in the TokenBucket.
+     * @returns {Number} The number of tokens remaining.
+     */
+    getTokensRemaining() {
+        this.tokenBucket.drip();
+        return this.tokenBucket.content;
+    }
+}
+exports.RateLimiter = RateLimiter;
+//# sourceMappingURL=RateLimiter.js.map
+
+/***/ }),
+
+/***/ 5338:
+/***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.TokenBucket = void 0;
+const clock_js_1 = __nccwpck_require__(1495);
+/**
+ * A hierarchical token bucket for rate limiting. See
+ * http://en.wikipedia.org/wiki/Token_bucket for more information.
+ *
+ * @param options
+ * @param options.bucketSize Maximum number of tokens to hold in the bucket.
+ *  Also known as the burst rate.
+ * @param options.tokensPerInterval Number of tokens to drip into the bucket
+ *  over the course of one interval.
+ * @param options.interval The interval length in milliseconds, or as
+ *  one of the following strings: 'second', 'minute', 'hour', day'.
+ * @param options.parentBucket Optional. A token bucket that will act as
+ *  the parent of this bucket.
+ */
+class TokenBucket {
+    bucketSize;
+    tokensPerInterval;
+    interval;
+    parentBucket;
+    content;
+    lastDrip;
+    constructor({ bucketSize, tokensPerInterval, interval, parentBucket }) {
+        this.bucketSize = bucketSize;
+        this.tokensPerInterval = tokensPerInterval;
+        if (typeof interval === "string") {
+            switch (interval) {
+                case "sec":
+                case "second":
+                    this.interval = 1000;
+                    break;
+                case "min":
+                case "minute":
+                    this.interval = 1000 * 60;
+                    break;
+                case "hr":
+                case "hour":
+                    this.interval = 1000 * 60 * 60;
+                    break;
+                case "day":
+                    this.interval = 1000 * 60 * 60 * 24;
+                    break;
+                default:
+                    throw new Error("Invalid interval " + interval);
+            }
+        }
+        else {
+            this.interval = interval;
+        }
+        this.parentBucket = parentBucket;
+        this.content = 0;
+        this.lastDrip = (0, clock_js_1.getMilliseconds)();
+    }
+    /**
+     * Remove the requested number of tokens. If the bucket (and any parent
+     * buckets) contains enough tokens this will happen immediately. Otherwise,
+     * the removal will happen when enough tokens become available.
+     * @param count The number of tokens to remove.
+     * @returns A promise for the remainingTokens count.
+     */
+    async removeTokens(count) {
+        // Is this an infinite size bucket?
+        if (this.bucketSize === 0) {
+            return Number.POSITIVE_INFINITY;
+        }
+        // Make sure the bucket can hold the requested number of tokens
+        if (count > this.bucketSize) {
+            throw new Error(`Requested tokens ${count} exceeds bucket size ${this.bucketSize}`);
+        }
+        // Drip new tokens into this bucket
+        this.drip();
+        const comeBackLater = async () => {
+            // How long do we need to wait to make up the difference in tokens?
+            const waitMs = Math.ceil((count - this.content) * (this.interval / this.tokensPerInterval));
+            await (0, clock_js_1.wait)(waitMs);
+            return this.removeTokens(count);
+        };
+        // If we don't have enough tokens in this bucket, come back later
+        if (count > this.content)
+            return comeBackLater();
+        if (this.parentBucket != undefined) {
+            // Remove the requested from the parent bucket first
+            const remainingTokens = await this.parentBucket.removeTokens(count);
+            // Check that we still have enough tokens in this bucket
+            if (count > this.content)
+                return comeBackLater();
+            // Tokens were removed from the parent bucket, now remove them from
+            // this bucket. Note that we look at the current bucket and parent
+            // bucket's remaining tokens and return the smaller of the two values
+            this.content -= count;
+            return Math.min(remainingTokens, this.content);
+        }
+        else {
+            // Remove the requested tokens from this bucket
+            this.content -= count;
+            return this.content;
+        }
+    }
+    /**
+     * Attempt to remove the requested number of tokens and return immediately.
+     * If the bucket (and any parent buckets) contains enough tokens this will
+     * return true, otherwise false is returned.
+     * @param {Number} count The number of tokens to remove.
+     * @param {Boolean} True if the tokens were successfully removed, otherwise
+     *  false.
+     */
+    tryRemoveTokens(count) {
+        // Is this an infinite size bucket?
+        if (!this.bucketSize)
+            return true;
+        // Make sure the bucket can hold the requested number of tokens
+        if (count > this.bucketSize)
+            return false;
+        // Drip new tokens into this bucket
+        this.drip();
+        // If we don't have enough tokens in this bucket, return false
+        if (count > this.content)
+            return false;
+        // Try to remove the requested tokens from the parent bucket
+        if (this.parentBucket && !this.parentBucket.tryRemoveTokens(count))
+            return false;
+        // Remove the requested tokens from this bucket and return
+        this.content -= count;
+        return true;
+    }
+    /**
+     * Add any new tokens to the bucket since the last drip.
+     * @returns {Boolean} True if new tokens were added, otherwise false.
+     */
+    drip() {
+        if (this.tokensPerInterval === 0) {
+            const prevContent = this.content;
+            this.content = this.bucketSize;
+            return this.content > prevContent;
+        }
+        const now = (0, clock_js_1.getMilliseconds)();
+        const deltaMS = Math.max(now - this.lastDrip, 0);
+        this.lastDrip = now;
+        const dripAmount = deltaMS * (this.tokensPerInterval / this.interval);
+        const prevContent = this.content;
+        this.content = Math.min(this.content + dripAmount, this.bucketSize);
+        return Math.floor(this.content) > Math.floor(prevContent);
+    }
+}
+exports.TokenBucket = TokenBucket;
+//# sourceMappingURL=TokenBucket.js.map
+
+/***/ }),
+
+/***/ 1495:
+/***/ ((__unused_webpack_module, exports) => {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.wait = exports.getMilliseconds = void 0;
+// generate timestamp or delta
+// see http://nodejs.org/api/process.html#process_process_hrtime
+function hrtime(previousTimestamp) {
+    const clocktime = performance.now() * 1e-3;
+    let seconds = Math.floor(clocktime);
+    let nanoseconds = Math.floor((clocktime % 1) * 1e9);
+    if (previousTimestamp != undefined) {
+        seconds = seconds - previousTimestamp[0];
+        nanoseconds = nanoseconds - previousTimestamp[1];
+        if (nanoseconds < 0) {
+            seconds--;
+            nanoseconds += 1e9;
+        }
+    }
+    return [seconds, nanoseconds];
+}
+// The current timestamp in whole milliseconds
+function getMilliseconds() {
+    const [seconds, nanoseconds] = hrtime();
+    return seconds * 1e3 + Math.floor(nanoseconds / 1e6);
+}
+exports.getMilliseconds = getMilliseconds;
+// Wait for a specified number of milliseconds before fulfilling the returned promise.
+function wait(ms) {
+    return new Promise((resolve) => setTimeout(resolve, ms));
+}
+exports.wait = wait;
+//# sourceMappingURL=clock.js.map
+
+/***/ }),
+
+/***/ 5157:
+/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
+
+"use strict";
+
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __exportStar = (this && this.__exportStar) || function(m, exports) {
+    for (var p in m) if (p !== "default" && !Object.prototype.hasOwnProperty.call(exports, p)) __createBinding(exports, m, p);
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+__exportStar(__nccwpck_require__(4579), exports);
+__exportStar(__nccwpck_require__(5338), exports);
+//# sourceMappingURL=index.js.map
+
+/***/ }),
+
 /***/ 7269:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
@@ -44060,7 +44100,7 @@ const github = __nccwpck_require__(3228)
 const glob = __nccwpck_require__(7206)
 const fs = __nccwpck_require__(9896)
 const path = __nccwpck_require__(6928)
-const { RateLimiter } = __nccwpck_require__(724)
+const { RateLimiter } = __nccwpck_require__(5157)
 
 const vtUpload = __nccwpck_require__(9431)
 
@@ -44069,8 +44109,10 @@ const vtUpload = __nccwpck_require__(9431)
         core.info('🏳️ Starting VirusTotal Action')
 
         // Parse Inputs
+        core.startGroup('Parsed Inputs')
         const inputs = parseInputs()
         // console.log('inputs:', inputs)
+        core.endGroup() // Inputs
 
         // Set Variables
         const octokit = github.getOctokit(inputs.token)
@@ -44084,34 +44126,36 @@ const vtUpload = __nccwpck_require__(9431)
         /** @type {Object[]} */
         let results
         if (inputs.files?.length) {
-            core.info('📁 Processing File Globs')
+            // core.info('📁 Processing File Globs')
             results = await processFiles(inputs, limiter)
         } else if (release) {
-            core.info('🗄️ Processing Release Assets')
+            // core.info('🗄️ Processing Release Assets')
             results = await processRelease(inputs, limiter, octokit, release)
         } else {
             return core.setFailed('No files or release to process.')
         }
-        console.log('-'.repeat(40))
-        console.log('results:', results)
+        // console.log('-'.repeat(40))
+        core.startGroup('Results')
+        console.log(results)
+        core.endGroup() // Results
 
         // Update Release
         if (release && inputs.update) {
-            core.info(`📢 Updating Release: ${release.id}`)
+            core.startGroup(`Updating Release ${release.id}`)
             let body = release.body
             body += '\n\n🛡️ **VirusTotal Results:**'
             for (const result of results) {
                 body += `\n- [${result.name}](${result.link})`
             }
-            console.log('-'.repeat(40))
-            console.log(`body:\n${body}`)
+            console.log(`\n${body}\n`)
             await octokit.rest.repos.updateRelease({
                 ...github.context.repo,
                 release_id: release.id,
                 body,
             })
+            core.endGroup() // Release
         } else {
-            core.info('⏩ \u001b[33;1mSkipping Release Update')
+            core.info('⏩ \u001b[33mSkipping Release Update')
         }
 
         // Set Output
@@ -44123,43 +44167,20 @@ const vtUpload = __nccwpck_require__(9431)
         core.setOutput('results', output.join(','))
         core.setOutput('json', JSON.stringify(results))
 
-        // Summary
+        // Job Summary
         if (inputs.summary) {
             core.info('📝 Writing Job Summary')
-            const inputs_table = detailsTable('Inputs', 'Input', 'Value', {
-                file_globs: inputs.files.join(','),
-                rate_limit: inputs.rate,
-                update_release: inputs.update,
-                summary: inputs.summary,
-            })
-            core.summary.addRaw('### VirusTotal Action\n')
-            const results_table = resultsTable(results)
-            core.summary.addRaw(results_table, true)
-            // core.summary.addRaw('_Note: The `link` is manually generated_\n')
-            // core.summary.addDetails(
-            //     '<strong>Results</strong>',
-            //     `\n\n\`\`\`json\n${JSON.stringify(results, null, 2)}\n\`\`\`\n\n`
-            // )
-            core.summary.addDetails(
-                '<strong>Outputs</strong>',
-                `\n\n\`\`\`json\n${JSON.stringify(results, null, 2)}\n\`\`\`\n\n` +
-                    `\n\n\`\`\`text\n${output.join('\n')}\n\`\`\`\n\n`
-            )
-            core.summary.addRaw(inputs_table, true)
-            core.summary.addRaw(
-                '\n[View Documentation](https://github.com/cssnr/virustotal-action?tab=readme-ov-file#readme) | '
-            )
-            core.summary.addRaw(
-                '[Report an Issue or Request a Feature](https://github.com/cssnr/virustotal-action/issues)'
-            )
-            await core.summary.write()
-        } else {
-            core.info('⏩ Skipping Job Summary')
+            await writeSummary(inputs, results, output)
         }
 
         core.info('✅ \u001b[32;1mFinished Success')
     } catch (e) {
+        core.endGroup()
         console.log(e)
+        if (e.response) {
+            console.log(`\u001b[31m Error: ${e.response.statusText}`)
+            console.log(e.response.data)
+        }
         core.setFailed(e.message)
     }
 })()
@@ -44173,6 +44194,8 @@ const vtUpload = __nccwpck_require__(9431)
  * @return {Promise<Object[{id, name, link}]>}
  */
 async function processRelease(inputs, limiter, octokit, release) {
+    core.startGroup('Processing Release Assets')
+
     // Get Assets
     const assets = await octokit.rest.repos.listReleaseAssets({
         ...github.context.repo,
@@ -44192,10 +44215,14 @@ async function processRelease(inputs, limiter, octokit, release) {
         fs.mkdirSync(assetsPath)
     }
 
+    console.log(assets.data)
+    core.endGroup() // Assets
+
     // Process Assets
     const results = []
     for (const asset of assets.data) {
-        core.info(`--- Processing Asset: ${asset.name}`)
+        core.startGroup(`Processing: \u001b[36m${asset.name}`)
+        // core.info(`--- Processing Asset: ${asset.name}`)
         if (inputs.rate) {
             const remainingRequests = await limiter.removeTokens(1)
             console.log('remainingRequests:', remainingRequests)
@@ -44211,8 +44238,9 @@ async function processRelease(inputs, limiter, octokit, release) {
         })
         fs.writeFileSync(filePath, Buffer.from(file.data))
         const result = await processVt(inputs, asset.name, filePath)
-        // console.log('result:', result)
+        console.log('result:', result)
         results.push(result)
+        core.endGroup() // Processing
     }
     return results
 }
@@ -44229,14 +44257,17 @@ async function processFiles(inputs, limiter) {
         matchDirectories: false,
     })
     const files = await globber.glob()
+    core.startGroup('Processing File Globs')
     console.log('files:', files)
+    core.endGroup() // Files
     if (!files.length) {
         throw new Error('No files to process.')
     }
     const results = []
     for (const file of files) {
         const name = file.split('\\').pop().split('/').pop()
-        core.info(`--- Processing File: ${name}`)
+        // core.info(`--- Processing File: ${name}`)
+        core.startGroup(`Processing: \u001b[36m${name}`)
         if (inputs.rate) {
             const remainingRequests = await limiter.removeTokens(1)
             console.log('remainingRequests:', remainingRequests)
@@ -44244,6 +44275,7 @@ async function processFiles(inputs, limiter) {
         const result = await processVt(inputs, name, file)
         // console.log('result:', result)
         results.push(result)
+        core.endGroup() // Processing
     }
     return results
 }
@@ -44270,10 +44302,11 @@ async function processVt(inputs, name, filePath) {
  */
 async function getRelease(octokit) {
     const release_id = github.context.payload.release?.id
-    console.log('release_id:', release_id)
+    // console.log('release_id:', release_id)
     if (!release_id) {
         return
     }
+    core.info(`Found Release ID: \u001b[32m${release_id}`)
     const release = await octokit.rest.repos.getRelease({
         ...github.context.repo,
         release_id,
@@ -44283,7 +44316,14 @@ async function getRelease(octokit) {
 
 /**
  * @function parseInputs
- * @return {{token: string, key: string, files: string[], rate: number, update: boolean, summary: boolean}}
+ * @return {{
+ *   token: string,
+ *   key: string,
+ *   files: string[],
+ *   rate: number,
+ *   update: boolean,
+ *   summary: boolean
+ * }}
  */
 function parseInputs() {
     const githubToken = core.getInput('github_token', { required: true })
@@ -44307,38 +44347,56 @@ function parseInputs() {
 }
 
 /**
- * @function inputsTable
- * @param {String} summary
- * @param {String} h1
- * @param {String} h2
- * @param {Object} details
- * @return String
- */
-function detailsTable(summary, h1, h2, details) {
-    const table = [
-        `<details><summary><strong>${summary}</strong></summary>`,
-        `<table><tr><th>${h1}</th><th>${h2}</th></tr>`,
-    ]
-    for (const [key, object] of Object.entries(details)) {
-        const value = object.toString() || '-'
-        table.push(`<tr><td>${key}</td><td><code>${value}</code></td></tr>`)
-    }
-    return table.join('') + '</table></details>'
-}
-
-/**
- * @function inputsTable
+ * @function writeSummary
+ * @param {Object} inputs
  * @param {Object} results
- * @return String
+ * @param {Array} output
+ * @return {Promise<void>}
  */
-function resultsTable(results) {
-    const table = [`<table><tr><th>File</th><th>ID</th></tr>`]
+async function writeSummary(inputs, results, output) {
+    core.summary.addRaw('## VirusTotal Action\n')
+
+    const results_table = []
     for (const result of results) {
-        table.push(
-            `<tr><td><a href="${result.link}">${result.name}</a></td><td>${result.id}</td></tr>`
-        )
+        results_table.push([
+            { data: `<a href="${result.link}">${result.name}</a>` },
+            { data: result.id },
+        ])
     }
-    return table.join('') + '</table>'
+    core.summary.addTable([
+        [
+            { data: 'File', header: true },
+            { data: 'ID', header: true },
+        ],
+        ...results_table,
+    ])
+
+    core.summary.addDetails(
+        '<strong>Outputs</strong>',
+        `\n\n\`\`\`json\n${JSON.stringify(results, null, 2)}\n\`\`\`` +
+            `\n\n\`\`\`text\n${output.join('\n')}\n\`\`\`\n\n`
+    )
+
+    core.summary.addRaw('<details><summary>Inputs</summary>')
+    core.summary.addTable([
+        [
+            { data: 'Input', header: true },
+            { data: 'Value', header: true },
+        ],
+        [
+            { data: 'file_globs' },
+            { data: `<code>${inputs.files.join(',')}</code>` },
+        ],
+        [{ data: 'rate_limit' }, { data: `<code>${inputs.rate}</code>` }],
+        [{ data: 'update_release' }, { data: `<code>${inputs.update}</code>` }],
+        [{ data: 'summary' }, { data: `<code>${inputs.summary}</code>` }],
+    ])
+    core.summary.addRaw('</details>\n')
+
+    const text = 'View Documentation, Report Issues or Request Features'
+    const link = 'https://github.com/cssnr/virustotal-action'
+    core.summary.addRaw(`\n[${text}](${link}?tab=readme-ov-file#readme)\n\n---`)
+    await core.summary.write()
 }
 
 module.exports = __webpack_exports__;
