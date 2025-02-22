@@ -78,7 +78,12 @@ const vtUpload = require('./vt')
 
         core.info('✅ \u001b[32;1mFinished Success')
     } catch (e) {
+        core.endGroup()
         console.log(e)
+        if (e.response) {
+            console.log(`\u001b[31m Error: ${e.response.statusText}`)
+            console.log(e.response.data)
+        }
         core.setFailed(e.message)
     }
 })()

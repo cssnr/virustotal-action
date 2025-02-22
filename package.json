@@ -8,10 +8,10 @@
   "dependencies": {
     "@actions/core": "^1.11.1",
     "@actions/github": "^6.0.0",
-    "@actions/glob": "^0.4.0",
+    "@actions/glob": "^0.5.0",
     "axios": "^1.7.9",
     "form-data": "^4.0.2",
-    "limiter": "^2.1.0"
+    "limiter": "^3.0.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.20.0",
