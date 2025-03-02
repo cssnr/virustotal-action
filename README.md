@@ -1,5 +1,6 @@
 [![Release](https://img.shields.io/github/actions/workflow/status/cssnr/virustotal-action/release.yaml?logo=github&logoColor=white&label=release)](https://github.com/cssnr/virustotal-action/actions/workflows/release.yaml)
 [![Test](https://img.shields.io/github/actions/workflow/status/cssnr/virustotal-action/test.yaml?logo=github&logoColor=white&label=test)](https://github.com/cssnr/virustotal-action/actions/workflows/test.yaml)
+[![Lint](https://img.shields.io/github/actions/workflow/status/cssnr/virustotal-action/lint.yaml?logo=github&logoColor=white&label=lint)](https://github.com/cssnr/virustotal-action/actions/workflows/lint.yaml)
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=cssnr_virustotal-action&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=cssnr_virustotal-action)
 [![GitHub Release Version](https://img.shields.io/github/v/release/cssnr/virustotal-action?logo=github)](https://github.com/cssnr/virustotal-action/releases/latest)
 [![GitHub Last Commit](https://img.shields.io/github/last-commit/cssnr/virustotal-action?logo=github&logoColor=white&label=updated)](https://github.com/cssnr/virustotal-action/graphs/commit-activity)
@@ -96,6 +97,10 @@ README.md/ZWFkNTUwMDlhYTM4MTU3MzljYWE1NWRlMjQ5MzE5Y2E6MTc0MDE3NDA5Ng==
 ---
 
 </details>
+
+To see a workflow run you can view a recent
+[test.yaml workflow run](https://github.com/cssnr/virustotal-action/actions/workflows/test.yaml)
+_(requires login)_.
 
 With minimal inputs (to process release assets automatically):
 
