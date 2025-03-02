@@ -10,7 +10,7 @@
     "@actions/core": "^1.11.1",
     "@actions/github": "^6.0.0",
     "@actions/glob": "^0.5.0",
-    "axios": "^1.7.9",
+    "axios": "^1.8.1",
     "form-data": "^4.0.2",
     "limiter": "^3.0.0"
   },
@@ -18,8 +18,8 @@
     "@eslint/js": "^9.20.0",
     "@vercel/ncc": "^0.38.3",
     "eslint": "^9.21.0",
-    "eslint-config-prettier": "^10.0.1",
+    "eslint-config-prettier": "^10.0.2",
     "eslint-plugin-prettier": "^5.2.3",
-    "prettier": "^3.5.1"
+    "prettier": "^3.5.2"
   }
 }
