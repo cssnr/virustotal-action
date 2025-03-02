@@ -30,13 +30,13 @@ for files up to **650MB**. Therefore, files over 32MB will consume 2 API calls.
 ## Inputs
 
 | input          | required | default        | description              |
-| -------------- | -------- | -------------- | ------------------------ |
+| -------------- | :------: | -------------- | ------------------------ |
 | vt_api_key     | **Yes**  | -              | VirusTotal API Key \*    |
-| file_globs     | No       | -              | File Globs to Process \* |
-| rate_limit     | No       | `4`            | API Calls Per Minute \*  |
-| update_release | No       | `true`         | Update Release Notes \*  |
-| summary        | No       | `true`         | Add Summary to Job \*    |
-| github_token   | No       | `github.token` | Only for external or PAT |
+| file_globs     |    -     | -              | File Globs to Process \* |
+| rate_limit     |    -     | `4`            | API Calls Per Minute \*  |
+| update_release |    -     | `true`         | Update Release Notes \*  |
+| summary        |    -     | `true`         | Add Summary to Job \*    |
+| github_token   |    -     | `github.token` | Only for external or PAT |
 
 **vt_api_key** - Get your API key from: https://www.virustotal.com/gui/my-apikey
 
@@ -47,7 +47,7 @@ For glob pattern [examples](#examples), see https://github.com/actions/toolkit/t
 
 **update_release** - If triggered from a release workflow, will update the release notes and append the results.
 
-<details><summary>📜 View Release Notes Update Example</summary>
+<details><summary>👀 View Release Notes Update Example</summary>
 
 ---
 
@@ -63,7 +63,7 @@ For glob pattern [examples](#examples), see https://github.com/actions/toolkit/t
 
 **summary** - Will add result details to the job summary in the workflow
 
-<details><summary>📜 View Job Summary Example</summary>
+<details><summary>👀 View Job Summary Example</summary>
 
 ---
 
