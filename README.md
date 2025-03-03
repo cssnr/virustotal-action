@@ -99,8 +99,7 @@ README.md/ZWFkNTUwMDlhYTM4MTU3MzljYWE1NWRlMjQ5MzE5Y2E6MTc0MDE3NDA5Ng==
 </details>
 
 To see a workflow run you can view a recent
-[test.yaml run](https://github.com/cssnr/virustotal-action/actions/workflows/test.yaml)
-_(requires login)_.
+[test.yaml run](https://github.com/cssnr/virustotal-action/actions/workflows/test.yaml) _(requires login)_.
 
 With minimal inputs (to process release assets automatically):
 
