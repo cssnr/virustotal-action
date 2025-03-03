@@ -1,5 +1,6 @@
 [![Release](https://img.shields.io/github/actions/workflow/status/cssnr/virustotal-action/release.yaml?logo=github&logoColor=white&label=release)](https://github.com/cssnr/virustotal-action/actions/workflows/release.yaml)
 [![Test](https://img.shields.io/github/actions/workflow/status/cssnr/virustotal-action/test.yaml?logo=github&logoColor=white&label=test)](https://github.com/cssnr/virustotal-action/actions/workflows/test.yaml)
+[![Lint](https://img.shields.io/github/actions/workflow/status/cssnr/virustotal-action/lint.yaml?logo=github&logoColor=white&label=lint)](https://github.com/cssnr/virustotal-action/actions/workflows/lint.yaml)
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=cssnr_virustotal-action&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=cssnr_virustotal-action)
 [![GitHub Release Version](https://img.shields.io/github/v/release/cssnr/virustotal-action?logo=github)](https://github.com/cssnr/virustotal-action/releases/latest)
 [![GitHub Last Commit](https://img.shields.io/github/last-commit/cssnr/virustotal-action?logo=github&logoColor=white&label=updated)](https://github.com/cssnr/virustotal-action/graphs/commit-activity)
@@ -29,13 +30,13 @@ for files up to **650MB**. Therefore, files over 32MB will consume 2 API calls.
 ## Inputs
 
 | input          | required | default        | description              |
-| -------------- | -------- | -------------- | ------------------------ |
+| -------------- | :------: | -------------- | ------------------------ |
 | vt_api_key     | **Yes**  | -              | VirusTotal API Key \*    |
-| file_globs     | No       | -              | File Globs to Process \* |
-| rate_limit     | No       | `4`            | API Calls Per Minute \*  |
-| update_release | No       | `true`         | Update Release Notes \*  |
-| summary        | No       | `true`         | Add Summary to Job \*    |
-| github_token   | No       | `github.token` | Only for external or PAT |
+| file_globs     |    -     | -              | File Globs to Process \* |
+| rate_limit     |    -     | `4`            | API Calls Per Minute \*  |
+| update_release |    -     | `true`         | Update Release Notes \*  |
+| summary        |    -     | `true`         | Add Summary to Job \*    |
+| github_token   |    -     | `github.token` | Only for external or PAT |
 
 **vt_api_key** - Get your API key from: https://www.virustotal.com/gui/my-apikey
 
@@ -46,7 +47,7 @@ For glob pattern [examples](#examples), see https://github.com/actions/toolkit/t
 
 **update_release** - If triggered from a release workflow, will update the release notes and append the results.
 
-<details><summary>📜 View Release Notes Update Example</summary>
+<details><summary>👀 View Release Notes Update Example</summary>
 
 ---
 
@@ -62,7 +63,7 @@ For glob pattern [examples](#examples), see https://github.com/actions/toolkit/t
 
 **summary** - Will add result details to the job summary in the workflow
 
-<details><summary>📜 View Job Summary Example</summary>
+<details><summary>👀 View Job Summary Example</summary>
 
 ---
 
@@ -96,6 +97,9 @@ README.md/ZWFkNTUwMDlhYTM4MTU3MzljYWE1NWRlMjQ5MzE5Y2E6MTc0MDE3NDA5Ng==
 ---
 
 </details>
+
+To see a workflow run you can view a recent
+[test.yaml run](https://github.com/cssnr/virustotal-action/actions/workflows/test.yaml) _(requires login)_.
 
 With minimal inputs (to process release assets automatically):
 
@@ -298,6 +302,8 @@ If you are experiencing an issue/bug or getting unexpected results you can:
 # Contributing
 
 Currently, the best way to contribute to this project is to star this project on GitHub.
+
+If you would like to submit a PR, please review the [CONTRIBUTING.md](CONTRIBUTING.md).
 
 Additionally, you can support other GitHub Actions I have published:
 
