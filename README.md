@@ -1,12 +1,15 @@
-[![Release](https://img.shields.io/github/actions/workflow/status/cssnr/virustotal-action/release.yaml?logo=github&logoColor=white&label=release)](https://github.com/cssnr/virustotal-action/actions/workflows/release.yaml)
-[![Test](https://img.shields.io/github/actions/workflow/status/cssnr/virustotal-action/test.yaml?logo=github&logoColor=white&label=test)](https://github.com/cssnr/virustotal-action/actions/workflows/test.yaml)
-[![Lint](https://img.shields.io/github/actions/workflow/status/cssnr/virustotal-action/lint.yaml?logo=github&logoColor=white&label=lint)](https://github.com/cssnr/virustotal-action/actions/workflows/lint.yaml)
+[![Tags](https://img.shields.io/badge/tags-v1_%7C_v1.3-blue?logo=git&logoColor=white)](https://github.com/cssnr/virustotal-action/tags)
+[![GitHub Release Version](https://img.shields.io/github/v/release/cssnr/virustotal-action?logo=git&logoColor=white&label=latest)](https://github.com/cssnr/virustotal-action/releases/latest)
+[![Release](https://img.shields.io/github/actions/workflow/status/cssnr/virustotal-action/release.yaml?logo=github&label=release)](https://github.com/cssnr/virustotal-action/actions/workflows/release.yaml)
+[![Test](https://img.shields.io/github/actions/workflow/status/cssnr/virustotal-action/test.yaml?logo=github&label=test)](https://github.com/cssnr/virustotal-action/actions/workflows/test.yaml)
+[![Lint](https://img.shields.io/github/actions/workflow/status/cssnr/virustotal-action/lint.yaml?logo=github&label=lint)](https://github.com/cssnr/virustotal-action/actions/workflows/lint.yaml)
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=cssnr_virustotal-action&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=cssnr_virustotal-action)
-[![GitHub Release Version](https://img.shields.io/github/v/release/cssnr/virustotal-action?logo=github)](https://github.com/cssnr/virustotal-action/releases/latest)
-[![GitHub Last Commit](https://img.shields.io/github/last-commit/cssnr/virustotal-action?logo=github&logoColor=white&label=updated)](https://github.com/cssnr/virustotal-action/graphs/commit-activity)
+[![GitHub Last Commit](https://img.shields.io/github/last-commit/cssnr/virustotal-action?logo=github&label=updated)](https://github.com/cssnr/virustotal-action/graphs/commit-activity)
 [![Codeberg Last Commit](https://img.shields.io/gitea/last-commit/cssnr/virustotal-action/master?gitea_url=https%3A%2F%2Fcodeberg.org%2F&logo=codeberg&logoColor=white&label=updated)](https://codeberg.org/cssnr/virustotal-action)
-[![GitHub Top Language](https://img.shields.io/github/languages/top/cssnr/virustotal-action?logo=htmx&logoColor=white)](https://github.com/cssnr/virustotal-action)
-[![GitHub Org Stars](https://img.shields.io/github/stars/cssnr?style=flat&logo=github&logoColor=white)](https://cssnr.github.io/)
+[![GitHub Top Language](https://img.shields.io/github/languages/top/cssnr/virustotal-action?logo=htmx)](https://github.com/cssnr/virustotal-action)
+[![GitHub Forks](https://img.shields.io/github/forks/cssnr/virustotal-action?style=flat&logo=github)](https://github.com/cssnr/virustotal-action/forks)
+[![GitHub Repo Stars](https://img.shields.io/github/stars/cssnr/virustotal-action?style=flat&logo=github)](https://github.com/cssnr/virustotal-action/stargazers)
+[![GitHub Org Stars](https://img.shields.io/github/stars/cssnr?style=flat&logo=github&label=org%20stars)](https://cssnr.github.io/)
 [![Discord](https://img.shields.io/discord/899171661457293343?logo=discord&logoColor=white&label=discord&color=7289da)](https://discord.gg/wXy6m2X8wY)
 
 # VirusTotal Action
@@ -14,14 +17,15 @@
 - [Inputs](#Inputs)
 - [Outputs](#Outputs)
 - [Examples](#Examples)
+- [Tags](#Tags)
 - [Planned Features](#Planned-Features)
 - [Support](#Support)
 - [Contributing](#Contributing)
 
 Upload Release Assets or Specified File Globs to VirusTotal and Optionally Update Release Notes with Links.
 
-The /files/ endpoint is used for files under 32MB, otherwise, the /files/upload_url/ endpoint is used providing support
-for files up to **650MB**. Therefore, files over 32MB will consume 2 API calls.
+The /files/ endpoint is used for files under 32MB, otherwise, the /files/upload_url/ endpoint is used
+providing support for files up to **650MB**. Therefore, files over 32MB will consume 2 API calls.
 
 > [!NOTE]  
 > Please submit a [Feature Request](https://github.com/cssnr/virustotal-action/discussions/categories/feature-requests)
@@ -36,7 +40,7 @@ for files up to **650MB**. Therefore, files over 32MB will consume 2 API calls.
 | rate_limit     |    -     | `4`            | API Calls Per Minute \*  |
 | update_release |    -     | `true`         | Update Release Notes \*  |
 | summary        |    -     | `true`         | Add Summary to Job \*    |
-| github_token   |    -     | `github.token` | Only for external or PAT |
+| github_token   |    -     | `github.token` | Only for using a PAT     |
 
 **vt_api_key** - Get your API key from: https://www.virustotal.com/gui/my-apikey
 
@@ -98,10 +102,10 @@ README.md/ZWFkNTUwMDlhYTM4MTU3MzljYWE1NWRlMjQ5MzE5Y2E6MTc0MDE3NDA5Ng==
 
 </details>
 
-To see a workflow run you can view a recent
-[test.yaml run](https://github.com/cssnr/virustotal-action/actions/workflows/test.yaml) _(requires login)_.
+To view a workflow run, click on a recent
+[Test](https://github.com/cssnr/virustotal-action/actions/workflows/test.yaml) job _(requires login)_.
 
-With minimal inputs (to process release assets automatically):
+With no inputs this will automatically process release assets.
 
 ```yaml
 - name: 'VirusTotal'
@@ -110,7 +114,7 @@ With minimal inputs (to process release assets automatically):
     vt_api_key: ${{ secrets.VT_API_KEY }}
 ```
 
-With all inputs:
+<details><summary>With all inputs</summary>
 
 ```yaml
 - name: 'VirusTotal'
@@ -125,7 +129,9 @@ With all inputs:
     summary: true
 ```
 
-See [Examples](#Examples) for more...
+</details>
+
+See the [Examples](#Examples) section for more options.
 
 ## Outputs
 
@@ -134,13 +140,15 @@ See [Examples](#Examples) for more...
 | results | Comma Seperated String of `file/id` |
 | json    | JSON Object List Results String     |
 
-Example results:
+Web links can be generated by appending the ID to: `https://www.virustotal.com/gui/file-analysis/`
+
+Example `results` output.
 
 ```text
 install-linux.deb/ZDAzY2M2ZGQzZmEwZWEwZTI2NjQ5NmVjZDcwZmY0YTY6MTcxNzU2NzI3Ng==,install-macos.pkg/YTkzOGFjMDZhNTI3NmU5MmI4YzQzNzg5ODE3OGRkMzg6MTcxNzU2NzI3OA==,install-win.exe/M2JhZDJhMzRhYjcyM2Y0MDFkNjU1OGZlYjFkNjgyMmY6MTcxNzU2NzI4MA==
 ```
 
-Example json (note: `link` is manually generated and added):
+Example `json` output.
 
 ```json
 [
@@ -152,7 +160,7 @@ Example json (note: `link` is manually generated and added):
 ]
 ```
 
-Using the outputs:
+Using the outputs.
 
 ```yaml
 - name: 'VirusTotal'
@@ -171,7 +179,19 @@ _Note: URLs are generated by appending the ID to this url: https://www.virustota
 
 ## Examples
 
-Ensure the step only runs on a release event:
+💡 _Click on an example heading to expand or collapse the example._
+
+<details open><summary>Process release assets</summary>
+
+```yaml
+- name: 'VirusTotal'
+  uses: cssnr/virustotal-action@v1
+  with:
+    vt_api_key: ${{ secrets.VT_API_KEY }}
+```
+
+</details>
+<details><summary>Only run on a release event</summary>
 
 ```yaml
 - name: 'VirusTotal'
@@ -181,7 +201,8 @@ Ensure the step only runs on a release event:
     vt_api_key: ${{ secrets.VT_API_KEY }}
 ```
 
-With File Globs:
+</details>
+<details><summary>Using file globs</summary>
 
 ```yaml
 - name: 'VirusTotal'
@@ -191,7 +212,8 @@ With File Globs:
     file_globs: artifacts/*
 ```
 
-Multiple Globs:
+</details>
+<details><summary>Multiple file globs</summary>
 
 ```yaml
 - name: 'VirusTotal'
@@ -203,7 +225,24 @@ Multiple Globs:
       assets/asset.zip
 ```
 
-Simple Example:
+</details>
+<details><summary>With all inputs</summary>
+
+```yaml
+- name: 'VirusTotal'
+  uses: cssnr/virustotal-action@v1
+  with:
+    vt_api_key: ${{ secrets.VT_API_KEY }}
+    file_globs: |
+      file1
+      release/*
+    rate_limit: 4
+    update_release: true
+    summary: true
+```
+
+</details>
+<details><summary>Simple workflow example</summary>
 
 ```yaml
 name: 'VirusTotal Example'
@@ -225,7 +264,8 @@ jobs:
           vt_api_key: ${{ secrets.VT_API_KEY }}
 ```
 
-Full Example:
+</details>
+<details><summary>Full workflow example</summary>
 
 ```yaml
 name: 'VirusTotal Example'
@@ -276,8 +316,27 @@ jobs:
           update_release: true
 ```
 
+</details>
+
 To see this used in a build/release/scan workflow, check out:  
 https://github.com/cssnr/hls-downloader-client/blob/master/.github/workflows/build.yaml
+
+For more examples, you can check out other projects using this action:  
+https://github.com/cssnr/virustotal-action/network/dependents
+
+## Tags
+
+The following [rolling tags](https://github.com/cssnr/virustotal-action/tags) are maintained.
+
+| Tag      | Example  | Bugs | Feat. | Description                            |
+| -------- | -------- | :--: | :---: | -------------------------------------- |
+| `vN`     | `v1`     |  ✅  |  ✅   | Points to latest `vN.x.x` release.     |
+| `vN.N`   | `v1.0`   |  ✅  |  ❌   | Points to latest `vN.N.x` release.     |
+| `vN.N.N` | `v1.0.0` |  ❌  |  ❌   | Points directly to a specific release. |
+
+**Important:** Make sure to use one of the [latest tags](https://github.com/cssnr/virustotal-action/tags).
+
+You can view the release notes for each version on the [Releases Page](https://github.com/cssnr/virustotal-action/releases).
 
 ## Planned Features
 
@@ -298,6 +357,8 @@ If you are experiencing an issue/bug or getting unexpected results you can:
 - Report an Issue: https://github.com/cssnr/virustotal-action/issues
 - Chat with us on Discord: https://discord.gg/wXy6m2X8wY
 - Provide General Feedback: [https://cssnr.github.io/feedback/](https://cssnr.github.io/feedback/?app=VirusTotal%20Scan)
+
+For more information, see the CSSNR [SUPPORT.md](https://github.com/cssnr/.github/blob/master/.github/SUPPORT.md#support).
 
 # Contributing
 
