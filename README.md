@@ -358,6 +358,8 @@ If you are experiencing an issue/bug or getting unexpected results you can:
 - Chat with us on Discord: https://discord.gg/wXy6m2X8wY
 - Provide General Feedback: [https://cssnr.github.io/feedback/](https://cssnr.github.io/feedback/?app=VirusTotal%20Scan)
 
+For more information, see the CSSNR [SUPPORT.md](https://github.com/cssnr/.github/blob/master/.github/SUPPORT.md#support).
+
 # Contributing
 
 Currently, the best way to contribute to this project is to star this project on GitHub.
