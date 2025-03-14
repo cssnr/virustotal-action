@@ -1,9 +1,9 @@
-[![GitHub Tag Major](https://img.shields.io/github/v/tag/cssnr/virustotal-action?filter=!v*.*&logo=git&logoColor=white&labelColor=585858&label=%20)](https://github.com/cssnr/virustotal-action/tags)
-[![GitHub Tag Minor](https://img.shields.io/github/v/tag/cssnr/virustotal-action?filter=!v*.*.*&logo=git&logoColor=white&labelColor=585858&label=%20)](https://github.com/cssnr/virustotal-action/tags)
+[![GitHub Tag Major](https://img.shields.io/github/v/tag/cssnr/virustotal-action?sort=semver&filter=!v*.*&logo=git&logoColor=white&labelColor=585858&label=%20)](https://github.com/cssnr/virustotal-action/tags)
+[![GitHub Tag Minor](https://img.shields.io/github/v/tag/cssnr/virustotal-action?sort=semver&filter=!v*.*.*&logo=git&logoColor=white&labelColor=585858&label=%20)](https://github.com/cssnr/virustotal-action/tags)
 [![GitHub Release Version](https://img.shields.io/github/v/release/cssnr/virustotal-action?logo=git&logoColor=white&labelColor=585858&label=%20)](https://github.com/cssnr/virustotal-action/releases/latest)
-[![Release](https://img.shields.io/github/actions/workflow/status/cssnr/virustotal-action/release.yaml?logo=github&label=release)](https://github.com/cssnr/virustotal-action/actions/workflows/release.yaml)
-[![Test](https://img.shields.io/github/actions/workflow/status/cssnr/virustotal-action/test.yaml?logo=github&label=test)](https://github.com/cssnr/virustotal-action/actions/workflows/test.yaml)
-[![Lint](https://img.shields.io/github/actions/workflow/status/cssnr/virustotal-action/lint.yaml?logo=github&label=lint)](https://github.com/cssnr/virustotal-action/actions/workflows/lint.yaml)
+[![Workflow Release](https://img.shields.io/github/actions/workflow/status/cssnr/virustotal-action/release.yaml?logo=github&label=release)](https://github.com/cssnr/virustotal-action/actions/workflows/release.yaml)
+[![Workflow Test](https://img.shields.io/github/actions/workflow/status/cssnr/virustotal-action/test.yaml?logo=github&label=test)](https://github.com/cssnr/virustotal-action/actions/workflows/test.yaml)
+[![Workflow Lint](https://img.shields.io/github/actions/workflow/status/cssnr/virustotal-action/lint.yaml?logo=github&label=lint)](https://github.com/cssnr/virustotal-action/actions/workflows/lint.yaml)
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=cssnr_virustotal-action&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=cssnr_virustotal-action)
 [![GitHub Last Commit](https://img.shields.io/github/last-commit/cssnr/virustotal-action?logo=github&label=updated)](https://github.com/cssnr/virustotal-action/graphs/commit-activity)
 [![Codeberg Last Commit](https://img.shields.io/gitea/last-commit/cssnr/virustotal-action/master?gitea_url=https%3A%2F%2Fcodeberg.org%2F&logo=codeberg&logoColor=white&label=updated)](https://codeberg.org/cssnr/virustotal-action)
@@ -32,32 +32,31 @@ providing support for files up to **650MB**. Therefore, files over 32MB will con
 > Please submit a [Feature Request](https://github.com/cssnr/virustotal-action/discussions/categories/feature-requests)
 > for new features or [Open an Issue](https://github.com/cssnr/virustotal-action/issues) if you find any bugs.
 
-This is a fairly simple action, for more details see
-[src/index.js](src/index.js) and [src/vt.js](src/vt.js).
+This is a fairly simple action, for more details see [src/index.js](src/index.js) and [src/vt.js](src/vt.js).
 
 ## Inputs
 
-| input          | required | default        | description              |
-| -------------- | :------: | -------------- | ------------------------ |
-| vt_api_key     | **Yes**  | -              | VirusTotal API Key \*    |
-| file_globs     |    -     | -              | File Globs to Process \* |
-| rate_limit     |    -     | `4`            | API Calls Per Minute \*  |
-| update_release |    -     | `true`         | Update Release Notes \*  |
-| summary        |    -     | `true`         | Add Summary to Job \*    |
-| github_token   |    -     | `github.token` | Only for using a PAT     |
+| Input            | Required | Default        | Description              |
+| :--------------- | :------: | :------------- | :----------------------- |
+| `vt_api_key`     | **Yes**  | -              | VirusTotal API Key \*    |
+| `file_globs`     |    -     | -              | File Globs to Process \* |
+| `rate_limit`     |    -     | `4`            | API Calls Per Minute \*  |
+| `update_release` |    -     | `true`         | Update Release Notes \*  |
+| `summary`        |    -     | `true`         | Add Summary to Job \*    |
+| `github_token`   |    -     | `github.token` | For use with a PAT       |
 
 _For additional details on inputs, see the VirusTotal API
 [documentation](https://docs.virustotal.com/reference/overview)._
 
-**vt_api_key** - Get your API key from: https://www.virustotal.com/gui/my-apikey
+**vt_api_key:** Get your API key from: https://www.virustotal.com/gui/my-apikey
 
-**file_globs** - If provided, will process matching files instead of release assets.
+**file_globs:** If provided, will process matching files instead of release assets.
 For glob pattern, see [examples](#examples) and the
 [docs](https://github.com/actions/toolkit/tree/main/packages/glob#patterns).
 
-**rate_limit** - Rate limit for file uploads. Set to `0` to disable if you know what you are doing.
+**rate_limit:** Rate limit for file uploads. Set to `0` to disable if you know what you are doing.
 
-**update_release** - If triggered from a release workflow, will update the release notes and append the results.
+**update_release:** If triggered from a release workflow, will update the release notes and append the results.
 
 <details><summary>👀 View Release Notes Update Example</summary>
 
@@ -73,7 +72,7 @@ For glob pattern, see [examples](#examples) and the
 
 </details>
 
-**summary** - Will add result details to the job summary in the workflow
+**summary:** Will add result details to the job summary in the workflow
 
 <details><summary>👀 View Job Summary Example</summary>
 
@@ -110,8 +109,7 @@ README.md/ZWFkNTUwMDlhYTM4MTU3MzljYWE1NWRlMjQ5MzE5Y2E6MTc0MDE3NDA5Ng==
 
 </details>
 
-To view a workflow run, click on a recent
-[Test](https://github.com/cssnr/virustotal-action/actions/workflows/test.yaml) job _(requires login)_.
+To view a workflow run, click on a recent [Test](https://github.com/cssnr/virustotal-action/actions/workflows/test.yaml) job _(requires login)_.
 
 With no inputs this will automatically process release assets.
 
@@ -143,8 +141,8 @@ See the [Examples](#Examples) section for more options.
 
 ## Outputs
 
-| output  | description                         |
-| ------- | ----------------------------------- |
+| Output  | Description                         |
+| :------ | :---------------------------------- |
 | results | Comma Seperated String of `file/id` |
 | json    | JSON Object List Results String     |
 
@@ -338,11 +336,11 @@ https://github.com/cssnr/virustotal-action/network/dependents
 
 The following rolling [tags](https://github.com/cssnr/virustotal-action/tags) are maintained.
 
-| Tag                                                                                                                                                                                                     | Example  | Target   | Bugs | Feat. | Description                                               |
-| ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------- | -------- | :--: | :---: | --------------------------------------------------------- |
-| [![GitHub Tag](https://img.shields.io/github/v/tag/cssnr/virustotal-action?filter=!v*.*&style=for-the-badge&label=%20&color=limegreen)](https://github.com/cssnr/virustotal-action/releases/latest)     | `vN`     | `vN.x.x` |  ✅  |  ✅   | Includes new features but is always backwards compatible. |
-| [![GitHub Tag](https://img.shields.io/github/v/tag/cssnr/virustotal-action?filter=!v*.*.*&style=for-the-badge&label=%20&color=yellowgreen)](https://github.com/cssnr/virustotal-action/releases/latest) | `vN.N`   | `vN.N.x` |  ✅  |  ❌   | Only receives bug fixes. This is the most stable tag.     |
-| [![GitHub Release](https://img.shields.io/github/v/release/cssnr/virustotal-action?style=for-the-badge&label=%20&color=orange)](https://github.com/cssnr/virustotal-action/releases/latest)             | `vN.N.N` | `vN.N.N` |  ❌  |  ❌   | Not a rolling tag. **Not** recommended.                   |
+| Version&nbsp;Tag                                                                                                                                                                                                   | Rolling | Bugs | Feat. | Target   | Example  |
+| :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :-----: | :--: | :---: | :------- | :------- |
+| [![GitHub Tag Major](https://img.shields.io/github/v/tag/cssnr/virustotal-action?sort=semver&filter=!v*.*&style=for-the-badge&label=%20&color=44cc10)](https://github.com/cssnr/virustotal-action/releases/latest) |   ✅    |  ✅  |  ✅   | `vN.x.x` | `vN`     |
+| [![GitHub Tag Minor](https://img.shields.io/github/v/tag/cssnr/virustotal-action?sort=semver&filter=!v*.*.*&style=for-the-badge&label=%20&color=blue)](https://github.com/cssnr/virustotal-action/releases/latest) |   ✅    |  ✅  |  ❌   | `vN.N.x` | `vN.N`   |
+| [![GitHub Release](https://img.shields.io/github/v/release/cssnr/virustotal-action?style=for-the-badge&label=%20&color=red)](https://github.com/cssnr/virustotal-action/releases/latest)                           |   ❌    |  ❌  |  ❌   | `vN.N.N` | `vN.N.N` |
 
 You can view the release notes for each version on the [releases](https://github.com/cssnr/virustotal-action/releases) page.
 
