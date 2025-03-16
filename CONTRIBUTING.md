@@ -3,8 +3,6 @@
 > [!WARNING]  
 > This guide is a work in progress and may not be complete.
 
-This is a basic contributing guide and is a work in progress.
-
 ## Workflow
 
 1. Fork the repository.
@@ -43,7 +41,7 @@ You will need to add your secrets to a `.secrets` file in env file format.
 ```shell
 npm install
 npm run build:watch
-act -j test -e event.json
+act -j test
 ```
 
 To print your secrets in plan text (insecure) use `--insecure-secrets`

@@ -39293,7 +39293,7 @@ __exportStar(__nccwpck_require__(5338), exports);
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
 "use strict";
-/*! Axios v1.8.2 Copyright (c) 2025 Matt Zabriskie and contributors */
+/*! Axios v1.8.3 Copyright (c) 2025 Matt Zabriskie and contributors */
 
 
 const FormData$1 = __nccwpck_require__(6454);
@@ -41379,7 +41379,7 @@ function buildFullPath(baseURL, requestedURL, allowAbsoluteUrls) {
   return requestedURL;
 }
 
-const VERSION = "1.8.2";
+const VERSION = "1.8.3";
 
 function parseProtocol(url) {
   const match = /^([-+\w]{1,25})(:?\/\/|:)/.exec(url);
@@ -42697,7 +42697,7 @@ const resolveConfig = (config) => {
 
   newConfig.headers = headers = AxiosHeaders$1.from(headers);
 
-  newConfig.url = buildURL(buildFullPath(newConfig.baseURL, newConfig.url), config.params, config.paramsSerializer);
+  newConfig.url = buildURL(buildFullPath(newConfig.baseURL, newConfig.url, newConfig.allowAbsoluteUrls), config.params, config.paramsSerializer);
 
   // HTTP basic authentication
   if (auth) {
@@ -44123,9 +44123,9 @@ const vtUpload = __nccwpck_require__(9431)
         core.info('🏳️ Starting VirusTotal Action')
 
         // Parse Inputs
-        core.startGroup('Parsed Inputs')
+        core.startGroup('Config')
         const inputs = parseInputs()
-        console.log('inputs:', inputs)
+        console.log(inputs)
         core.endGroup() // Inputs
 
         // Set Variables
@@ -44356,34 +44356,23 @@ async function writeSummary(inputs, results, output) {
         ...results_table,
     ])
 
-    core.summary.addDetails(
-        '<strong>Outputs</strong>',
-        `\n\n\`\`\`json\n${JSON.stringify(results, null, 2)}\n\`\`\`` +
-            `\n\n\`\`\`text\n${output.join('\n')}\n\`\`\`\n\n`
-    )
+    core.summary.addRaw('<details><summary>Outputs</summary>')
+    core.summary.addCodeBlock(JSON.stringify(results, null, 2), 'json')
+    core.summary.addCodeBlock(output.join('\n'), 'text')
+    core.summary.addRaw('</details>\n')
 
-    // core.summary.addRaw('<details><summary>Inputs</summary>')
-    // core.summary.addTable([
-    //     [
-    //         { data: 'Input', header: true },
-    //         { data: 'Value', header: true },
-    //     ],
-    //     [
-    //         { data: 'file_globs' },
-    //         { data: `<code>${inputs.files.join(',')}</code>` },
-    //     ],
-    //     [{ data: 'rate_limit' }, { data: `<code>${inputs.rate}</code>` }],
-    //     [{ data: 'update_release' }, { data: `<code>${inputs.update}</code>` }],
-    //     [{ data: 'summary' }, { data: `<code>${inputs.summary}</code>` }],
-    // ])
-    // core.summary.addRaw('</details>\n')
+    // core.summary.addDetails(
+    //     '<strong>Outputs</strong>',
+    //     `\n\n\`\`\`json\n${JSON.stringify(results, null, 2)}\n\`\`\`` +
+    //         `\n\n\`\`\`text\n${output.join('\n')}\n\`\`\`\n\n`
+    // )
 
     delete inputs.token
     delete inputs.key
     const yaml = Object.entries(inputs)
         .map(([k, v]) => `${k}: ${JSON.stringify(v)}`)
         .join('\n')
-    core.summary.addRaw('<details><summary>Inputs</summary>')
+    core.summary.addRaw('<details><summary>Config</summary>')
     core.summary.addCodeBlock(yaml, 'yaml')
     core.summary.addRaw('</details>\n')
 

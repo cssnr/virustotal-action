@@ -17,9 +17,11 @@
 
 - [Inputs](#Inputs)
   - [Release Notes](#Release-Notes)
+  - [Permissions](#Permissions)
 - [Outputs](#Outputs)
 - [Examples](#Examples)
 - [Tags](#Tags)
+- [Features](#Features)
 - [Planned Features](#Planned-Features)
 - [Support](#Support)
 - [Contributing](#Contributing)
@@ -51,9 +53,8 @@ This is a fairly simple action, for more details see [src/index.js](src/index.js
 
 **vt_api_key:** Get your API key from: https://www.virustotal.com/gui/my-apikey
 
-**file_globs:** If provided, will process matching files instead of release assets.
-For glob pattern, see [examples](#examples) and the
-[docs](https://github.com/actions/toolkit/tree/main/packages/glob#patterns).
+**file_globs:** If provided, will process matching files instead of release assets.  
+For glob pattern, see [examples](#examples) and the [docs](https://github.com/actions/toolkit/tree/main/packages/glob#patterns).
 
 **rate_limit:** Rate limit for file uploads. Set to `0` to disable if you know what you are doing.
 
@@ -87,8 +88,7 @@ README.md/ZWFkNTUwMDlhYTM4MTU3MzljYWE1NWRlMjQ5MzE5Y2E6MTc0MDE3NDA5Ng==
 ```
 
 </details>
-<details><summary>Inputs</summary><table><tr><th>Input</th><th>Value</th></tr><tr><td>file_globs</td><td><code>README.md,.gitignore</code></td></tr><tr><td>rate_limit</td><td><code>4</code></td></tr><tr><td>update_release</td><td><code>true</code></td></tr><tr><td>summary</td><td><code>true</code></td></tr></table>
-</details>
+<details><summary>Inputs</summary><table><tr><th>Input</th><th>Value</th></tr><tr><td>file_globs</td><td><code>README.md,.gitignore</code></td></tr><tr><td>rate_limit</td><td><code>4</code></td></tr><tr><td>update_release</td><td><code>true</code></td></tr><tr><td>summary</td><td><code>true</code></td></tr></table></details>
 
 ---
 
@@ -146,6 +146,19 @@ You can customize the heading or remove it by specifying an empty string.
 ---
 
 </details>
+
+### Permissions
+
+This action requires the following permissions to edit releases notes:
+
+```yaml
+permissions:
+  contents: write
+```
+
+Permissions documentation for
+[Workflows](https://docs.github.com/en/actions/writing-workflows/choosing-what-your-workflow-does/controlling-permissions-for-github_token)
+and [Actions](https://docs.github.com/en/actions/security-for-github-actions/security-guides/automatic-token-authentication).
 
 ## Outputs
 
@@ -268,17 +281,21 @@ on:
     types: [published]
 
 jobs:
-  test:
-    name: 'Test'
+  release:
+    name: 'Release'
     runs-on: ubuntu-latest
     timeout-minutes: 5
+    permissions:
+      contents: write
 
     steps:
-      - name: 'VirusTotal'
+      - name: 'VirusTotal Action'
         uses: cssnr/virustotal-action@v1
         with:
           vt_api_key: ${{ secrets.VT_API_KEY }}
 ```
+
+Note: the permissions are applied to the individual job here.
 
 </details>
 <details><summary>Full workflow example</summary>
@@ -289,6 +306,9 @@ name: 'VirusTotal Example'
 on:
   release:
     types: [published]
+
+permissions:
+  contents: write
 
 jobs:
   windows:
@@ -317,20 +337,22 @@ jobs:
           file_glob: true
 
   virustotal:
-    name: 'VirusTotal Scan'
+    name: 'VirusTotal'
     runs-on: ubuntu-latest
     needs: [windows]
     timeout-minutes: 5
     if: ${{ github.event_name == 'release' }}
 
     steps:
-      - name: 'VirusTotal'
+      - name: 'VirusTotal Action'
         uses: cssnr/virustotal-action@v1
         with:
           vt_api_key: ${{ secrets.VT_API_KEY }}
           rate_limit: 4
           update_release: true
 ```
+
+Note: the permissions are applied to the entire workflow here.
 
 </details>
 
@@ -354,6 +376,14 @@ You can view the release notes for each version on the [releases](https://github
 
 The **Major** tag is recommended. It is the most up-to-date and always backwards compatible.
 Breaking changes would result in a **Major** version bump. At a minimum you should use a **Minor** tag.
+
+## Features
+
+- Supports files up to 650MB
+- Upload Release Assets or File Globs
+- Append Results to Release Notes
+- Customize Results Heading
+- Rate Limited for Free Accounts
 
 ## Planned Features
 
