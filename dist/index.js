@@ -44210,6 +44210,9 @@ const vtUpload = __nccwpck_require__(9431)
  */
 async function processRelease(inputs, limiter, octokit, release) {
     core.startGroup('Processing Release Assets')
+    core.startGroup('Release')
+    console.log('release:', release)
+    core.endGroup() // Release
 
     // Get Assets
     const assets = await octokit.rest.repos.listReleaseAssets({

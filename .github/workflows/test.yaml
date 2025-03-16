@@ -36,7 +36,6 @@ jobs:
           file_globs: |
             README.md
             .gitignore
-          release_heading: "**VirusTotal Results:**"
 
       - name: "Verify Outputs"
         run: |
