@@ -44125,7 +44125,7 @@ const vtUpload = __nccwpck_require__(9431)
         // Parse Inputs
         core.startGroup('Parsed Inputs')
         const inputs = parseInputs()
-        // console.log('inputs:', inputs)
+        console.log('inputs:', inputs)
         core.endGroup() // Inputs
 
         // Set Variables
@@ -44148,7 +44148,6 @@ const vtUpload = __nccwpck_require__(9431)
         } else {
             return core.setFailed('No files or release to process.')
         }
-        // console.log('-'.repeat(40))
         core.startGroup('Results')
         console.log(results)
         core.endGroup() // Results
@@ -44201,7 +44200,7 @@ const vtUpload = __nccwpck_require__(9431)
 })()
 
 /**
- * @function processRelease
+ * Process Release Assets
  * @param {Object} inputs
  * @param {RateLimiter} limiter
  * @param {InstanceType<typeof github.GitHub>} octokit
@@ -44264,7 +44263,7 @@ async function processRelease(inputs, limiter, octokit, release) {
 }
 
 /**
- * @function processFiles
+ * Process File Globs
  * @param {Object} inputs
  * @param {RateLimiter} limiter
  * @return {Promise<Object[{id, name, link}]>}
@@ -44299,7 +44298,7 @@ async function processFiles(inputs, limiter) {
 }
 
 /**
- * @function processVt
+ * Process VirusTotal
  * @param {Object} inputs
  * @param {String} name
  * @param {String} filePath
@@ -44314,7 +44313,7 @@ async function processVt(inputs, name, filePath) {
 }
 
 /**
- * @function processRelease
+ * Get Release
  * @param {InstanceType<typeof github.GitHub>} octokit
  * @return {Promise<InstanceType<typeof github.GitHub>|Undefined>}
  */
@@ -44333,9 +44332,9 @@ async function getRelease(octokit) {
 }
 
 /**
- * @function writeSummary
+ * Write Job Summary
  * @param {Object} inputs
- * @param {Object} results
+ * @param {Object[]} results
  * @param {Array} output
  * @return {Promise<void>}
  */
@@ -44363,20 +44362,29 @@ async function writeSummary(inputs, results, output) {
             `\n\n\`\`\`text\n${output.join('\n')}\n\`\`\`\n\n`
     )
 
+    // core.summary.addRaw('<details><summary>Inputs</summary>')
+    // core.summary.addTable([
+    //     [
+    //         { data: 'Input', header: true },
+    //         { data: 'Value', header: true },
+    //     ],
+    //     [
+    //         { data: 'file_globs' },
+    //         { data: `<code>${inputs.files.join(',')}</code>` },
+    //     ],
+    //     [{ data: 'rate_limit' }, { data: `<code>${inputs.rate}</code>` }],
+    //     [{ data: 'update_release' }, { data: `<code>${inputs.update}</code>` }],
+    //     [{ data: 'summary' }, { data: `<code>${inputs.summary}</code>` }],
+    // ])
+    // core.summary.addRaw('</details>\n')
+
+    delete inputs.token
+    delete inputs.key
+    const yaml = Object.entries(inputs)
+        .map(([k, v]) => `${k}: ${JSON.stringify(v)}`)
+        .join('\n')
     core.summary.addRaw('<details><summary>Inputs</summary>')
-    core.summary.addTable([
-        [
-            { data: 'Input', header: true },
-            { data: 'Value', header: true },
-        ],
-        [
-            { data: 'file_globs' },
-            { data: `<code>${inputs.files.join(',')}</code>` },
-        ],
-        [{ data: 'rate_limit' }, { data: `<code>${inputs.rate}</code>` }],
-        [{ data: 'update_release' }, { data: `<code>${inputs.update}</code>` }],
-        [{ data: 'summary' }, { data: `<code>${inputs.summary}</code>` }],
-    ])
+    core.summary.addCodeBlock(yaml, 'yaml')
     core.summary.addRaw('</details>\n')
 
     const text = 'View Documentation, Report Issues or Request Features'
@@ -44386,7 +44394,7 @@ async function writeSummary(inputs, results, output) {
 }
 
 /**
- * @function parseInputs
+ * Parse Inputs
  * @return {{
  *   token: string,
  *   key: string,
@@ -44398,24 +44406,14 @@ async function writeSummary(inputs, results, output) {
  * }}
  */
 function parseInputs() {
-    const githubToken = core.getInput('github_token', { required: true })
-    const vtApiKey = core.getInput('vt_api_key', { required: true })
-    const fileGlobs = core.getInput('file_globs')
-    console.log(`file_globs: "${fileGlobs}"`)
-    const rateLimit = core.getInput('rate_limit', { required: true })
-    console.log('rate_limit:', rateLimit)
-    const updateRelease = core.getBooleanInput('update_release')
-    console.log('update_release:', updateRelease)
-    const summary = core.getBooleanInput('summary')
-    console.log('summary:', summary)
     return {
-        token: githubToken,
-        key: vtApiKey,
-        files: fileGlobs ? fileGlobs.split('\n') : [],
-        rate: parseInt(rateLimit),
-        update: updateRelease,
+        token: core.getInput('github_token', { required: true }),
+        key: core.getInput('vt_api_key', { required: true }),
+        files: core.getInput('file_globs').split('\n').filter(Boolean),
+        rate: parseInt(core.getInput('rate_limit', { required: true })),
+        update: core.getBooleanInput('update_release'),
         heading: core.getInput('release_heading'),
-        summary: summary,
+        summary: core.getBooleanInput('summary'),
     }
 }
 
