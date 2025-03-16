@@ -414,8 +414,8 @@ Breaking changes would result in a **Major** version bump. At a minimum you shou
 
 ### Planned
 
+- Add options to customize release update/output format (next on the roadmap).
 - Add release body parsing to properly process new files on edited activity.
-- Add options to customize release update/output format.
 - Add option to apply file_globs to release assets.
 - Refactor vt.js as a Class to clean up index.js.
 
