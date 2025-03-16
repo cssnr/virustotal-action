@@ -20,6 +20,10 @@ inputs:
     description: "Update Release Notes"
     required: false
     default: "true"
+  release_heading:
+    description: "Release Notes Heading"
+    required: false
+    default: "🛡️ **VirusTotal Results:**"
   summary:
     description: "Add Summary to Job"
     required: false

@@ -44157,7 +44157,8 @@ const vtUpload = __nccwpck_require__(9431)
         if (release && inputs.update) {
             core.startGroup(`Updating Release ${release.id}`)
             let body = release.body
-            body += '\n\n🛡️ **VirusTotal Results:**'
+            body += `\n\n${inputs.heading}`
+
             for (const result of results) {
                 body += `\n- [${result.name}](${result.link})`
             }
@@ -44329,38 +44330,6 @@ async function getRelease(octokit) {
 }
 
 /**
- * @function parseInputs
- * @return {{
- *   token: string,
- *   key: string,
- *   files: string[],
- *   rate: number,
- *   update: boolean,
- *   summary: boolean
- * }}
- */
-function parseInputs() {
-    const githubToken = core.getInput('github_token', { required: true })
-    const vtApiKey = core.getInput('vt_api_key', { required: true })
-    const fileGlobs = core.getInput('file_globs')
-    console.log(`file_globs: "${fileGlobs}"`)
-    const rateLimit = core.getInput('rate_limit', { required: true })
-    console.log('rate_limit:', rateLimit)
-    const updateRelease = core.getBooleanInput('update_release')
-    console.log('update_release:', updateRelease)
-    const summary = core.getBooleanInput('summary')
-    console.log('summary:', summary)
-    return {
-        token: githubToken,
-        key: vtApiKey,
-        files: fileGlobs ? fileGlobs.split('\n') : [],
-        rate: parseInt(rateLimit),
-        update: updateRelease,
-        summary: summary,
-    }
-}
-
-/**
  * @function writeSummary
  * @param {Object} inputs
  * @param {Object} results
@@ -44411,6 +44380,40 @@ async function writeSummary(inputs, results, output) {
     const link = 'https://github.com/cssnr/virustotal-action'
     core.summary.addRaw(`\n[${text}](${link}?tab=readme-ov-file#readme)\n\n---`)
     await core.summary.write()
+}
+
+/**
+ * @function parseInputs
+ * @return {{
+ *   token: string,
+ *   key: string,
+ *   files: string[],
+ *   rate: number,
+ *   update: boolean,
+ *   heading: string,
+ *   summary: boolean
+ * }}
+ */
+function parseInputs() {
+    const githubToken = core.getInput('github_token', { required: true })
+    const vtApiKey = core.getInput('vt_api_key', { required: true })
+    const fileGlobs = core.getInput('file_globs')
+    console.log(`file_globs: "${fileGlobs}"`)
+    const rateLimit = core.getInput('rate_limit', { required: true })
+    console.log('rate_limit:', rateLimit)
+    const updateRelease = core.getBooleanInput('update_release')
+    console.log('update_release:', updateRelease)
+    const summary = core.getBooleanInput('summary')
+    console.log('summary:', summary)
+    return {
+        token: githubToken,
+        key: vtApiKey,
+        files: fileGlobs ? fileGlobs.split('\n') : [],
+        rate: parseInt(rateLimit),
+        update: updateRelease,
+        heading: core.getInput('release_heading'),
+        summary: summary,
+    }
 }
 
 module.exports = __webpack_exports__;

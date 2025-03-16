@@ -16,6 +16,7 @@
 # VirusTotal Action
 
 - [Inputs](#Inputs)
+  - [Release Notes](#Release-Notes)
 - [Outputs](#Outputs)
 - [Examples](#Examples)
 - [Tags](#Tags)
@@ -23,7 +24,7 @@
 - [Support](#Support)
 - [Contributing](#Contributing)
 
-Upload Release Assets or Specified File Globs to VirusTotal and Optionally Update Release Notes with Links.
+Upload Release Assets or Specified File Globs to VirusTotal and Optionally Update [Release Notes](#Release-Notes) with Links.
 
 The /files/ endpoint is used for files under 32MB, otherwise, the /files/upload_url/ endpoint is used
 providing support for files up to **650MB**. Therefore, files over 32MB will consume 2 API calls.
@@ -36,17 +37,17 @@ This is a fairly simple action, for more details see [src/index.js](src/index.js
 
 ## Inputs
 
-| Input            | Required | Default        | Description              |
-| :--------------- | :------: | :------------- | :----------------------- |
-| `vt_api_key`     | **Yes**  | -              | VirusTotal API Key \*    |
-| `file_globs`     |    -     | -              | File Globs to Process \* |
-| `rate_limit`     |    -     | `4`            | API Calls Per Minute \*  |
-| `update_release` |    -     | `true`         | Update Release Notes \*  |
-| `summary`        |    -     | `true`         | Add Summary to Job \*    |
-| `github_token`   |    -     | `github.token` | For use with a PAT       |
+| Input&nbsp;Name   |  Req.   | Default&nbsp;Value            | Short&nbsp;Description                       |
+| :---------------- | :-----: | :---------------------------- | :------------------------------------------- |
+| `vt_api_key`      | **Yes** | -                             | VirusTotal API Key \*                        |
+| `file_globs`      |    -    | -                             | File Globs to Process \*                     |
+| `rate_limit`      |    -    | `4`                           | API Calls Per Minute \*                      |
+| `update_release`  |    -    | `true`                        | Update [Release Notes](#Release-Notes)       |
+| `release_heading` |    -    | _[see below](#Release-Notes)_ | Release Notes Heading _[⤵️](#Release-Notes)_ |
+| `summary`         |    -    | `true`                        | Add Summary to Job \*                        |
+| `github_token`    |    -    | `github.token`                | For use with a PAT                           |
 
-_For additional details on inputs, see the VirusTotal API
-[documentation](https://docs.virustotal.com/reference/overview)._
+> For more details on inputs, see the VirusTotal API [documentation](https://docs.virustotal.com/reference/overview).
 
 **vt_api_key:** Get your API key from: https://www.virustotal.com/gui/my-apikey
 
@@ -55,22 +56,6 @@ For glob pattern, see [examples](#examples) and the
 [docs](https://github.com/actions/toolkit/tree/main/packages/glob#patterns).
 
 **rate_limit:** Rate limit for file uploads. Set to `0` to disable if you know what you are doing.
-
-**update_release:** If triggered from a release workflow, will update the release notes and append the results.
-
-<details><summary>👀 View Release Notes Update Example</summary>
-
----
-
-🛡️ **VirusTotal Results:**
-
-- [install-linux.deb](https://www.virustotal.com/gui/file-analysis/ZDAzY2M2ZGQzZmEwZWEwZTI2NjQ5NmVjZDcwZmY0YTY6MTcxNzU2NzI3Ng==)
-- [install-macos.pkg](https://www.virustotal.com/gui/file-analysis/YTkzOGFjMDZhNTI3NmU5MmI4YzQzNzg5ODE3OGRkMzg6MTcxNzU2NzI3OA==)
-- [install-win.exe](https://www.virustotal.com/gui/file-analysis/M2JhZDJhMzRhYjcyM2Y0MDFkNjU1OGZlYjFkNjgyMmY6MTcxNzU2NzI4MA==)
-
----
-
-</details>
 
 **summary:** Will add result details to the job summary in the workflow
 
@@ -138,6 +123,29 @@ With no inputs this will automatically process release assets.
 </details>
 
 See the [Examples](#Examples) section for more options.
+
+### Release Notes
+
+If run on a release event, the Releas Notes are automatically updated with the results unless you set `update_release` to `false`.
+You can customize the heading or remove it by specifying an empty string.
+
+**update_release:** If triggered from a release workflow, will update the release notes and append the results.
+
+**release_heading:** Customize the Release Notes Heading. If not specified it defaults too:
+
+<details open><summary>👀 View Release Notes Update Example</summary>
+
+---
+
+🛡️ **VirusTotal Results:**
+
+- [install-linux.deb](https://www.virustotal.com/gui/file-analysis/ZDAzY2M2ZGQzZmEwZWEwZTI2NjQ5NmVjZDcwZmY0YTY6MTcxNzU2NzI3Ng==)
+- [install-macos.pkg](https://www.virustotal.com/gui/file-analysis/YTkzOGFjMDZhNTI3NmU5MmI4YzQzNzg5ODE3OGRkMzg6MTcxNzU2NzI3OA==)
+- [install-win.exe](https://www.virustotal.com/gui/file-analysis/M2JhZDJhMzRhYjcyM2Y0MDFkNjU1OGZlYjFkNjgyMmY6MTcxNzU2NzI4MA==)
+
+---
+
+</details>
 
 ## Outputs
 
@@ -336,13 +344,16 @@ https://github.com/cssnr/virustotal-action/network/dependents
 
 The following rolling [tags](https://github.com/cssnr/virustotal-action/tags) are maintained.
 
-| Version&nbsp;Tag                                                                                                                                                                                                   | Rolling | Bugs | Feat. | Target   | Example  |
-| :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :-----: | :--: | :---: | :------- | :------- |
-| [![GitHub Tag Major](https://img.shields.io/github/v/tag/cssnr/virustotal-action?sort=semver&filter=!v*.*&style=for-the-badge&label=%20&color=44cc10)](https://github.com/cssnr/virustotal-action/releases/latest) |   ✅    |  ✅  |  ✅   | `vN.x.x` | `vN`     |
-| [![GitHub Tag Minor](https://img.shields.io/github/v/tag/cssnr/virustotal-action?sort=semver&filter=!v*.*.*&style=for-the-badge&label=%20&color=blue)](https://github.com/cssnr/virustotal-action/releases/latest) |   ✅    |  ✅  |  ❌   | `vN.N.x` | `vN.N`   |
-| [![GitHub Release](https://img.shields.io/github/v/release/cssnr/virustotal-action?style=for-the-badge&label=%20&color=red)](https://github.com/cssnr/virustotal-action/releases/latest)                           |   ❌    |  ❌  |  ❌   | `vN.N.N` | `vN.N.N` |
+| Version&nbsp;Tag                                                                                                                                                                                                   | Rolling | Bugs | Feat. |   Name    |  Target  | Example  |
+| :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :-----: | :--: | :---: | :-------: | :------: | :------- |
+| [![GitHub Tag Major](https://img.shields.io/github/v/tag/cssnr/virustotal-action?sort=semver&filter=!v*.*&style=for-the-badge&label=%20&color=44cc10)](https://github.com/cssnr/virustotal-action/releases/latest) |   ✅    |  ✅  |  ✅   | **Major** | `vN.x.x` | `vN`     |
+| [![GitHub Tag Minor](https://img.shields.io/github/v/tag/cssnr/virustotal-action?sort=semver&filter=!v*.*.*&style=for-the-badge&label=%20&color=blue)](https://github.com/cssnr/virustotal-action/releases/latest) |   ✅    |  ✅  |  ❌   | **Minor** | `vN.N.x` | `vN.N`   |
+| [![GitHub Release](https://img.shields.io/github/v/release/cssnr/virustotal-action?style=for-the-badge&label=%20&color=red)](https://github.com/cssnr/virustotal-action/releases/latest)                           |   ❌    |  ❌  |  ❌   | **Micro** | `vN.N.N` | `vN.N.N` |
 
 You can view the release notes for each version on the [releases](https://github.com/cssnr/virustotal-action/releases) page.
+
+The **Major** tag is recommended. It is the most up-to-date and always backwards compatible.
+Breaking changes would result in a **Major** version bump. At a minimum you should use a **Minor** tag.
 
 ## Planned Features
 
