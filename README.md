@@ -126,14 +126,14 @@ See the [Examples](#Examples) section for more options.
 
 ### Release Notes
 
-If run on a release event, the Releas Notes are automatically updated with the results unless you set `update_release` to `false`.
+If run on a release event, the Release Notes are automatically updated with the results unless you set `update_release` to `false`.
 You can customize the heading or remove it by specifying an empty string.
 
 **update_release:** If triggered from a release workflow, will update the release notes and append the results.
 
-**release_heading:** Customize the Release Notes Heading. If not specified it defaults too:
+**release_heading:** Customize the Release Notes Heading. Default: `🛡️ **VirusTotal Results:**`
 
-<details open><summary>👀 View Release Notes Update Example</summary>
+#### Example Release Notes Update
 
 ---
 
@@ -144,8 +144,6 @@ You can customize the heading or remove it by specifying an empty string.
 - [install-win.exe](https://www.virustotal.com/gui/file-analysis/M2JhZDJhMzRhYjcyM2Y0MDFkNjU1OGZlYjFkNjgyMmY6MTcxNzU2NzI4MA==)
 
 ---
-
-</details>
 
 ### Permissions
 
