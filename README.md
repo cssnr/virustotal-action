@@ -22,7 +22,7 @@
 - [Examples](#Examples)
 - [Tags](#Tags)
 - [Features](#Features)
-- [Planned Features](#Planned-Features)
+  - [Planned](#Planned)
 - [Support](#Support)
 - [Contributing](#Contributing)
 
@@ -385,12 +385,14 @@ Breaking changes would result in a **Major** version bump. At a minimum you shou
 - Customize Results Heading
 - Rate Limited for Free Accounts
 
-## Planned Features
+### Planned
 
 - Add release body parsing to properly process new files on edited activity.
 - Add options to customize release update/output format.
 - Add option to apply file_globs to release assets.
 - Refactor vt.js as a Class to clean up index.js.
+
+Don't see your feature here, or want to see one implemented? Let us know in the [Support](#Support) section.
 
 # Support
 
