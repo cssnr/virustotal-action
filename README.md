@@ -134,7 +134,7 @@ You can customize the heading or remove it by specifying an empty string.
 
 **update_release:** If triggered from a release workflow, will update the release notes and append the results.
 
-**release_heading:** Customize the Release Notes Heading.
+**release_heading:** Customize the Release Notes Heading.  
 Default: `🛡️ **VirusTotal Results:**`
 
 #### Example Release Notes Update
