@@ -41,7 +41,7 @@ This is a fairly simple action, for more details see [src/index.js](src/index.js
 
 ## Inputs
 
-| Input&nbsp;Name   |  Req.   | Default&nbsp;Value            | Short&nbsp;Description                       |
+| Input&nbsp;Name   |  Req.   | Default&nbsp;Value            | Input&nbsp;Description                       |
 | :---------------- | :-----: | :---------------------------- | :------------------------------------------- |
 | `vt_api_key`      | **Yes** | -                             | VirusTotal API Key \*                        |
 | `file_globs`      |    -    | -                             | File Globs to Process \*                     |
@@ -162,7 +162,7 @@ and [Actions](https://docs.github.com/en/actions/security-for-github-actions/sec
 
 ## Outputs
 
-| Output  | Short&nbsp;Description              |
+| Output  | Output&nbsp;Description             |
 | :------ | :---------------------------------- |
 | results | Comma Seperated String of `file/id` |
 | json    | JSON Object List Results String     |
