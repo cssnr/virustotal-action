@@ -3,7 +3,11 @@
 > [!WARNING]  
 > This guide is a work in progress and may not be complete.
 
-This is a basic contributing guide and is a work in progress.
+- [Workflow](#Workflow)
+- [Testing](#Testing)
+  - [GitHub](#GitHub)
+  - [Locally](#Locally)
+  - [Releases](#Releases)
 
 ## Workflow
 
@@ -43,7 +47,7 @@ You will need to add your secrets to a `.secrets` file in env file format.
 ```shell
 npm install
 npm run build:watch
-act -j test -e event.json
+act -j test
 ```
 
 To print your secrets in plan text (insecure) use `--insecure-secrets`
@@ -51,3 +55,28 @@ To print your secrets in plan text (insecure) use `--insecure-secrets`
 To see all available jobs run `act -l` and see `act --help`
 
 For more information see the documentation: https://nektosact.com/usage/index.html
+
+### Releases
+
+To test a release locally you need to create an `event.json` with the following.
+Make sure the release ID points to an existing release in the current repository.
+
+```json
+{
+  "release": {
+    "id": 205787094
+  }
+}
+```
+
+To test a release on GitHub, create a release workflow that points to your branch.
+Then you can easily create and delete releases over and over with:
+
+```shell
+gh release delete v1.0.2 --cleanup-tag
+gh release create v1.0.2 --generate-notes --latest
+```
+
+---
+
+For more information, see the CSSNR [CONTRIBUTING.md](https://github.com/cssnr/.github/blob/master/.github/CONTRIBUTING.md#contributing).

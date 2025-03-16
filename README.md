@@ -16,14 +16,19 @@
 # VirusTotal Action
 
 - [Inputs](#Inputs)
+  - [Release Notes](#Release-Notes)
+  - [Permissions](#Permissions)
 - [Outputs](#Outputs)
 - [Examples](#Examples)
 - [Tags](#Tags)
-- [Planned Features](#Planned-Features)
+- [Features](#Features)
+  - [Planned](#Planned)
 - [Support](#Support)
 - [Contributing](#Contributing)
 
-Upload Release Assets or Specified File Globs to VirusTotal and Optionally Update Release Notes with Links.
+Upload Release Assets or Specified File Globs to VirusTotal and Optionally Update [Release Notes](#Release-Notes) with Links.
+
+See the [Features](#Features) for more details.
 
 The /files/ endpoint is used for files under 32MB, otherwise, the /files/upload_url/ endpoint is used
 providing support for files up to **650MB**. Therefore, files over 32MB will consume 2 API calls.
@@ -36,41 +41,24 @@ This is a fairly simple action, for more details see [src/index.js](src/index.js
 
 ## Inputs
 
-| Input            | Required | Default        | Description              |
-| :--------------- | :------: | :------------- | :----------------------- |
-| `vt_api_key`     | **Yes**  | -              | VirusTotal API Key \*    |
-| `file_globs`     |    -     | -              | File Globs to Process \* |
-| `rate_limit`     |    -     | `4`            | API Calls Per Minute \*  |
-| `update_release` |    -     | `true`         | Update Release Notes \*  |
-| `summary`        |    -     | `true`         | Add Summary to Job \*    |
-| `github_token`   |    -     | `github.token` | For use with a PAT       |
+| Input&nbsp;Name   |  Req.   | Default&nbsp;Value            | Input&nbsp;Description                     |
+| :---------------- | :-----: | :---------------------------- | :----------------------------------------- |
+| `vt_api_key`      | **Yes** | -                             | VirusTotal API Key \*                      |
+| `file_globs`      |    -    | -                             | File Globs to Process \*                   |
+| `rate_limit`      |    -    | `4`                           | API Calls Per Minute \*                    |
+| `update_release`  |    -    | `true`                        | Update the [Release Notes](#Release-Notes) |
+| `release_heading` |    -    | _[see below](#Release-Notes)_ | Release Notes Heading [⤵️](#Release-Notes) |
+| `summary`         |    -    | `true`                        | Add Summary to Job \*                      |
+| `github_token`    |    -    | `github.token`                | For use with a PAT                         |
 
-_For additional details on inputs, see the VirusTotal API
-[documentation](https://docs.virustotal.com/reference/overview)._
+> For more details on inputs, see the VirusTotal API [documentation](https://docs.virustotal.com/reference/overview).
 
 **vt_api_key:** Get your API key from: https://www.virustotal.com/gui/my-apikey
 
-**file_globs:** If provided, will process matching files instead of release assets.
-For glob pattern, see [examples](#examples) and the
-[docs](https://github.com/actions/toolkit/tree/main/packages/glob#patterns).
+**file_globs:** If provided, will process matching files instead of release assets.  
+For glob pattern, see [examples](#examples) and the [docs](https://github.com/actions/toolkit/tree/main/packages/glob#patterns).
 
 **rate_limit:** Rate limit for file uploads. Set to `0` to disable if you know what you are doing.
-
-**update_release:** If triggered from a release workflow, will update the release notes and append the results.
-
-<details><summary>👀 View Release Notes Update Example</summary>
-
----
-
-🛡️ **VirusTotal Results:**
-
-- [install-linux.deb](https://www.virustotal.com/gui/file-analysis/ZDAzY2M2ZGQzZmEwZWEwZTI2NjQ5NmVjZDcwZmY0YTY6MTcxNzU2NzI3Ng==)
-- [install-macos.pkg](https://www.virustotal.com/gui/file-analysis/YTkzOGFjMDZhNTI3NmU5MmI4YzQzNzg5ODE3OGRkMzg6MTcxNzU2NzI3OA==)
-- [install-win.exe](https://www.virustotal.com/gui/file-analysis/M2JhZDJhMzRhYjcyM2Y0MDFkNjU1OGZlYjFkNjgyMmY6MTcxNzU2NzI4MA==)
-
----
-
-</details>
 
 **summary:** Will add result details to the job summary in the workflow
 
@@ -78,31 +66,28 @@ For glob pattern, see [examples](#examples) and the
 
 ---
 
-<table><tr><th>File</th><th>ID</th></tr><tr><td><a href="https://www.virustotal.com/gui/file-analysis/ZWFkNTUwMDlhYTM4MTU3MzljYWE1NWRlMjQ5MzE5Y2E6MTc0MDE3NDA5Ng==">README.md</a></td><td>ZWFkNTUwMDlhYTM4MTU3MzljYWE1NWRlMjQ5MzE5Y2E6MTc0MDE3NDA5Ng==</td></tr><tr><td><a href="https://www.virustotal.com/gui/file-analysis/ZTM4MjBkOGFhYmRhNjBiMTY0MTEwZjZkNDE1YjViODc6MTc0MDE3NDA5Ng==">.gitignore</a></td><td>ZTM4MjBkOGFhYmRhNjBiMTY0MTEwZjZkNDE1YjViODc6MTc0MDE3NDA5Ng==</td></tr></table>
-<details><summary><strong>Outputs</strong></summary>
-
-```json
-[
+<table><tr><th>File</th><th>ID</th></tr><tr><td><a href="https://www.virustotal.com/gui/file-analysis/YmFmZTVlZjIzMDRkMjRlMTcwNjk1Yzg0MTgyN2FmMmM6MTc0MjExMjY5Mw==">README.md</a></td><td>YmFmZTVlZjIzMDRkMjRlMTcwNjk1Yzg0MTgyN2FmMmM6MTc0MjExMjY5Mw==</td></tr><tr><td><a href="https://www.virustotal.com/gui/file-analysis/ZTM4MjBkOGFhYmRhNjBiMTY0MTEwZjZkNDE1YjViODc6MTc0MjExMjY5Mw==">.gitignore</a></td><td>ZTM4MjBkOGFhYmRhNjBiMTY0MTEwZjZkNDE1YjViODc6MTc0MjExMjY5Mw==</td></tr></table><details><summary>Outputs</summary>
+<pre lang="json"><code>[
   {
-    "id": "ZWFkNTUwMDlhYTM4MTU3MzljYWE1NWRlMjQ5MzE5Y2E6MTc0MDE3NDA5Ng==",
+    "id": "YmFmZTVlZjIzMDRkMjRlMTcwNjk1Yzg0MTgyN2FmMmM6MTc0MjExMjY5Mw==",
     "name": "README.md",
-    "link": "https://www.virustotal.com/gui/file-analysis/ZWFkNTUwMDlhYTM4MTU3MzljYWE1NWRlMjQ5MzE5Y2E6MTc0MDE3NDA5Ng=="
+    "link": "https://www.virustotal.com/gui/file-analysis/YmFmZTVlZjIzMDRkMjRlMTcwNjk1Yzg0MTgyN2FmMmM6MTc0MjExMjY5Mw=="
   },
   {
-    "id": "ZTM4MjBkOGFhYmRhNjBiMTY0MTEwZjZkNDE1YjViODc6MTc0MDE3NDA5Ng==",
+    "id": "ZTM4MjBkOGFhYmRhNjBiMTY0MTEwZjZkNDE1YjViODc6MTc0MjExMjY5Mw==",
     "name": ".gitignore",
-    "link": "https://www.virustotal.com/gui/file-analysis/ZTM4MjBkOGFhYmRhNjBiMTY0MTEwZjZkNDE1YjViODc6MTc0MDE3NDA5Ng=="
+    "link": "https://www.virustotal.com/gui/file-analysis/ZTM4MjBkOGFhYmRhNjBiMTY0MTEwZjZkNDE1YjViODc6MTc0MjExMjY5Mw=="
   }
 ]
-```
-
-```text
-README.md/ZWFkNTUwMDlhYTM4MTU3MzljYWE1NWRlMjQ5MzE5Y2E6MTc0MDE3NDA5Ng==
-.gitignore/ZTM4MjBkOGFhYmRhNjBiMTY0MTEwZjZkNDE1YjViODc6MTc0MDE3NDA5Ng==
-```
-
-</details>
-<details><summary>Inputs</summary><table><tr><th>Input</th><th>Value</th></tr><tr><td>file_globs</td><td><code>README.md,.gitignore</code></td></tr><tr><td>rate_limit</td><td><code>4</code></td></tr><tr><td>update_release</td><td><code>true</code></td></tr><tr><td>summary</td><td><code>true</code></td></tr></table>
+</code></pre>
+<pre lang="text"><code>README.md/YmFmZTVlZjIzMDRkMjRlMTcwNjk1Yzg0MTgyN2FmMmM6MTc0MjExMjY5Mw==
+.gitignore/ZTM4MjBkOGFhYmRhNjBiMTY0MTEwZjZkNDE1YjViODc6MTc0MjExMjY5Mw==</code></pre>
+</details><details><summary>Config</summary>
+<pre lang="yaml"><code>files: ["README.md",".gitignore"]
+rate: 4
+update: true
+heading: "🛡️ **VirusTotal Results:**"
+summary: true</code></pre>
 </details>
 
 ---
@@ -132,6 +117,7 @@ With no inputs this will automatically process release assets.
       release/*
     rate_limit: 4
     update_release: true
+    release_heading: '🛡️ **VirusTotal Results:**'
     summary: true
 ```
 
@@ -139,9 +125,44 @@ With no inputs this will automatically process release assets.
 
 See the [Examples](#Examples) section for more options.
 
+### Release Notes
+
+If run on a release event, the Release Notes are automatically updated with the results unless you set `update_release` to `false`.
+You can customize the heading or remove it by specifying an empty string.
+
+**update_release:** If triggered from a release workflow, will update the release notes and append the results.
+
+**release_heading:** Customize the Release Notes Heading.  
+Default: `🛡️ **VirusTotal Results:**`
+
+#### Example Release Notes Update
+
+---
+
+🛡️ **VirusTotal Results:**
+
+- [install-linux.deb](https://www.virustotal.com/gui/file-analysis/ZDAzY2M2ZGQzZmEwZWEwZTI2NjQ5NmVjZDcwZmY0YTY6MTcxNzU2NzI3Ng==)
+- [install-macos.pkg](https://www.virustotal.com/gui/file-analysis/YTkzOGFjMDZhNTI3NmU5MmI4YzQzNzg5ODE3OGRkMzg6MTcxNzU2NzI3OA==)
+- [install-win.exe](https://www.virustotal.com/gui/file-analysis/M2JhZDJhMzRhYjcyM2Y0MDFkNjU1OGZlYjFkNjgyMmY6MTcxNzU2NzI4MA==)
+
+---
+
+### Permissions
+
+This action requires the following permissions to edit releases notes:
+
+```yaml
+permissions:
+  contents: write
+```
+
+Permissions documentation for
+[Workflows](https://docs.github.com/en/actions/writing-workflows/choosing-what-your-workflow-does/controlling-permissions-for-github_token)
+and [Actions](https://docs.github.com/en/actions/security-for-github-actions/security-guides/automatic-token-authentication).
+
 ## Outputs
 
-| Output  | Description                         |
+| Output  | Output&nbsp;Description             |
 | :------ | :---------------------------------- |
 | results | Comma Seperated String of `file/id` |
 | json    | JSON Object List Results String     |
@@ -152,13 +173,15 @@ Web links can be generated by appending the ID to this URL:
 https://www.virustotal.com/gui/file-analysis/
 ```
 
-Example `results` output.
+<details><summary>Example Results</summary>
 
 ```text
 install-linux.deb/ZDAzY2M2ZGQzZmEwZWEwZTI2NjQ5NmVjZDcwZmY0YTY6MTcxNzU2NzI3Ng==,install-macos.pkg/YTkzOGFjMDZhNTI3NmU5MmI4YzQzNzg5ODE3OGRkMzg6MTcxNzU2NzI3OA==,install-win.exe/M2JhZDJhMzRhYjcyM2Y0MDFkNjU1OGZlYjFkNjgyMmY6MTcxNzU2NzI4MA==
 ```
 
-Example `json` output.
+</details>
+
+<details><summary>Example JSON</summary>
 
 ```json
 [
@@ -169,6 +192,8 @@ Example `json` output.
   }
 ]
 ```
+
+</details>
 
 Using the outputs.
 
@@ -196,6 +221,18 @@ Using the outputs.
   uses: cssnr/virustotal-action@v1
   with:
     vt_api_key: ${{ secrets.VT_API_KEY }}
+```
+
+</details>
+<details><summary>Customize release notes heading</summary>
+
+```yaml
+- name: 'VirusTotal'
+  uses: cssnr/virustotal-action@v1
+  if: ${{ github.event_name == 'release' }}
+  with:
+    vt_api_key: ${{ secrets.VT_API_KEY }}
+    release_heading: '### Scan Results'
 ```
 
 </details>
@@ -246,6 +283,7 @@ Using the outputs.
       release/*
     rate_limit: 4
     update_release: true
+    release_heading: '🛡️ **VirusTotal Results:**'
     summary: true
 ```
 
@@ -260,17 +298,21 @@ on:
     types: [published]
 
 jobs:
-  test:
-    name: 'Test'
+  release:
+    name: 'Release'
     runs-on: ubuntu-latest
     timeout-minutes: 5
+    permissions:
+      contents: write
 
     steps:
-      - name: 'VirusTotal'
+      - name: 'VirusTotal Action'
         uses: cssnr/virustotal-action@v1
         with:
           vt_api_key: ${{ secrets.VT_API_KEY }}
 ```
+
+Note: the permissions are applied to the individual job here.
 
 </details>
 <details><summary>Full workflow example</summary>
@@ -281,6 +323,9 @@ name: 'VirusTotal Example'
 on:
   release:
     types: [published]
+
+permissions:
+  contents: write
 
 jobs:
   windows:
@@ -309,20 +354,22 @@ jobs:
           file_glob: true
 
   virustotal:
-    name: 'VirusTotal Scan'
+    name: 'VirusTotal'
     runs-on: ubuntu-latest
     needs: [windows]
     timeout-minutes: 5
     if: ${{ github.event_name == 'release' }}
 
     steps:
-      - name: 'VirusTotal'
+      - name: 'VirusTotal Action'
         uses: cssnr/virustotal-action@v1
         with:
           vt_api_key: ${{ secrets.VT_API_KEY }}
           rate_limit: 4
           update_release: true
 ```
+
+Note: the permissions are applied to the entire workflow here.
 
 </details>
 
@@ -336,20 +383,33 @@ https://github.com/cssnr/virustotal-action/network/dependents
 
 The following rolling [tags](https://github.com/cssnr/virustotal-action/tags) are maintained.
 
-| Version&nbsp;Tag                                                                                                                                                                                                   | Rolling | Bugs | Feat. | Target   | Example  |
-| :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :-----: | :--: | :---: | :------- | :------- |
-| [![GitHub Tag Major](https://img.shields.io/github/v/tag/cssnr/virustotal-action?sort=semver&filter=!v*.*&style=for-the-badge&label=%20&color=44cc10)](https://github.com/cssnr/virustotal-action/releases/latest) |   ✅    |  ✅  |  ✅   | `vN.x.x` | `vN`     |
-| [![GitHub Tag Minor](https://img.shields.io/github/v/tag/cssnr/virustotal-action?sort=semver&filter=!v*.*.*&style=for-the-badge&label=%20&color=blue)](https://github.com/cssnr/virustotal-action/releases/latest) |   ✅    |  ✅  |  ❌   | `vN.N.x` | `vN.N`   |
-| [![GitHub Release](https://img.shields.io/github/v/release/cssnr/virustotal-action?style=for-the-badge&label=%20&color=red)](https://github.com/cssnr/virustotal-action/releases/latest)                           |   ❌    |  ❌  |  ❌   | `vN.N.N` | `vN.N.N` |
+| Version&nbsp;Tag                                                                                                                                                                                                   | Rolling | Bugs | Feat. |   Name    |  Target  | Example  |
+| :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :-----: | :--: | :---: | :-------: | :------: | :------- |
+| [![GitHub Tag Major](https://img.shields.io/github/v/tag/cssnr/virustotal-action?sort=semver&filter=!v*.*&style=for-the-badge&label=%20&color=44cc10)](https://github.com/cssnr/virustotal-action/releases/latest) |   ✅    |  ✅  |  ✅   | **Major** | `vN.x.x` | `vN`     |
+| [![GitHub Tag Minor](https://img.shields.io/github/v/tag/cssnr/virustotal-action?sort=semver&filter=!v*.*.*&style=for-the-badge&label=%20&color=blue)](https://github.com/cssnr/virustotal-action/releases/latest) |   ✅    |  ✅  |  ❌   | **Minor** | `vN.N.x` | `vN.N`   |
+| [![GitHub Release](https://img.shields.io/github/v/release/cssnr/virustotal-action?style=for-the-badge&label=%20&color=red)](https://github.com/cssnr/virustotal-action/releases/latest)                           |   ❌    |  ❌  |  ❌   | **Micro** | `vN.N.N` | `vN.N.N` |
 
 You can view the release notes for each version on the [releases](https://github.com/cssnr/virustotal-action/releases) page.
 
-## Planned Features
+The **Major** tag is recommended. It is the most up-to-date and always backwards compatible.
+Breaking changes would result in a **Major** version bump. At a minimum you should use a **Minor** tag.
+
+## Features
+
+- Supports files up to 650MB
+- Upload Release Assets or File Globs
+- Automatically add Results to Release Notes
+- Customize Release Notes Heading
+- Rate Limited for Free Accounts
+
+### Planned
 
 - Add release body parsing to properly process new files on edited activity.
 - Add options to customize release update/output format.
 - Add option to apply file_globs to release assets.
 - Refactor vt.js as a Class to clean up index.js.
+
+Don't see your feature here, or want to see one implemented? Let us know in the [Support](#Support) section.
 
 # Support
 

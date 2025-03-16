@@ -12,9 +12,9 @@ const vtUpload = require('./vt')
         core.info('🏳️ Starting VirusTotal Action')
 
         // Parse Inputs
-        core.startGroup('Parsed Inputs')
+        core.startGroup('Config')
         const inputs = parseInputs()
-        // console.log('inputs:', inputs)
+        console.log(inputs)
         core.endGroup() // Inputs
 
         // Set Variables
@@ -37,7 +37,6 @@ const vtUpload = require('./vt')
         } else {
             return core.setFailed('No files or release to process.')
         }
-        // console.log('-'.repeat(40))
         core.startGroup('Results')
         console.log(results)
         core.endGroup() // Results
@@ -46,7 +45,8 @@ const vtUpload = require('./vt')
         if (release && inputs.update) {
             core.startGroup(`Updating Release ${release.id}`)
             let body = release.body
-            body += '\n\n🛡️ **VirusTotal Results:**'
+            body += `\n\n${inputs.heading}`
+
             for (const result of results) {
                 body += `\n- [${result.name}](${result.link})`
             }
@@ -89,7 +89,7 @@ const vtUpload = require('./vt')
 })()
 
 /**
- * @function processRelease
+ * Process Release Assets
  * @param {Object} inputs
  * @param {RateLimiter} limiter
  * @param {InstanceType<typeof github.GitHub>} octokit
@@ -98,6 +98,9 @@ const vtUpload = require('./vt')
  */
 async function processRelease(inputs, limiter, octokit, release) {
     core.startGroup('Processing Release Assets')
+    core.startGroup('Release')
+    console.log('release:', release)
+    core.endGroup() // Release
 
     // Get Assets
     const assets = await octokit.rest.repos.listReleaseAssets({
@@ -149,7 +152,7 @@ async function processRelease(inputs, limiter, octokit, release) {
 }
 
 /**
- * @function processFiles
+ * Process File Globs
  * @param {Object} inputs
  * @param {RateLimiter} limiter
  * @return {Promise<Object[{id, name, link}]>}
@@ -184,7 +187,7 @@ async function processFiles(inputs, limiter) {
 }
 
 /**
- * @function processVt
+ * Process VirusTotal
  * @param {Object} inputs
  * @param {String} name
  * @param {String} filePath
@@ -199,7 +202,7 @@ async function processVt(inputs, name, filePath) {
 }
 
 /**
- * @function processRelease
+ * Get Release
  * @param {InstanceType<typeof github.GitHub>} octokit
  * @return {Promise<InstanceType<typeof github.GitHub>|Undefined>}
  */
@@ -218,41 +221,9 @@ async function getRelease(octokit) {
 }
 
 /**
- * @function parseInputs
- * @return {{
- *   token: string,
- *   key: string,
- *   files: string[],
- *   rate: number,
- *   update: boolean,
- *   summary: boolean
- * }}
- */
-function parseInputs() {
-    const githubToken = core.getInput('github_token', { required: true })
-    const vtApiKey = core.getInput('vt_api_key', { required: true })
-    const fileGlobs = core.getInput('file_globs')
-    console.log(`file_globs: "${fileGlobs}"`)
-    const rateLimit = core.getInput('rate_limit', { required: true })
-    console.log('rate_limit:', rateLimit)
-    const updateRelease = core.getBooleanInput('update_release')
-    console.log('update_release:', updateRelease)
-    const summary = core.getBooleanInput('summary')
-    console.log('summary:', summary)
-    return {
-        token: githubToken,
-        key: vtApiKey,
-        files: fileGlobs ? fileGlobs.split('\n') : [],
-        rate: parseInt(rateLimit),
-        update: updateRelease,
-        summary: summary,
-    }
-}
-
-/**
- * @function writeSummary
+ * Write Job Summary
  * @param {Object} inputs
- * @param {Object} results
+ * @param {Object[]} results
  * @param {Array} output
  * @return {Promise<void>}
  */
@@ -274,30 +245,52 @@ async function writeSummary(inputs, results, output) {
         ...results_table,
     ])
 
-    core.summary.addDetails(
-        '<strong>Outputs</strong>',
-        `\n\n\`\`\`json\n${JSON.stringify(results, null, 2)}\n\`\`\`` +
-            `\n\n\`\`\`text\n${output.join('\n')}\n\`\`\`\n\n`
-    )
+    core.summary.addRaw('<details><summary>Outputs</summary>')
+    core.summary.addCodeBlock(JSON.stringify(results, null, 2), 'json')
+    core.summary.addCodeBlock(output.join('\n'), 'text')
+    core.summary.addRaw('</details>\n')
 
-    core.summary.addRaw('<details><summary>Inputs</summary>')
-    core.summary.addTable([
-        [
-            { data: 'Input', header: true },
-            { data: 'Value', header: true },
-        ],
-        [
-            { data: 'file_globs' },
-            { data: `<code>${inputs.files.join(',')}</code>` },
-        ],
-        [{ data: 'rate_limit' }, { data: `<code>${inputs.rate}</code>` }],
-        [{ data: 'update_release' }, { data: `<code>${inputs.update}</code>` }],
-        [{ data: 'summary' }, { data: `<code>${inputs.summary}</code>` }],
-    ])
+    // core.summary.addDetails(
+    //     '<strong>Outputs</strong>',
+    //     `\n\n\`\`\`json\n${JSON.stringify(results, null, 2)}\n\`\`\`` +
+    //         `\n\n\`\`\`text\n${output.join('\n')}\n\`\`\`\n\n`
+    // )
+
+    delete inputs.token
+    delete inputs.key
+    const yaml = Object.entries(inputs)
+        .map(([k, v]) => `${k}: ${JSON.stringify(v)}`)
+        .join('\n')
+    core.summary.addRaw('<details><summary>Config</summary>')
+    core.summary.addCodeBlock(yaml, 'yaml')
     core.summary.addRaw('</details>\n')
 
     const text = 'View Documentation, Report Issues or Request Features'
     const link = 'https://github.com/cssnr/virustotal-action'
     core.summary.addRaw(`\n[${text}](${link}?tab=readme-ov-file#readme)\n\n---`)
     await core.summary.write()
+}
+
+/**
+ * Parse Inputs
+ * @return {{
+ *   token: string,
+ *   key: string,
+ *   files: string[],
+ *   rate: number,
+ *   update: boolean,
+ *   heading: string,
+ *   summary: boolean
+ * }}
+ */
+function parseInputs() {
+    return {
+        token: core.getInput('github_token', { required: true }),
+        key: core.getInput('vt_api_key', { required: true }),
+        files: core.getInput('file_globs').split('\n').filter(Boolean),
+        rate: parseInt(core.getInput('rate_limit', { required: true })),
+        update: core.getBooleanInput('update_release'),
+        heading: core.getInput('release_heading'),
+        summary: core.getBooleanInput('summary'),
+    }
 }
