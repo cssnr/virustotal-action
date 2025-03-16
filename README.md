@@ -41,15 +41,15 @@ This is a fairly simple action, for more details see [src/index.js](src/index.js
 
 ## Inputs
 
-| Input&nbsp;Name   |  Req.   | Default&nbsp;Value            | Input&nbsp;Description                       |
-| :---------------- | :-----: | :---------------------------- | :------------------------------------------- |
-| `vt_api_key`      | **Yes** | -                             | VirusTotal API Key \*                        |
-| `file_globs`      |    -    | -                             | File Globs to Process \*                     |
-| `rate_limit`      |    -    | `4`                           | API Calls Per Minute \*                      |
-| `update_release`  |    -    | `true`                        | Update [Release Notes](#Release-Notes)       |
-| `release_heading` |    -    | _[see below](#Release-Notes)_ | Release Notes Heading _[⤵️](#Release-Notes)_ |
-| `summary`         |    -    | `true`                        | Add Summary to Job \*                        |
-| `github_token`    |    -    | `github.token`                | For use with a PAT                           |
+| Input&nbsp;Name   |  Req.   | Default&nbsp;Value            | Input&nbsp;Description                     |
+| :---------------- | :-----: | :---------------------------- | :----------------------------------------- |
+| `vt_api_key`      | **Yes** | -                             | VirusTotal API Key \*                      |
+| `file_globs`      |    -    | -                             | File Globs to Process \*                   |
+| `rate_limit`      |    -    | `4`                           | API Calls Per Minute \*                    |
+| `update_release`  |    -    | `true`                        | Update the [Release Notes](#Release-Notes) |
+| `release_heading` |    -    | _[see below](#Release-Notes)_ | Release Notes Heading [⤵️](#Release-Notes) |
+| `summary`         |    -    | `true`                        | Add Summary to Job \*                      |
+| `github_token`    |    -    | `github.token`                | For use with a PAT                         |
 
 > For more details on inputs, see the VirusTotal API [documentation](https://docs.virustotal.com/reference/overview).
 
@@ -66,31 +66,29 @@ For glob pattern, see [examples](#examples) and the [docs](https://github.com/ac
 
 ---
 
-<table><tr><th>File</th><th>ID</th></tr><tr><td><a href="https://www.virustotal.com/gui/file-analysis/ZWFkNTUwMDlhYTM4MTU3MzljYWE1NWRlMjQ5MzE5Y2E6MTc0MDE3NDA5Ng==">README.md</a></td><td>ZWFkNTUwMDlhYTM4MTU3MzljYWE1NWRlMjQ5MzE5Y2E6MTc0MDE3NDA5Ng==</td></tr><tr><td><a href="https://www.virustotal.com/gui/file-analysis/ZTM4MjBkOGFhYmRhNjBiMTY0MTEwZjZkNDE1YjViODc6MTc0MDE3NDA5Ng==">.gitignore</a></td><td>ZTM4MjBkOGFhYmRhNjBiMTY0MTEwZjZkNDE1YjViODc6MTc0MDE3NDA5Ng==</td></tr></table>
-<details><summary><strong>Outputs</strong></summary>
-
-```json
-[
+<table><tr><th>File</th><th>ID</th></tr><tr><td><a href="https://www.virustotal.com/gui/file-analysis/YmFmZTVlZjIzMDRkMjRlMTcwNjk1Yzg0MTgyN2FmMmM6MTc0MjExMjY5Mw==">README.md</a></td><td>YmFmZTVlZjIzMDRkMjRlMTcwNjk1Yzg0MTgyN2FmMmM6MTc0MjExMjY5Mw==</td></tr><tr><td><a href="https://www.virustotal.com/gui/file-analysis/ZTM4MjBkOGFhYmRhNjBiMTY0MTEwZjZkNDE1YjViODc6MTc0MjExMjY5Mw==">.gitignore</a></td><td>ZTM4MjBkOGFhYmRhNjBiMTY0MTEwZjZkNDE1YjViODc6MTc0MjExMjY5Mw==</td></tr></table><details><summary>Outputs</summary>
+<pre lang="json"><code>[
   {
-    "id": "ZWFkNTUwMDlhYTM4MTU3MzljYWE1NWRlMjQ5MzE5Y2E6MTc0MDE3NDA5Ng==",
+    "id": "YmFmZTVlZjIzMDRkMjRlMTcwNjk1Yzg0MTgyN2FmMmM6MTc0MjExMjY5Mw==",
     "name": "README.md",
-    "link": "https://www.virustotal.com/gui/file-analysis/ZWFkNTUwMDlhYTM4MTU3MzljYWE1NWRlMjQ5MzE5Y2E6MTc0MDE3NDA5Ng=="
+    "link": "https://www.virustotal.com/gui/file-analysis/YmFmZTVlZjIzMDRkMjRlMTcwNjk1Yzg0MTgyN2FmMmM6MTc0MjExMjY5Mw=="
   },
   {
-    "id": "ZTM4MjBkOGFhYmRhNjBiMTY0MTEwZjZkNDE1YjViODc6MTc0MDE3NDA5Ng==",
+    "id": "ZTM4MjBkOGFhYmRhNjBiMTY0MTEwZjZkNDE1YjViODc6MTc0MjExMjY5Mw==",
     "name": ".gitignore",
-    "link": "https://www.virustotal.com/gui/file-analysis/ZTM4MjBkOGFhYmRhNjBiMTY0MTEwZjZkNDE1YjViODc6MTc0MDE3NDA5Ng=="
+    "link": "https://www.virustotal.com/gui/file-analysis/ZTM4MjBkOGFhYmRhNjBiMTY0MTEwZjZkNDE1YjViODc6MTc0MjExMjY5Mw=="
   }
 ]
-```
-
-```text
-README.md/ZWFkNTUwMDlhYTM4MTU3MzljYWE1NWRlMjQ5MzE5Y2E6MTc0MDE3NDA5Ng==
-.gitignore/ZTM4MjBkOGFhYmRhNjBiMTY0MTEwZjZkNDE1YjViODc6MTc0MDE3NDA5Ng==
-```
-
+</code></pre>
+<pre lang="text"><code>README.md/YmFmZTVlZjIzMDRkMjRlMTcwNjk1Yzg0MTgyN2FmMmM6MTc0MjExMjY5Mw==
+.gitignore/ZTM4MjBkOGFhYmRhNjBiMTY0MTEwZjZkNDE1YjViODc6MTc0MjExMjY5Mw==</code></pre>
+</details><details><summary>Config</summary>
+<pre lang="yaml"><code>files: ["README.md",".gitignore"]
+rate: 4
+update: true
+heading: "🛡️ **VirusTotal Results:**"
+summary: true</code></pre>
 </details>
-<details><summary>Inputs</summary><table><tr><th>Input</th><th>Value</th></tr><tr><td>file_globs</td><td><code>README.md,.gitignore</code></td></tr><tr><td>rate_limit</td><td><code>4</code></td></tr><tr><td>update_release</td><td><code>true</code></td></tr><tr><td>summary</td><td><code>true</code></td></tr></table></details>
 
 ---
 
