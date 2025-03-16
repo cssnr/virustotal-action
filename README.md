@@ -28,7 +28,7 @@
 
 Upload Release Assets or Specified File Globs to VirusTotal and Optionally Update [Release Notes](#Release-Notes) with Links.
 
-See the [Features](#Features) section for more information.
+See the [Features](#Features) for more details.
 
 The /files/ endpoint is used for files under 32MB, otherwise, the /files/upload_url/ endpoint is used
 providing support for files up to **650MB**. Therefore, files over 32MB will consume 2 API calls.
@@ -119,6 +119,7 @@ With no inputs this will automatically process release assets.
       release/*
     rate_limit: 4
     update_release: true
+    release_heading: '🛡️ **VirusTotal Results:**'
     summary: true
 ```
 
@@ -133,7 +134,7 @@ You can customize the heading or remove it by specifying an empty string.
 
 **update_release:** If triggered from a release workflow, will update the release notes and append the results.
 
-**release_heading:** Customize the Release Notes Heading. Default: `🛡️ **VirusTotal Results:**`
+**release_heading:** Customize the Release Notes Heading. Defaults to: `🛡️&nbsp;**VirusTotal Results:**`
 
 #### Example Release Notes Update
 
@@ -224,6 +225,18 @@ Using the outputs.
 ```
 
 </details>
+<details><summary>Customize release notes heading</summary>
+
+```yaml
+- name: 'VirusTotal'
+  uses: cssnr/virustotal-action@v1
+  if: ${{ github.event_name == 'release' }}
+  with:
+    vt_api_key: ${{ secrets.VT_API_KEY }}
+    release_heading: '### Scan Results'
+```
+
+</details>
 <details><summary>Only run on a release event</summary>
 
 ```yaml
@@ -271,6 +284,7 @@ Using the outputs.
       release/*
     rate_limit: 4
     update_release: true
+    release_heading: '🛡️ **VirusTotal Results:**'
     summary: true
 ```
 
