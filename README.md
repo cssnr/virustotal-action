@@ -28,6 +28,8 @@
 
 Upload Release Assets or Specified File Globs to VirusTotal and Optionally Update [Release Notes](#Release-Notes) with Links.
 
+See the [Features](#Features) section for more details.
+
 The /files/ endpoint is used for files under 32MB, otherwise, the /files/upload_url/ endpoint is used
 providing support for files up to **650MB**. Therefore, files over 32MB will consume 2 API calls.
 
@@ -160,7 +162,7 @@ and [Actions](https://docs.github.com/en/actions/security-for-github-actions/sec
 
 ## Outputs
 
-| Output  | Description                         |
+| Output  | Short&nbsp;Description              |
 | :------ | :---------------------------------- |
 | results | Comma Seperated String of `file/id` |
 | json    | JSON Object List Results String     |
@@ -173,11 +175,15 @@ https://www.virustotal.com/gui/file-analysis/
 
 Example `results` output.
 
+<details><summary>Example Results</summary>
+
 ```text
 install-linux.deb/ZDAzY2M2ZGQzZmEwZWEwZTI2NjQ5NmVjZDcwZmY0YTY6MTcxNzU2NzI3Ng==,install-macos.pkg/YTkzOGFjMDZhNTI3NmU5MmI4YzQzNzg5ODE3OGRkMzg6MTcxNzU2NzI3OA==,install-win.exe/M2JhZDJhMzRhYjcyM2Y0MDFkNjU1OGZlYjFkNjgyMmY6MTcxNzU2NzI4MA==
 ```
 
-Example `json` output.
+</details>
+
+<details><summary>Example JSON</summary>
 
 ```json
 [
@@ -188,6 +194,8 @@ Example `json` output.
   }
 ]
 ```
+
+</details>
 
 Using the outputs.
 
