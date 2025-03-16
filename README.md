@@ -400,8 +400,8 @@ Breaking changes would result in a **Major** version bump. At a minimum you shou
 
 - Supports files up to 650MB
 - Upload Release Assets or File Globs
-- Append Results to Release Notes
-- Customize Results Heading
+- Automatically add Results to Release Notes
+- Customize Release Notes Heading
 - Rate Limited for Free Accounts
 
 ### Planned
