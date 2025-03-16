@@ -99,7 +99,7 @@ const vtUpload = require('./vt')
 async function processRelease(inputs, limiter, octokit, release) {
     core.startGroup('Processing Release Assets')
     core.startGroup('Release')
-    console.log('release:', release)
+    console.log(release)
     core.endGroup() // Release
 
     // Get Assets
@@ -110,7 +110,6 @@ async function processRelease(inputs, limiter, octokit, release) {
     if (!assets?.data?.length) {
         console.log('assets:', assets)
         throw new Error(`No Assets Found for Release: ${release.id}`)
-        // return core.setFailed(`No Assets Found for Release: ${release_id}`)
     }
 
     // Create Temp
@@ -128,7 +127,6 @@ async function processRelease(inputs, limiter, octokit, release) {
     const results = []
     for (const asset of assets.data) {
         core.startGroup(`Processing: \u001b[36m${asset.name}`)
-        // core.info(`--- Processing Asset: ${asset.name}`)
         if (inputs.rate) {
             const remainingRequests = await limiter.removeTokens(1)
             console.log('remainingRequests:', remainingRequests)
@@ -158,13 +156,12 @@ async function processRelease(inputs, limiter, octokit, release) {
  * @return {Promise<Object[{id, name, link}]>}
  */
 async function processFiles(inputs, limiter) {
-    // const patterns = ['**/tar.gz', '**/tar.bz']
     const globber = await glob.create(inputs.files.join('\n'), {
         matchDirectories: false,
     })
     const files = await globber.glob()
     core.startGroup('Processing File Globs')
-    console.log('files:', files)
+    console.log(files)
     core.endGroup() // Files
     if (!files.length) {
         throw new Error('No files to process.')
@@ -172,7 +169,6 @@ async function processFiles(inputs, limiter) {
     const results = []
     for (const file of files) {
         const name = file.split('\\').pop().split('/').pop()
-        // core.info(`--- Processing File: ${name}`)
         core.startGroup(`Processing: \u001b[36m${name}`)
         if (inputs.rate) {
             const remainingRequests = await limiter.removeTokens(1)
@@ -208,7 +204,6 @@ async function processVt(inputs, name, filePath) {
  */
 async function getRelease(octokit) {
     const release_id = github.context.payload.release?.id
-    // console.log('release_id:', release_id)
     if (!release_id) {
         return
     }
@@ -249,12 +244,6 @@ async function writeSummary(inputs, results, output) {
     core.summary.addCodeBlock(JSON.stringify(results, null, 2), 'json')
     core.summary.addCodeBlock(output.join('\n'), 'text')
     core.summary.addRaw('</details>\n')
-
-    // core.summary.addDetails(
-    //     '<strong>Outputs</strong>',
-    //     `\n\n\`\`\`json\n${JSON.stringify(results, null, 2)}\n\`\`\`` +
-    //         `\n\n\`\`\`text\n${output.join('\n')}\n\`\`\`\n\n`
-    // )
 
     delete inputs.token
     delete inputs.key

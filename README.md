@@ -141,9 +141,9 @@ Default: `🛡️ **VirusTotal Results:**`
 
 🛡️ **VirusTotal Results:**
 
-- [install-linux.deb](https://www.virustotal.com/gui/file-analysis/ZDAzY2M2ZGQzZmEwZWEwZTI2NjQ5NmVjZDcwZmY0YTY6MTcxNzU2NzI3Ng==)
-- [install-macos.pkg](https://www.virustotal.com/gui/file-analysis/YTkzOGFjMDZhNTI3NmU5MmI4YzQzNzg5ODE3OGRkMzg6MTcxNzU2NzI3OA==)
-- [install-win.exe](https://www.virustotal.com/gui/file-analysis/M2JhZDJhMzRhYjcyM2Y0MDFkNjU1OGZlYjFkNjgyMmY6MTcxNzU2NzI4MA==)
+- [install-linux.deb](https://www.virustotal.com/gui/file-analysis/ODA3ZWUyN2E4YjhjMTJlODRlZTBmOTJjMmE5MzBlMmQ6MTcyNjg3MjQyMw==)
+- [install-macos.pkg](https://www.virustotal.com/gui/file-analysis/YTAwN2I4MWQwZjkzNDJjZTVmMWFhNzBjY2Y0ZGJkODE6MTcyNjg3MjQyNQ==)
+- [install-win.exe](https://www.virustotal.com/gui/file-analysis/N2JlODFiMWMwZGY1M2EzMzg5MWY1ZDQ0N2QyMWU0MWI6MTcyNjg3MjQyNw==)
 
 ---
 
@@ -176,7 +176,7 @@ https://www.virustotal.com/gui/file-analysis/
 <details><summary>Example Results</summary>
 
 ```text
-install-linux.deb/ZDAzY2M2ZGQzZmEwZWEwZTI2NjQ5NmVjZDcwZmY0YTY6MTcxNzU2NzI3Ng==,install-macos.pkg/YTkzOGFjMDZhNTI3NmU5MmI4YzQzNzg5ODE3OGRkMzg6MTcxNzU2NzI3OA==,install-win.exe/M2JhZDJhMzRhYjcyM2Y0MDFkNjU1OGZlYjFkNjgyMmY6MTcxNzU2NzI4MA==
+install-linux.deb/ODA3ZWUyN2E4YjhjMTJlODRlZTBmOTJjMmE5MzBlMmQ6MTcyNjg3MjQyMw==,install-macos.pkg/YTAwN2I4MWQwZjkzNDJjZTVmMWFhNzBjY2Y0ZGJkODE6MTcyNjg3MjQyNQ==,install-win.exe/N2JlODFiMWMwZGY1M2EzMzg5MWY1ZDQ0N2QyMWU0MWI6MTcyNjg3MjQyNw==
 ```
 
 </details>
@@ -186,9 +186,19 @@ install-linux.deb/ZDAzY2M2ZGQzZmEwZWEwZTI2NjQ5NmVjZDcwZmY0YTY6MTcxNzU2NzI3Ng==,i
 ```json
 [
   {
-    "id": "ZDAzY2M2ZGQzZmEwZWEwZTI2NjQ5NmVjZDcwZmY0YTY6MTcxNzU2NzI3Ng==",
+    "id": "ODA3ZWUyN2E4YjhjMTJlODRlZTBmOTJjMmE5MzBlMmQ6MTcyNjg3MjQyMw==",
     "name": "install-linux.deb",
-    "link": "https://www.virustotal.com/gui/file-analysis/ZDAzY2M2ZGQzZmEwZWEwZTI2NjQ5NmVjZDcwZmY0YTY6MTcxNzU2NzI3Ng=="
+    "link": "https://www.virustotal.com/gui/file-analysis/ODA3ZWUyN2E4YjhjMTJlODRlZTBmOTJjMmE5MzBlMmQ6MTcyNjg3MjQyMw=="
+  },
+  {
+    "id": "YTAwN2I4MWQwZjkzNDJjZTVmMWFhNzBjY2Y0ZGJkODE6MTcyNjg3MjQyNQ==",
+    "name": "install-macos.pkg",
+    "link": "https://www.virustotal.com/gui/file-analysis/YTAwN2I4MWQwZjkzNDJjZTVmMWFhNzBjY2Y0ZGJkODE6MTcyNjg3MjQyNQ=="
+  },
+  {
+    "id": "N2JlODFiMWMwZGY1M2EzMzg5MWY1ZDQ0N2QyMWU0MWI6MTcyNjg3MjQyNw==",
+    "name": "install-win.exe",
+    "link": "https://www.virustotal.com/gui/file-analysis/N2JlODFiMWMwZGY1M2EzMzg5MWY1ZDQ0N2QyMWU0MWI6MTcyNjg3MjQyNw=="
   }
 ]
 ```
