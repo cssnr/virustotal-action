@@ -11,7 +11,7 @@ on:
       - "src/**"
       - ".github/workflows/test.yaml"
       - "package*.json"
-      - "requirements.txt"
+      - "requirements*.txt"
       - "action.yml"
 
 concurrency:

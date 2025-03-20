@@ -1,6 +1,7 @@
 [![GitHub Tag Major](https://img.shields.io/github/v/tag/cssnr/virustotal-action?sort=semver&filter=!v*.*&logo=git&logoColor=white&labelColor=585858&label=%20)](https://github.com/cssnr/virustotal-action/tags)
 [![GitHub Tag Minor](https://img.shields.io/github/v/tag/cssnr/virustotal-action?sort=semver&filter=!v*.*.*&logo=git&logoColor=white&labelColor=585858&label=%20)](https://github.com/cssnr/virustotal-action/tags)
 [![GitHub Release Version](https://img.shields.io/github/v/release/cssnr/virustotal-action?logo=git&logoColor=white&labelColor=585858&label=%20)](https://github.com/cssnr/virustotal-action/releases/latest)
+[![GitHub Dist Size](https://img.shields.io/github/size/cssnr/virustotal-action/dist%2Findex.js?label=dist%20size)](https://github.com/cssnr/virustotal-action/blob/master/src/index.js)
 [![Workflow Release](https://img.shields.io/github/actions/workflow/status/cssnr/virustotal-action/release.yaml?logo=github&label=release)](https://github.com/cssnr/virustotal-action/actions/workflows/release.yaml)
 [![Workflow Test](https://img.shields.io/github/actions/workflow/status/cssnr/virustotal-action/test.yaml?logo=github&label=test)](https://github.com/cssnr/virustotal-action/actions/workflows/test.yaml)
 [![Workflow Lint](https://img.shields.io/github/actions/workflow/status/cssnr/virustotal-action/lint.yaml?logo=github&label=lint)](https://github.com/cssnr/virustotal-action/actions/workflows/lint.yaml)
@@ -453,5 +454,6 @@ Additionally, you can support other GitHub Actions I have published:
 - [Mozilla Addon Update Action](https://github.com/cssnr/mozilla-addon-update-action?tab=readme-ov-file#readme)
 - [Docker Tags Action](https://github.com/cssnr/docker-tags-action?tab=readme-ov-file#readme)
 - [Package Changelog Action](https://github.com/cssnr/package-changelog-action?tab=readme-ov-file#readme)
+- [NPM Outdated Check Action](https://github.com/cssnr/npm-outdated-action?tab=readme-ov-file#readme)
 
 For a full list of current projects to support visit: [https://cssnr.github.io/](https://cssnr.github.io/)
