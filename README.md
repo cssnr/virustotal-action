@@ -28,7 +28,7 @@
 
 Upload Release Assets or Specified File Globs to VirusTotal and Optionally Update [Release Notes](#Release-Notes) with Links.
 
-See the [Features](#Features) for more details.
+You can now customize the release notes heading. See the [Features](#Features) for more details.
 
 The /files/ endpoint is used for files under 32MB, otherwise, the /files/upload_url/ endpoint is used
 providing support for files up to **650MB**. Therefore, files over 32MB will consume 2 API calls.
@@ -60,7 +60,7 @@ For glob pattern, see [examples](#examples) and the [docs](https://github.com/ac
 
 **rate_limit:** Rate limit for file uploads. Set to `0` to disable if you know what you are doing.
 
-**summary:** Will add result details to the job summary in the workflow
+**summary:** Will add result details to the job summary in the workflow.
 
 <details><summary>👀 View Job Summary Example</summary>
 
@@ -156,9 +156,7 @@ permissions:
   contents: write
 ```
 
-Permissions documentation for
-[Workflows](https://docs.github.com/en/actions/writing-workflows/choosing-what-your-workflow-does/controlling-permissions-for-github_token)
-and [Actions](https://docs.github.com/en/actions/security-for-github-actions/security-guides/automatic-token-authentication).
+Permissions documentation for [Workflows](https://docs.github.com/en/actions/writing-workflows/choosing-what-your-workflow-does/controlling-permissions-for-github_token) and [Actions](https://docs.github.com/en/actions/security-for-github-actions/security-guides/automatic-token-authentication).
 
 ## Outputs
 
@@ -454,5 +452,6 @@ Additionally, you can support other GitHub Actions I have published:
 - [Cloudflare Purge Cache Action](https://github.com/cssnr/cloudflare-purge-cache-action?tab=readme-ov-file#readme)
 - [Mozilla Addon Update Action](https://github.com/cssnr/mozilla-addon-update-action?tab=readme-ov-file#readme)
 - [Docker Tags Action](https://github.com/cssnr/docker-tags-action?tab=readme-ov-file#readme)
+- [Package Changelog Action](https://github.com/cssnr/package-changelog-action?tab=readme-ov-file#readme)
 
 For a full list of current projects to support visit: [https://cssnr.github.io/](https://cssnr.github.io/)

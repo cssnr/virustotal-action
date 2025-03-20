@@ -11,29 +11,29 @@ const vtUpload = require('./vt')
     try {
         core.info('🏳️ Starting VirusTotal Action')
 
-        // Parse Inputs
+        // Get Config
         core.startGroup('Config')
-        const inputs = parseInputs()
-        console.log(inputs)
-        core.endGroup() // Inputs
+        const config = getConfig()
+        console.log(config)
+        core.endGroup() // Config
 
         // Set Variables
-        const octokit = github.getOctokit(inputs.token)
+        const octokit = github.getOctokit(config.token)
         const release = await getRelease(octokit)
         const limiter = new RateLimiter({
-            tokensPerInterval: inputs.rate,
+            tokensPerInterval: config.rate,
             interval: 'minute',
         })
 
         // Process
         /** @type {Object[]} */
         let results
-        if (inputs.files?.length) {
+        if (config.files?.length) {
             // core.info('📁 Processing File Globs')
-            results = await processFiles(inputs, limiter)
+            results = await processFiles(config, limiter)
         } else if (release) {
             // core.info('🗄️ Processing Release Assets')
-            results = await processRelease(inputs, limiter, octokit, release)
+            results = await processRelease(config, limiter, octokit, release)
         } else {
             return core.setFailed('No files or release to process.')
         }
@@ -42,10 +42,10 @@ const vtUpload = require('./vt')
         core.endGroup() // Results
 
         // Update Release
-        if (release && inputs.update) {
+        if (release && config.update) {
             core.startGroup(`Updating Release ${release.id}`)
             let body = release.body
-            body += `\n\n${inputs.heading}`
+            body += `\n\n${config.heading}`
 
             for (const result of results) {
                 body += `\n- [${result.name}](${result.link})`
@@ -71,9 +71,9 @@ const vtUpload = require('./vt')
         core.setOutput('json', JSON.stringify(results))
 
         // Job Summary
-        if (inputs.summary) {
+        if (config.summary) {
             core.info('📝 Writing Job Summary')
-            await writeSummary(inputs, results, output)
+            await writeSummary(config, results, output)
         }
 
         core.info('✅ \u001b[32;1mFinished Success')
@@ -90,13 +90,13 @@ const vtUpload = require('./vt')
 
 /**
  * Process Release Assets
- * @param {Object} inputs
+ * @param {Object} config
  * @param {RateLimiter} limiter
  * @param {InstanceType<typeof github.GitHub>} octokit
  * @param {Object} release
  * @return {Promise<Object[{id, name, link}]>}
  */
-async function processRelease(inputs, limiter, octokit, release) {
+async function processRelease(config, limiter, octokit, release) {
     core.startGroup('Processing Release Assets')
     core.startGroup('Release')
     console.log(release)
@@ -127,7 +127,7 @@ async function processRelease(inputs, limiter, octokit, release) {
     const results = []
     for (const asset of assets.data) {
         core.startGroup(`Processing: \u001b[36m${asset.name}`)
-        if (inputs.rate) {
+        if (config.rate) {
             const remainingRequests = await limiter.removeTokens(1)
             console.log('remainingRequests:', remainingRequests)
         }
@@ -141,7 +141,7 @@ async function processRelease(inputs, limiter, octokit, release) {
             },
         })
         fs.writeFileSync(filePath, Buffer.from(file.data))
-        const result = await processVt(inputs, asset.name, filePath)
+        const result = await processVt(config, asset.name, filePath)
         console.log('result:', result)
         results.push(result)
         core.endGroup() // Processing
@@ -151,12 +151,12 @@ async function processRelease(inputs, limiter, octokit, release) {
 
 /**
  * Process File Globs
- * @param {Object} inputs
+ * @param {Object} config
  * @param {RateLimiter} limiter
  * @return {Promise<Object[{id, name, link}]>}
  */
-async function processFiles(inputs, limiter) {
-    const globber = await glob.create(inputs.files.join('\n'), {
+async function processFiles(config, limiter) {
+    const globber = await glob.create(config.files.join('\n'), {
         matchDirectories: false,
     })
     const files = await globber.glob()
@@ -170,11 +170,11 @@ async function processFiles(inputs, limiter) {
     for (const file of files) {
         const name = file.split('\\').pop().split('/').pop()
         core.startGroup(`Processing: \u001b[36m${name}`)
-        if (inputs.rate) {
+        if (config.rate) {
             const remainingRequests = await limiter.removeTokens(1)
             console.log('remainingRequests:', remainingRequests)
         }
-        const result = await processVt(inputs, name, file)
+        const result = await processVt(config, name, file)
         // console.log('result:', result)
         results.push(result)
         core.endGroup() // Processing
@@ -184,13 +184,13 @@ async function processFiles(inputs, limiter) {
 
 /**
  * Process VirusTotal
- * @param {Object} inputs
+ * @param {Object} config
  * @param {String} name
  * @param {String} filePath
  * @return {Promise<{name, link: string, id}>}
  */
-async function processVt(inputs, name, filePath) {
-    const response = await vtUpload(filePath, inputs.key)
+async function processVt(config, name, filePath) {
+    const response = await vtUpload(filePath, config.key)
     console.log('response.data.id:', response.data.id)
     const link = `https://www.virustotal.com/gui/file-analysis/${response.data.id}`
     console.log('link:', link)
@@ -203,26 +203,25 @@ async function processVt(inputs, name, filePath) {
  * @return {Promise<InstanceType<typeof github.GitHub>|Undefined>}
  */
 async function getRelease(octokit) {
-    const release_id = github.context.payload.release?.id
-    if (!release_id) {
+    if (!github.context.payload.release?.id) {
         return
     }
-    core.info(`Found Release ID: \u001b[32m${release_id}`)
+    core.info(`Getting Release: \u001b[32m${github.context.payload.release.id}`)
     const release = await octokit.rest.repos.getRelease({
         ...github.context.repo,
-        release_id,
+        release_id: github.context.payload.release.id,
     })
     return release.data
 }
 
 /**
  * Write Job Summary
- * @param {Object} inputs
+ * @param {Object} config
  * @param {Object[]} results
  * @param {Array} output
  * @return {Promise<void>}
  */
-async function writeSummary(inputs, results, output) {
+async function writeSummary(config, results, output) {
     core.summary.addRaw('## VirusTotal Action\n')
 
     const results_table = []
@@ -245,9 +244,9 @@ async function writeSummary(inputs, results, output) {
     core.summary.addCodeBlock(output.join('\n'), 'text')
     core.summary.addRaw('</details>\n')
 
-    delete inputs.token
-    delete inputs.key
-    const yaml = Object.entries(inputs)
+    delete config.token
+    delete config.key
+    const yaml = Object.entries(config)
         .map(([k, v]) => `${k}: ${JSON.stringify(v)}`)
         .join('\n')
     core.summary.addRaw('<details><summary>Config</summary>')
@@ -261,18 +260,18 @@ async function writeSummary(inputs, results, output) {
 }
 
 /**
- * Parse Inputs
- * @return {{
- *   token: string,
- *   key: string,
- *   files: string[],
- *   rate: number,
- *   update: boolean,
- *   heading: string,
- *   summary: boolean
- * }}
+ * Get Config
+ * @typedef {Object} Config
+ * @property {String} token
+ * @property {String} key
+ * @property {String[]} files
+ * @property {Number} rate
+ * @property {Boolean} update
+ * @property {String} heading
+ * @property {Boolean} summary
+ * @return {Config}
  */
-function parseInputs() {
+function getConfig() {
     return {
         token: core.getInput('github_token', { required: true }),
         key: core.getInput('vt_api_key', { required: true }),
