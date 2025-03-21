@@ -11,8 +11,12 @@ on:
       - "src/**"
       - ".github/workflows/test.yaml"
       - "package*.json"
-      - "requirements.txt"
+      - "requirements*.txt"
       - "action.yml"
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   test:
