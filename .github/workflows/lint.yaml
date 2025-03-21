@@ -68,6 +68,9 @@ jobs:
           echo "::endgroup::"
           "${RUNNER_TEMP}/actionlint" -color -verbose -shellcheck= -pyflakes=
 
+      #- name: "Check Build Action"
+      #  uses: cssnr/check-build-action@master
+
       - name: "ESLint Annotate"
         if: ${{ failure() && steps.eslint.outcome != 'success' }}
         continue-on-error: true

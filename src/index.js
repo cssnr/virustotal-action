@@ -1,8 +1,10 @@
+const fs = require('fs')
+const path = require('path')
+
 const core = require('@actions/core')
 const github = require('@actions/github')
 const glob = require('@actions/glob')
-const fs = require('fs')
-const path = require('path')
+
 const { RateLimiter } = require('limiter')
 
 const vtUpload = require('./vt')

@@ -20,5 +20,4 @@ jobs:
         uses: actions/checkout@v4
 
       - name: "NPM Outdated Check"
-        continue-on-error: true # TODO: remove continue-on-error
         uses: cssnr/npm-outdated-action@master

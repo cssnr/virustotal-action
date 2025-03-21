@@ -37013,9 +37013,10 @@ function wrappy (fn, cb) {
 /***/ 9431:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
+const fs = __nccwpck_require__(9896)
+
 const axios = __nccwpck_require__(7269)
 const FormData = __nccwpck_require__(6454)
-const fs = __nccwpck_require__(9896)
 
 /**
  * https://docs.virustotal.com/reference/files-scan
@@ -44109,11 +44110,13 @@ module.exports = /*#__PURE__*/JSON.parse('{"application/1d-interleaved-parityfec
 /******/ 	
 /************************************************************************/
 var __webpack_exports__ = {};
+const fs = __nccwpck_require__(9896)
+const path = __nccwpck_require__(6928)
+
 const core = __nccwpck_require__(7484)
 const github = __nccwpck_require__(3228)
 const glob = __nccwpck_require__(7206)
-const fs = __nccwpck_require__(9896)
-const path = __nccwpck_require__(6928)
+
 const { RateLimiter } = __nccwpck_require__(5157)
 
 const vtUpload = __nccwpck_require__(9431)
