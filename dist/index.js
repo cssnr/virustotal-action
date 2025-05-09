@@ -44184,10 +44184,15 @@ const vtUpload = __nccwpck_require__(9431)
         core.setOutput('results', output.join(','))
         core.setOutput('json', JSON.stringify(results))
 
-        // Job Summary
+        // Summary
         if (config.summary) {
             core.info('📝 Writing Job Summary')
-            await writeSummary(config, results, output)
+            try {
+                await addSummary(config, results, output)
+            } catch (e) {
+                console.log(e)
+                core.error(`Error writing Job Summary ${e.message}`)
+            }
         }
 
         core.info('✅ \u001b[32;1mFinished Success')
@@ -44329,13 +44334,13 @@ async function getRelease(octokit) {
 }
 
 /**
- * Write Job Summary
+ * Add Job Summary
  * @param {Object} config
  * @param {Object[]} results
  * @param {Array} output
  * @return {Promise<void>}
  */
-async function writeSummary(config, results, output) {
+async function addSummary(config, results, output) {
     core.summary.addRaw('## VirusTotal Action\n')
 
     const results_table = []
