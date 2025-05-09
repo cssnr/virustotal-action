@@ -44159,11 +44159,21 @@ const vtUpload = __nccwpck_require__(9431)
         if (release && config.update) {
             core.startGroup(`Updating Release ${release.id}`)
             let body = release.body
-            body += `\n\n${config.heading}`
 
+            const collapsed = config.collapsed ? '' : ' open'
+            body += `\n\n<details${collapsed}><summary>${config.heading}</summary>\n\n`
             for (const result of results) {
-                body += `\n- [${result.name}](${result.link})`
+                let name = result.name
+                if (config.name === 'id') {
+                    name = result.id
+                } else if (config.name === 'hash') {
+                    name = 'TODO: ADD HASH HERE' // TODO: ADD HASH HERE
+                }
+                console.log(`name: ${name}`)
+                if (config.name) body += `\n- [${name}](${result.link})`
             }
+            body += '\n\n</details>\n\n'
+
             console.log(`\n${body}\n`)
             await octokit.rest.repos.updateRelease({
                 ...github.context.repo,
@@ -44386,6 +44396,8 @@ async function addSummary(config, results, output) {
  * @property {String[]} files
  * @property {Number} rate
  * @property {Boolean} update
+ * @property {Boolean} collapsed
+ * @property {String} name
  * @property {String} heading
  * @property {Boolean} summary
  * @return {Config}
@@ -44397,6 +44409,8 @@ function getConfig() {
         files: core.getInput('file_globs').split('\n').filter(Boolean),
         rate: parseInt(core.getInput('rate_limit', { required: true })),
         update: core.getBooleanInput('update_release'),
+        collapsed: core.getBooleanInput('collapsed'),
+        name: core.getInput('file_name').toLowerCase(),
         heading: core.getInput('release_heading'),
         summary: core.getBooleanInput('summary'),
     }
