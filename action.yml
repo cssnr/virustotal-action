@@ -28,6 +28,10 @@ inputs:
     description: "Show Links Collapsed"
     required: false
     default: "false"
+  file_name:
+    description: "File Name Display"
+    required: false
+    default: "name"
   summary:
     description: "Add Summary to Job"
     required: false

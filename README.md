@@ -42,17 +42,17 @@ This is a fairly simple action, for more details see [src/index.js](src/index.js
 
 ## Inputs
 
-| Input&nbsp;Name   |  Req.   | Default&nbsp;Value            | Input&nbsp;Description                                        |
-| :---------------- | :-----: | :---------------------------- | :------------------------------------------------------------ |
-| `vt_api_key`      | **Yes** | -                             | VirusTotal API Key \*                                         |
-| `file_globs`      |    -    | -                             | File Globs to Process \*                                      |
-| `rate_limit`      |    -    | `4`                           | API Calls Per Minute \*                                       |
-| `update_release`  |    -    | `true`                        | Update the [Release Notes](#Release-Notes)                    |
-| `release_heading` |    -    | _[see below](#Release-Notes)_ | Release Notes Heading [⤵️](#Release-Notes)                    |
-| `collapsed`       |    -    | `false`                       | Show Links Collapsed. [⤵️](#Release-Notes)                    |
-| `file_name`       |    -    | `name`                        | File Name Display: [`name`,`hash`, `id`] [⤵️](#Release-Notes) |
-| `summary`         |    -    | `true`                        | Add Summary to Job \*                                         |
-| `github_token`    |    -    | `github.token`                | For use with a PAT                                            |
+| Input&nbsp;Name   |  Req.   | Default&nbsp;Value            | Input&nbsp;Description                                 |
+| :---------------- | :-----: | :---------------------------- | :----------------------------------------------------- |
+| `vt_api_key`      | **Yes** | -                             | VirusTotal API Key \*                                  |
+| `file_globs`      |    -    | -                             | File Globs to Process \*                               |
+| `rate_limit`      |    -    | `4`                           | API Calls Per Minute \*                                |
+| `update_release`  |    -    | `true`                        | Update the [Release Notes](#Release-Notes)             |
+| `release_heading` |    -    | _[see below](#Release-Notes)_ | Release Notes Heading [⤵️](#Release-Notes)             |
+| `collapsed`       |    -    | `false`                       | Show Links Collapsed. [⤵️](#Release-Notes)             |
+| `file_name`       |    -    | `name`                        | File Name Display: [`name`, `id`] [⤵️](#Release-Notes) |
+| `summary`         |    -    | `true`                        | Add Summary to Job \*                                  |
+| `github_token`    |    -    | `github.token`                | For use with a PAT                                     |
 
 > For more details on inputs, see the VirusTotal API [documentation](https://docs.virustotal.com/reference/overview).
 
@@ -140,7 +140,7 @@ Default: `🛡️ **VirusTotal Results:**`
 
 **collapsed:** Set to `true` to collapse the result links by default.
 
-**file_name:** Customize the Release Notes File Name Display. This can be one of `name`, or `hash`.
+**file_name:** Customize the Release Notes File Name Display. This can be one of `name`, or `id`.
 
 #### Example Release Notes Update
 
