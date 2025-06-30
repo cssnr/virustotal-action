@@ -24,6 +24,10 @@ inputs:
     description: "Release Notes Heading"
     required: false
     default: "🛡️ **VirusTotal Results:**"
+  collapsed:
+    description: "Show Links Collapsed"
+    required: false
+    default: "false"
   summary:
     description: "Add Summary to Job"
     required: false
