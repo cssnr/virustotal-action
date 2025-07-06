@@ -2,7 +2,7 @@
 *.iml
 .vscode/
 node_modules/
+eslint_report.json
 .env
 .secrets
 .vars
-eslint_report.json
