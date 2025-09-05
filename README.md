@@ -37,11 +37,20 @@ You can now customize the release notes heading. See the [Features](#Features) f
 The /files/ endpoint is used for files under 32MB, otherwise, the /files/upload_url/ endpoint is used
 providing support for files up to **650MB**. Therefore, files over 32MB will consume 2 API calls.
 
+With no inputs this will automatically process release assets.
+
+```yaml
+- name: 'VirusTotal'
+  uses: cssnr/virustotal-action@v1
+  with:
+    vt_api_key: ${{ secrets.VT_API_KEY }}
+```
+
+This is a fairly simple action, for more details see [src/index.js](src/index.js) and [src/vt.js](src/vt.js).
+
 > [!NOTE]  
 > Please submit a [Feature Request](https://github.com/cssnr/virustotal-action/discussions/categories/feature-requests)
 > for new features or [Open an Issue](https://github.com/cssnr/virustotal-action/issues) if you find any bugs.
-
-This is a fairly simple action, for more details see [src/index.js](src/index.js) and [src/vt.js](src/vt.js).
 
 ## Inputs
 
@@ -102,16 +111,7 @@ summary: true</code></pre>
 
 To view a workflow run, click on a recent [Test](https://github.com/cssnr/virustotal-action/actions/workflows/test.yaml) job _(requires login)_.
 
-With no inputs this will automatically process release assets.
-
-```yaml
-- name: 'VirusTotal'
-  uses: cssnr/virustotal-action@v1
-  with:
-    vt_api_key: ${{ secrets.VT_API_KEY }}
-```
-
-<details><summary>With all inputs</summary>
+Example with all inputs:
 
 ```yaml
 - name: 'VirusTotal'
@@ -126,8 +126,6 @@ With no inputs this will automatically process release assets.
     release_heading: '🛡️ **VirusTotal Results:**'
     summary: true
 ```
-
-</details>
 
 See the [Examples](#Examples) section for more options.
 

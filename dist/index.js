@@ -44214,11 +44214,11 @@ const vtUpload = __nccwpck_require__(9431)
             let body = release.body
 
             body += `\n\n`
-            if (config.heading.trim()) {
+            if (config.heading) {
                 body += `${config.heading}\n\n`
             }
             if (config.collapsed) {
-                body += `\n\n<details><summary>Click Here to Show Results</summary>\n\n`
+                body += `\n\n<details><summary>Click Here to Show Scan Results</summary>\n\n`
             }
             // const collapsed = config.collapsed ? '' : ' open'
             // body += `\n\n<details${collapsed}><summary>${config.heading}</summary>\n\n`
@@ -44227,7 +44227,7 @@ const vtUpload = __nccwpck_require__(9431)
                 if (config.name === 'id') {
                     name = result.id
                     // } else if (config.name === 'hash') {
-                    //     name = 'TODO: ADD HASH HERE' // TODO: ADD HASH HERE.
+                    //     name = 'TODO: ADD HASH HERE'
                 }
                 console.log(`name: ${name}`)
                 if (config.name) body += `\n- [${name}](${result.link})`
