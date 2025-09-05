@@ -47,11 +47,32 @@ const vtUpload = require('./vt')
         if (release && config.update) {
             core.startGroup(`Updating Release ${release.id}`)
             let body = release.body
-            body += `\n\n${config.heading}`
 
-            for (const result of results) {
-                body += `\n- [${result.name}](${result.link})`
+            body += `\n\n`
+            if (config.heading) {
+                body += `${config.heading}\n\n`
             }
+            if (config.collapsed) {
+                body += `\n\n<details><summary>Click Here to Show Scan Results</summary>\n\n`
+            }
+            // const collapsed = config.collapsed ? '' : ' open'
+            // body += `\n\n<details${collapsed}><summary>${config.heading}</summary>\n\n`
+            for (const result of results) {
+                let name = result.name
+                if (config.name === 'id') {
+                    name = result.id
+                    // } else if (config.name === 'hash') {
+                    //     name = 'TODO: ADD HASH HERE'
+                }
+                console.log(`name: ${name}`)
+                if (config.name) body += `\n- [${name}](${result.link})`
+            }
+            if (config.collapsed) {
+                body += '\n\n</details>\n\n'
+            } else {
+                body += `\n\n`
+            }
+
             console.log(`\n${body}\n`)
             await octokit.rest.repos.updateRelease({
                 ...github.context.repo,
@@ -72,10 +93,15 @@ const vtUpload = require('./vt')
         core.setOutput('results', output.join(','))
         core.setOutput('json', JSON.stringify(results))
 
-        // Job Summary
+        // Summary
         if (config.summary) {
             core.info('📝 Writing Job Summary')
-            await writeSummary(config, results, output)
+            try {
+                await addSummary(config, results, output)
+            } catch (e) {
+                console.log(e)
+                core.error(`Error writing Job Summary ${e.message}`)
+            }
         }
 
         core.info('✅ \u001b[32;1mFinished Success')
@@ -217,13 +243,13 @@ async function getRelease(octokit) {
 }
 
 /**
- * Write Job Summary
+ * Add Job Summary
  * @param {Object} config
  * @param {Object[]} results
  * @param {Array} output
  * @return {Promise<void>}
  */
-async function writeSummary(config, results, output) {
+async function addSummary(config, results, output) {
     core.summary.addRaw('## VirusTotal Action\n')
 
     const results_table = []
@@ -269,6 +295,8 @@ async function writeSummary(config, results, output) {
  * @property {String[]} files
  * @property {Number} rate
  * @property {Boolean} update
+ * @property {Boolean} collapsed
+ * @property {String} name
  * @property {String} heading
  * @property {Boolean} summary
  * @return {Config}
@@ -280,6 +308,8 @@ function getConfig() {
         files: core.getInput('file_globs').split('\n').filter(Boolean),
         rate: parseInt(core.getInput('rate_limit', { required: true })),
         update: core.getBooleanInput('update_release'),
+        collapsed: core.getBooleanInput('collapsed'),
+        name: core.getInput('file_name').toLowerCase(),
         heading: core.getInput('release_heading'),
         summary: core.getBooleanInput('summary'),
     }
