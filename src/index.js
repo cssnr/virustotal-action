@@ -48,8 +48,15 @@ const vtUpload = require('./vt')
             core.startGroup(`Updating Release ${release.id}`)
             let body = release.body
 
-            const collapsed = config.collapsed ? '' : ' open'
-            body += `\n\n<details${collapsed}><summary>${config.heading}</summary>\n\n`
+            body += `\n\n`
+            if (config.heading.trim()) {
+                body += `${config.heading}\n\n`
+            }
+            if (config.collapsed) {
+                body += `\n\n<details><summary>Click Here to Show Results</summary>\n\n`
+            }
+            // const collapsed = config.collapsed ? '' : ' open'
+            // body += `\n\n<details${collapsed}><summary>${config.heading}</summary>\n\n`
             for (const result of results) {
                 let name = result.name
                 if (config.name === 'id') {
@@ -60,7 +67,11 @@ const vtUpload = require('./vt')
                 console.log(`name: ${name}`)
                 if (config.name) body += `\n- [${name}](${result.link})`
             }
-            body += '\n\n</details>\n\n'
+            if (config.collapsed) {
+                body += '\n\n</details>\n\n'
+            } else {
+                body += `\n\n`
+            }
 
             console.log(`\n${body}\n`)
             await octokit.rest.repos.updateRelease({

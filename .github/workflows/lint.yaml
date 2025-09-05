@@ -18,10 +18,10 @@ jobs:
 
     steps:
       - name: "Checkout"
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: "Setup Node 22"
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v5
         with:
           node-version: 22
           #cache: npm
@@ -29,7 +29,7 @@ jobs:
       - name: "Install"
         id: install
         run: |
-          npm install
+          npm ci
 
       - name: "ESLint"
         id: eslint
@@ -73,6 +73,6 @@ jobs:
         uses: cssnr/check-build-action@master
 
       - name: "ESLint Annotate"
-        if: ${{ failure() && steps.eslint.outcome != 'success' }}
+        if: ${{ !cancelled() && steps.eslint.outcome != 'success' }}
         continue-on-error: true
         uses: ataylorme/eslint-annotate-action@v3
