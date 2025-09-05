@@ -29,7 +29,7 @@
 - [Support](#Support)
 - [Contributing](#Contributing)
 
-This action will submit file globs or release assets to the VirusTotal API for scanning.
+Submit file globs or release assets to the VirusTotal API for scanning.
 
 On release events the [Release Notes](#Release-Notes) will optionally be updated with links to the scan results.
 
