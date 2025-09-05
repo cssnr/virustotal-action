@@ -8,7 +8,6 @@
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=cssnr_virustotal-action&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=cssnr_virustotal-action)
 [![GitHub Last Commit](https://img.shields.io/github/last-commit/cssnr/virustotal-action?logo=github&label=updated)](https://github.com/cssnr/virustotal-action/pulse)
 [![Codeberg Last Commit](https://img.shields.io/gitea/last-commit/cssnr/virustotal-action/master?gitea_url=https%3A%2F%2Fcodeberg.org%2F&logo=codeberg&logoColor=white&label=updated)](https://codeberg.org/cssnr/virustotal-action)
-[![GitHub Contributors](https://img.shields.io/github/contributors/cssnr/virustotal-action?logo=github)](https://github.com/cssnr/virustotal-action/graphs/contributors)
 [![GitHub Repo Size](https://img.shields.io/github/repo-size/cssnr/virustotal-action?logo=bookstack&logoColor=white&label=repo%20size)](https://github.com/cssnr/virustotal-action)
 [![GitHub Top Language](https://img.shields.io/github/languages/top/cssnr/virustotal-action?logo=htmx)](https://github.com/cssnr/virustotal-action)
 [![GitHub Forks](https://img.shields.io/github/forks/cssnr/virustotal-action?style=flat&logo=github)](https://github.com/cssnr/virustotal-action/forks)
