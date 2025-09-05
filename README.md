@@ -48,7 +48,7 @@ With no inputs this will automatically process release assets.
     vt_api_key: ${{ secrets.VT_API_KEY }}
 ```
 
-Make sure to review the [Inputs](#inputs) and checkout the [Examples](#examples).
+Make sure to review the [Inputs](#inputs) and checkout more [Examples](#examples).
 
 This is a fairly simple action, for more details see [src/index.js](src/index.js) and [src/vt.js](src/vt.js).
 
