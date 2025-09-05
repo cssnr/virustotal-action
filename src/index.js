@@ -62,7 +62,7 @@ const vtUpload = require('./vt')
                 if (config.name === 'id') {
                     name = result.id
                     // } else if (config.name === 'hash') {
-                    //     name = 'TODO: ADD HASH HERE' // TODO: ADD HASH HERE
+                    //     name = 'TODO: ADD HASH HERE' // TODO: ADD HASH HERE.
                 }
                 console.log(`name: ${name}`)
                 if (config.name) body += `\n- [${name}](${result.link})`
