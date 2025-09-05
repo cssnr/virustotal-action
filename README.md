@@ -30,9 +30,11 @@
 - [Support](#Support)
 - [Contributing](#Contributing)
 
-Upload Release Assets or Specified File Globs to VirusTotal and Optionally Update [Release Notes](#Release-Notes) with Links.
+This action will submit file globs or release assets to the VirusTotal API for scanning.
 
-You can now customize the release notes heading. See the [Features](#Features) for more details.
+On release events the [Release Notes](#Release-Notes) will optionally be updated with links to the scan results.
+
+You can now customize the links display and release notes heading. See the [Features](#Features) for more details.
 
 The /files/ endpoint is used for files under 32MB, otherwise, the /files/upload_url/ endpoint is used
 providing support for files up to **650MB**. Therefore, files over 32MB will consume 2 API calls.
