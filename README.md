@@ -1,14 +1,15 @@
 [![GitHub Tag Major](https://img.shields.io/github/v/tag/cssnr/virustotal-action?sort=semver&filter=!v*.*&logo=git&logoColor=white&labelColor=585858&label=%20)](https://github.com/cssnr/virustotal-action/tags)
-[![GitHub Tag Minor](https://img.shields.io/github/v/tag/cssnr/virustotal-action?sort=semver&filter=!v*.*.*&logo=git&logoColor=white&labelColor=585858&label=%20)](https://github.com/cssnr/virustotal-action/tags)
+[![GitHub Tag Minor](https://img.shields.io/github/v/tag/cssnr/virustotal-action?sort=semver&filter=!v*.*.*&logo=git&logoColor=white&labelColor=585858&label=%20)](https://github.com/cssnr/virustotal-action/releases)
 [![GitHub Release Version](https://img.shields.io/github/v/release/cssnr/virustotal-action?logo=git&logoColor=white&labelColor=585858&label=%20)](https://github.com/cssnr/virustotal-action/releases/latest)
-[![GitHub Dist Size](https://img.shields.io/github/size/cssnr/virustotal-action/dist%2Findex.js?label=dist%20size)](https://github.com/cssnr/virustotal-action/blob/master/src/index.js)
+[![GitHub Dist Size](https://img.shields.io/github/size/cssnr/virustotal-action/dist%2Findex.js?logo=bookstack&logoColor=white&label=dist%20size)](https://github.com/cssnr/virustotal-action/blob/master/src)
 [![Workflow Release](https://img.shields.io/github/actions/workflow/status/cssnr/virustotal-action/release.yaml?logo=cachet&label=release)](https://github.com/cssnr/virustotal-action/actions/workflows/release.yaml)
 [![Workflow Test](https://img.shields.io/github/actions/workflow/status/cssnr/virustotal-action/test.yaml?logo=cachet&label=test)](https://github.com/cssnr/virustotal-action/actions/workflows/test.yaml)
 [![Workflow Lint](https://img.shields.io/github/actions/workflow/status/cssnr/virustotal-action/lint.yaml?logo=cachet&label=lint)](https://github.com/cssnr/virustotal-action/actions/workflows/lint.yaml)
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=cssnr_virustotal-action&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=cssnr_virustotal-action)
 [![GitHub Last Commit](https://img.shields.io/github/last-commit/cssnr/virustotal-action?logo=github&label=updated)](https://github.com/cssnr/virustotal-action/pulse)
 [![Codeberg Last Commit](https://img.shields.io/gitea/last-commit/cssnr/virustotal-action/master?gitea_url=https%3A%2F%2Fcodeberg.org%2F&logo=codeberg&logoColor=white&label=updated)](https://codeberg.org/cssnr/virustotal-action)
-[![GitHub Repo Size](https://img.shields.io/github/repo-size/cssnr/virustotal-action?logo=bookstack&logoColor=white&label=repo%20size)](https://github.com/cssnr/virustotal-action)
+[![GitHub Contributors](https://img.shields.io/github/contributors/cssnr/virustotal-action?logo=github)](https://github.com/cssnr/virustotal-action/graphs/contributors)
+[![GitHub Repo Size](https://img.shields.io/github/repo-size/cssnr/virustotal-action?logo=bookstack&logoColor=white&label=repo%20size)](https://github.com/cssnr/virustotal-action?tab=readme-ov-file#readme)
 [![GitHub Top Language](https://img.shields.io/github/languages/top/cssnr/virustotal-action?logo=htmx)](https://github.com/cssnr/virustotal-action)
 [![GitHub Forks](https://img.shields.io/github/forks/cssnr/virustotal-action?style=flat&logo=github)](https://github.com/cssnr/virustotal-action/forks)
 [![GitHub Repo Stars](https://img.shields.io/github/stars/cssnr/virustotal-action?style=flat&logo=github)](https://github.com/cssnr/virustotal-action/stargazers)
@@ -57,17 +58,17 @@ This is a fairly simple action, for more details see [src/index.js](src/index.js
 
 ## Inputs
 
-| Input&nbsp;Name   |  Req.   | Default&nbsp;Value            | Input&nbsp;Description                                 |
-| :---------------- | :-----: | :---------------------------- | :----------------------------------------------------- |
-| `vt_api_key`      | **Yes** | -                             | VirusTotal API Key \*                                  |
-| `file_globs`      |    -    | -                             | File Globs to Process \*                               |
-| `rate_limit`      |    -    | `4`                           | API Calls Per Minute \*                                |
-| `update_release`  |    -    | `true`                        | Update the [Release Notes](#Release-Notes)             |
-| `release_heading` |    -    | _[see below](#Release-Notes)_ | Release Notes Heading [⤵️](#Release-Notes)             |
-| `collapsed`       |    -    | `false`                       | Show Links Collapsed. [⤵️](#Release-Notes)             |
-| `file_name`       |    -    | `name`                        | File Name Display: [`name`, `id`] [⤵️](#Release-Notes) |
-| `summary`         |    -    | `true`                        | Add Summary to Job \*                                  |
-| `github_token`    |    -    | `github.token`                | For use with a PAT                                     |
+|  Input&nbsp;Name  | Default&nbsp;Value            | Description&nbsp;of&nbsp;Input&nbsp;Value              |
+| :---------------: | :---------------------------- | :----------------------------------------------------- |
+|   `vt_api_key`    | **Required**                  | VirusTotal API Key \*                                  |
+|   `file_globs`    | -                             | File Globs to Process \*                               |
+|   `rate_limit`    | `4`                           | API Calls Per Minute \*                                |
+| `update_release`  | `true`                        | Update the [Release Notes](#Release-Notes)             |
+| `release_heading` | _[see below](#Release-Notes)_ | Release Notes Heading [⤵️](#Release-Notes)             |
+|    `collapsed`    | `false`                       | Show Links Collapsed. [⤵️](#Release-Notes)             |
+|    `file_name`    | `name`                        | File Name Display: [`name`, `id`] [⤵️](#Release-Notes) |
+|     `summary`     | `true`                        | Add Summary to Job \*                                  |
+|  `github_token`   | `github.token`                | For use with a PAT                                     |
 
 > For more details on inputs, see the VirusTotal API [documentation](https://docs.virustotal.com/reference/overview).
 
@@ -468,5 +469,8 @@ Additionally, you can support other GitHub Actions I have published:
 - [Docker Tags Action](https://github.com/cssnr/docker-tags-action?tab=readme-ov-file#readme)
 - [Package Changelog Action](https://github.com/cssnr/package-changelog-action?tab=readme-ov-file#readme)
 - [NPM Outdated Check Action](https://github.com/cssnr/npm-outdated-action?tab=readme-ov-file#readme)
+- [Label Creator Action](https://github.com/cssnr/label-creator-action?tab=readme-ov-file#readme)
+- [Algolia Crawler Action](https://github.com/cssnr/algolia-crawler-action?tab=readme-ov-file#readme)
+- [Upload Release Action](https://github.com/cssnr/upload-release-action?tab=readme-ov-file#readme)
 
 For a full list of current projects visit: [https://cssnr.github.io/](https://cssnr.github.io/)

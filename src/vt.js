@@ -6,9 +6,9 @@ const FormData = require('form-data')
 /**
  * https://docs.virustotal.com/reference/files-scan
  * @function vtUpload
- * @param {string} filePath
- * @param {string} apiKey
- * @return {Promise<*|object>}
+ * @param {String} filePath
+ * @param {String} apiKey
+ * @return {Promise<*|Object>}
  */
 async function vtUpload(filePath, apiKey) {
     console.log('vtUpload:', filePath)
@@ -26,9 +26,9 @@ async function vtUpload(filePath, apiKey) {
 /**
  * https://docs.virustotal.com/reference/files-upload-url
  * @function vtGetURL
- * @param {string} filePath
- * @param {string} apiKey
- * @return {Promise<*|string>}
+ * @param {String} filePath
+ * @param {String} apiKey
+ * @return {Promise<*|String>}
  */
 async function vtGetURL(filePath, apiKey) {
     // This does not consume per-minute api quota, consider using axios
