@@ -1,4 +1,4 @@
-const fs = require('fs')
+const fs = require('node:fs')
 
 const axios = require('axios')
 const FormData = require('form-data')
