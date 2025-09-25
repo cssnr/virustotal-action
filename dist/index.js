@@ -37189,6 +37189,22 @@ module.exports = require("node:events");
 
 /***/ }),
 
+/***/ 3024:
+/***/ ((module) => {
+
+"use strict";
+module.exports = require("node:fs");
+
+/***/ }),
+
+/***/ 6760:
+/***/ ((module) => {
+
+"use strict";
+module.exports = require("node:path");
+
+/***/ }),
+
 /***/ 7075:
 /***/ ((module) => {
 
@@ -44334,8 +44350,8 @@ module.exports = /*#__PURE__*/JSON.parse('{"application/1d-interleaved-parityfec
 /******/ 	
 /************************************************************************/
 var __webpack_exports__ = {};
-const fs = __nccwpck_require__(9896)
-const path = __nccwpck_require__(6928)
+const fs = __nccwpck_require__(3024)
+const path = __nccwpck_require__(6760)
 
 const core = __nccwpck_require__(7484)
 const github = __nccwpck_require__(3228)
@@ -44642,7 +44658,7 @@ function getInputs() {
         token: core.getInput('github_token', { required: true }),
         key: core.getInput('vt_api_key', { required: true }),
         files: core.getInput('file_globs').split('\n').filter(Boolean),
-        rate: parseInt(core.getInput('rate_limit', { required: true })),
+        rate: Number.parseInt(core.getInput('rate_limit', { required: true })),
         update: core.getBooleanInput('update_release'),
         collapsed: core.getBooleanInput('collapsed'),
         name: core.getInput('file_name').toLowerCase(),

@@ -1,5 +1,5 @@
-const fs = require('fs')
-const path = require('path')
+const fs = require('node:fs')
+const path = require('node:path')
 
 const core = require('@actions/core')
 const github = require('@actions/github')
@@ -306,7 +306,7 @@ function getInputs() {
         token: core.getInput('github_token', { required: true }),
         key: core.getInput('vt_api_key', { required: true }),
         files: core.getInput('file_globs').split('\n').filter(Boolean),
-        rate: parseInt(core.getInput('rate_limit', { required: true })),
+        rate: Number.parseInt(core.getInput('rate_limit', { required: true })),
         update: core.getBooleanInput('update_release'),
         collapsed: core.getBooleanInput('collapsed'),
         name: core.getInput('file_name').toLowerCase(),
