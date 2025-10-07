@@ -59,33 +59,43 @@ This is a fairly simple action, for more details see [src/index.js](src/index.js
 
 ## Inputs
 
-| Input&nbsp;Name   | Default&nbsp;Value            | Description&nbsp;of&nbsp;Input&nbsp;Value              |
-| :---------------- | :---------------------------- | :----------------------------------------------------- |
-| `vt_api_key`      | **Required**                  | VirusTotal API Key \*                                  |
-| `file_globs`      | -                             | File Globs to Process \*                               |
-| `rate_limit`      | `4`                           | API Calls Per Minute \*                                |
-| `release_id`      | -                             | Release ID to Process                                  |
-| `update_release`  | `true`                        | Update the [Release Notes](#Release-Notes)             |
-| `release_heading` | _[see below](#Release-Notes)_ | Release Notes Heading [⤵️](#Release-Notes)             |
-| `collapsed`       | `false`                       | Show Links Collapsed. [⤵️](#Release-Notes)             |
-| `file_name`       | `name`                        | File Name Display: [`name`, `id`] [⤵️](#Release-Notes) |
-| `summary`         | `true`                        | Add Summary to Job \*                                  |
-| `github_token`    | `github.token`                | For use with a PAT                                     |
+| Input&nbsp;Name   | Default&nbsp;Value            | Description&nbsp;of&nbsp;Input&nbsp;Value          |
+| :---------------- | :---------------------------- | :------------------------------------------------- |
+| `vt_api_key`      | **Required**                  | VirusTotal API Key [⤵️](#vt_api_key)               |
+| `file_globs`      | -                             | File Globs to Process [⤵️](#file_globs)            |
+| `rate_limit`      | `4`                           | API Calls Per Minute [⤵️](#rate_limit)             |
+| `release_id`      | -                             | Release ID to Process [⤵️](#release_id)            |
+| `update_release`  | `true`                        | Update the [Release Notes](#Release-Notes)         |
+| `release_heading` | _[see below](#Release-Notes)_ | Release Notes Heading [⤵️](#release_heading)       |
+| `collapsed`       | `false`                       | Show Links Collapsed. [⤵️](#collapsed)             |
+| `file_name`       | `name`                        | File Name Display: [`name`, `id`] [⤵️](#file_name) |
+| `summary`         | `true`                        | Add Summary to Job [⤵️](#summary)                  |
+| `github_token`    | `github.token`                | For use with a PAT                                 |
 
 > For more details on inputs, see the VirusTotal API [documentation](https://docs.virustotal.com/reference/overview).
 
-**vt_api_key:** Get your API key from: https://www.virustotal.com/gui/my-apikey
+#### vt_api_key
 
-**file_globs:** If provided, will process matching files instead of release assets.  
+Get your API key from: https://www.virustotal.com/gui/my-apikey
+
+#### file_globs
+
+If provided, will process matching files instead of release assets.  
 For glob pattern, see [examples](#examples) and the [docs](https://github.com/actions/toolkit/tree/main/packages/glob#patterns).
 
-**release_id:** If provided, will process the corresponding release.
+#### rate_limit
+
+Rate limit for file uploads. Set to `0` to disable if you know what you are doing.
+
+#### release_id
+
+If provided, will process the corresponding release.
 The release ID can be generated from a previous step.
 By providing a release ID, this action does not need to run on a release event to process a release.
 
-**rate_limit:** Rate limit for file uploads. Set to `0` to disable if you know what you are doing.
+#### summary
 
-**summary:** Will add result details to the job summary in the workflow.
+Will add result details to the job summary in the workflow.
 
 <details><summary>👀 View Job Summary Example</summary>
 
@@ -144,16 +154,24 @@ See the [Examples](#Examples) section for more options.
 If run on a release event, the Release Notes are automatically updated with the results unless you set `update_release` to `false`.
 You can customize the heading or remove it by specifying an empty string.
 
-**update_release:** If triggered from a release workflow, will update the release notes and append the results.
+#### update_release
 
-**release_heading:** Customize the Release Notes Heading.  
+If triggered from a release workflow, will update the release notes and append the results.
+
+#### release_heading
+
+Customize the Release Notes Heading.  
 Default: `🛡️ **VirusTotal Results:**`
 
-**collapsed:** Set to `true` to collapse the result links by default. _Experimental._
+#### collapsed
 
-**file_name:** Customize the Release Notes File Name Display. This can be one of `name`, or `id`.
+Set to `true` to collapse the result links by default. _Experimental._
 
-#### Example Release Notes Update
+#### file_name
+
+Customize the Release Notes File Name Display. This can be one of `name`, or `id`.
+
+### Example Release Notes Update
 
 ---
 
