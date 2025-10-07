@@ -77,7 +77,7 @@ This is a fairly simple action, for more details see [src/index.js](src/index.js
 
 | Input&nbsp;Name   | Default&nbsp;Value            | Description&nbsp;of&nbsp;Input&nbsp;Value          |
 | :---------------- | :---------------------------- | :------------------------------------------------- |
-| `vt_api_key`      | **Required**                  | VirusTotal API Key [⤵️](#vt_api_key)               |
+| `vt_api_key`      | _Required_                    | VirusTotal API Key [⤵️](#vt_api_key)               |
 | `file_globs`      | -                             | File Globs to Process [⤵️](#file_globs)            |
 | `rate_limit`      | `4`                           | API Calls Per Minute [⤵️](#rate_limit)             |
 | `release_id`      | -                             | Release ID to Process [⤵️](#release_id)            |
