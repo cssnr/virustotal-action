@@ -16,6 +16,10 @@ inputs:
     description: "API Calls Per Minute"
     required: false
     default: "4"
+  release_id:
+    description: "Release ID to process"
+    required: false
+    default: ""
   update_release:
     description: "Update Release Notes"
     required: false
