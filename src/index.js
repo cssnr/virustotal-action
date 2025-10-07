@@ -162,11 +162,13 @@ async function processRelease(inputs, limiter, octokit, release) {
     // Get Assets
     let allAssets = []
     let page = 0
+    const { data } = await octokit.rest.rateLimit.get()
+    const ghLimiter = new RateLimiter({
+        tokensPerInterval: data.resources.core.limit,
+        interval: 'hour',
+    })
     while (true) {
-        if (inputs.rate) {
-            const remainingRequests = await limiter.removeTokens(1)
-            console.log('remainingRequests:', remainingRequests)
-        }
+        await ghLimiter.removeTokens(1)
         const assets = await octokit.rest.repos.listReleaseAssets({
             ...github.context.repo,
             release_id: release.id,
