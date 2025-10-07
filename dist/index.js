@@ -44614,15 +44614,22 @@ async function processVt(inputs, name, filePath) {
  */
 async function getRelease(octokit, release_id) {
     const target_release_id = release_id || github.context.payload.release?.id
-    if (!target_release_id) {
-        return
-    }
+    if (!target_release_id) return
+
     core.info(`Getting Release: \u001b[32m${target_release_id}`)
-    const release = await octokit.rest.repos.getRelease({
+
+    let release = await octokit.rest.repos.getRelease({
         ...github.context.repo,
         release_id: target_release_id,
     })
-    return release.data
+    if (release) return release.data
+
+    // try getting by tag name
+    release = await octokit.rest.repos.getReleaseByTag({
+        ...github.context.repo,
+        tag: target_release_id,
+    })
+    return release?.data
 }
 
 /**
