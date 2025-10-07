@@ -44512,17 +44512,21 @@ async function processRelease(inputs, limiter, octokit, release) {
     core.endGroup() // Release
 
     // Get Assets
-    let all_assets = []
+    let allAssets = []
     let page = 0
     while (true) {
+        if (inputs.rate) {
+            const remainingRequests = await limiter.removeTokens(1)
+            console.log('remainingRequests:', remainingRequests)
+        }
         const assets = await octokit.rest.repos.listReleaseAssets({
             ...github.context.repo,
             release_id: release.id,
-            per_page: 10,
+            per_page: 100,
             page: ++page,
         })
         if (!assets.data.length) break
-        all_assets = all_assets.concat(assets.data)
+        allAssets = all_assets.concat(assets.data)
     }
     if (!all_assets.length) {
         throw new Error(`No Assets Found for Release: ${release.id}`)
@@ -44536,12 +44540,12 @@ async function processRelease(inputs, limiter, octokit, release) {
         fs.mkdirSync(assetsPath)
     }
 
-    console.log(all_assets)
+    console.log(allAssets)
     core.endGroup() // Assets
 
     // Process Assets
     const results = []
-    for (const asset of all_assets) {
+    for (const asset of allAssets) {
         core.startGroup(`Processing: \u001b[36m${asset.name}`)
         if (inputs.rate) {
             const remainingRequests = await limiter.removeTokens(1)
