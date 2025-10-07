@@ -44438,23 +44438,21 @@ const vtUpload = __nccwpck_require__(9431)
                 }
             }
 
-            body += `\n\n`
+            body += `\n`
             if (inputs.heading) {
-                body += `${inputs.heading}\n\n`
+                body += `\n${inputs.heading}\n`
             }
             if (inputs.collapsed) {
-                body += `\n\n<details><summary>Click Here to Show Scan Results</summary>\n\n`
+                body += `\n<details><summary>Click Here to Show Scan Results</summary>\n`
             }
             // const collapsed = inputs.collapsed ? '' : ' open'
             // body += `\n\n<details${collapsed}><summary>${inputs.heading}</summary>\n\n`
             for (const result of existing_results_list) {
-                body += `- [${result.name}](${result.link})\n`
+                body += `\n- [${result.name}](${result.link})`
             }
             if (inputs.collapsed) {
-                body += '\n\n</details>\n\n'
-            } else {
-                body += `\n\n`
-            }
+                body += '\n\n</details>'
+            } 
 
             console.log(`\n${body}\n`)
             await octokit.rest.repos.updateRelease({
