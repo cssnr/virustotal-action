@@ -20,14 +20,14 @@
 
 # VirusTotal Action
 
+- [Features](#Features)
+  - [Planned](#Planned)
 - [Inputs](#Inputs)
   - [Release Notes](#Release-Notes)
   - [Permissions](#Permissions)
 - [Outputs](#Outputs)
 - [Examples](#Examples)
 - [Tags](#Tags)
-- [Features](#Features)
-  - [Planned](#Planned)
 - [Support](#Support)
 - [Contributing](#Contributing)
 
@@ -52,6 +52,22 @@ With no inputs this will automatically process release assets.
 Make sure to review the [Inputs](#inputs) and checkout more [Examples](#examples).
 
 This is a fairly simple action, for more details see [src/index.js](src/index.js) and [src/vt.js](src/vt.js).
+
+## Features
+
+- Supports files up to 650MB
+- Upload Release Assets or File Globs
+- Automatically add Results to Release Notes
+  - Customize Release Notes Heading
+- Rate Limited for Free Accounts
+- Option to specify the Release ID
+
+### Planned
+
+- Add options to customize release update/output format (next on the roadmap).
+- Add release body parsing to properly process new files on edited activity.
+- Add option to apply file_globs to release assets.
+- Refactor vt.js as a Class to clean up index.js.
 
 > [!NOTE]  
 > Please submit a [Feature Request](https://github.com/cssnr/virustotal-action/discussions/categories/feature-requests)
@@ -422,23 +438,6 @@ https://github.com/cssnr/hls-downloader-client/blob/master/.github/workflows/bui
 
 For more examples, you can check out other projects using this action:  
 https://github.com/cssnr/virustotal-action/network/dependents
-
-## Features
-
-- Supports files up to 650MB
-- Upload Release Assets or File Globs
-- Automatically add Results to Release Notes
-  - Customize Release Notes Heading
-- Rate Limited for Free Accounts
-
-### Planned
-
-- Add options to customize release update/output format (next on the roadmap).
-- Add release body parsing to properly process new files on edited activity.
-- Add option to apply file_globs to release assets.
-- Refactor vt.js as a Class to clean up index.js.
-
-Don't see your feature here, or want to see one implemented? Let us know in the [Support](#Support) section.
 
 ## Tags
 
