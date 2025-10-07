@@ -64,6 +64,7 @@ This is a fairly simple action, for more details see [src/index.js](src/index.js
 | `vt_api_key`      | **Required**                  | VirusTotal API Key \*                                  |
 | `file_globs`      | -                             | File Globs to Process \*                               |
 | `rate_limit`      | `4`                           | API Calls Per Minute \*                                |
+| `release_id`      | `''`                          | Release ID to Process                                  |
 | `update_release`  | `true`                        | Update the [Release Notes](#Release-Notes)             |
 | `release_heading` | _[see below](#Release-Notes)_ | Release Notes Heading [⤵️](#Release-Notes)             |
 | `collapsed`       | `false`                       | Show Links Collapsed. [⤵️](#Release-Notes)             |
@@ -77,6 +78,10 @@ This is a fairly simple action, for more details see [src/index.js](src/index.js
 
 **file_globs:** If provided, will process matching files instead of release assets.  
 For glob pattern, see [examples](#examples) and the [docs](https://github.com/actions/toolkit/tree/main/packages/glob#patterns).
+
+**release_id:** If provided, will process the corresponding release.
+The release ID can be generated from a previous step.
+By providing a release ID, this action does not need to run on a release event to process a release.
 
 **rate_limit:** Rate limit for file uploads. Set to `0` to disable if you know what you are doing.
 

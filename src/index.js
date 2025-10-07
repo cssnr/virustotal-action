@@ -21,7 +21,7 @@ const vtUpload = require('./vt')
 
         // Set Variables
         const octokit = github.getOctokit(inputs.token)
-        const release = await getRelease(octokit)
+        const release = await getRelease(octokit, inputs.release_id)
         const limiter = new RateLimiter({
             tokensPerInterval: inputs.rate,
             interval: 'minute',
@@ -48,15 +48,24 @@ const vtUpload = require('./vt')
             core.startGroup(`Updating Release ${release.id}`)
             let body = release.body
 
-            body += `\n\n`
+            let existing_results = ''
             if (inputs.heading) {
-                body += `${inputs.heading}\n\n`
+                const heading_index = body.indexOf(inputs.heading)
+                if (heading_index > -1) {
+                    existing_results = body.slice(heading_index).trim()
+                    body = body.slice(0, heading_index).trim()
+                }
             }
-            if (inputs.collapsed) {
-                body += `\n\n<details><summary>Click Here to Show Scan Results</summary>\n\n`
+
+            let existing_results_list = []
+            if (existing_results) {
+                const matches = [...existing_results.matchAll(/- \[(.*?)\]\((.*?)\)/g)]
+                existing_results_list = matches.map((match) => ({
+                    name: match[1],
+                    link: match[2],
+                }))
             }
-            // const collapsed = inputs.collapsed ? '' : ' open'
-            // body += `\n\n<details${collapsed}><summary>${inputs.heading}</summary>\n\n`
+
             for (const result of results) {
                 let name = result.name
                 if (inputs.name === 'id') {
@@ -65,12 +74,32 @@ const vtUpload = require('./vt')
                     //     name = 'TODO: ADD HASH HERE'
                 }
                 console.log(`name: ${name}`)
-                if (inputs.name) body += `\n- [${name}](${result.link})`
+                if (inputs.name) {
+                    // remove existing entry and append new one
+                    existing_results_list = existing_results_list.filter(
+                        (r) => r.name !== name
+                    )
+                    existing_results_list.push({
+                        name,
+                        link: result.link,
+                    })
+                }
+            }
+
+            body += `\n`
+            if (inputs.heading) {
+                body += `\n${inputs.heading}\n`
             }
             if (inputs.collapsed) {
-                body += '\n\n</details>\n\n'
-            } else {
-                body += `\n\n`
+                body += `\n<details><summary>Click Here to Show Scan Results</summary>\n`
+            }
+            // const collapsed = inputs.collapsed ? '' : ' open'
+            // body += `\n\n<details${collapsed}><summary>${inputs.heading}</summary>\n\n`
+            for (const result of existing_results_list) {
+                body += `\n- [${result.name}](${result.link})`
+            }
+            if (inputs.collapsed) {
+                body += '\n\n</details>'
             }
 
             console.log(`\n${body}\n`)
@@ -228,18 +257,27 @@ async function processVt(inputs, name, filePath) {
 /**
  * Get Release
  * @param {InstanceType<typeof github.GitHub>} octokit
+ * @param {String} release_id
  * @return {Promise<InstanceType<typeof github.GitHub>|Undefined>}
  */
-async function getRelease(octokit) {
-    if (!github.context.payload.release?.id) {
-        return
-    }
-    core.info(`Getting Release: \u001b[32m${github.context.payload.release.id}`)
-    const release = await octokit.rest.repos.getRelease({
+async function getRelease(octokit, release_id) {
+    const target_release_id = release_id || github.context.payload.release?.id
+    if (!target_release_id) return
+
+    core.info(`Getting Release: \u001b[32m${target_release_id}`)
+
+    let release = await octokit.rest.repos.getRelease({
         ...github.context.repo,
-        release_id: github.context.payload.release.id,
+        release_id: target_release_id,
     })
-    return release.data
+    if (release) return release.data
+
+    // try getting by tag name
+    release = await octokit.rest.repos.getReleaseByTag({
+        ...github.context.repo,
+        tag: target_release_id,
+    })
+    return release?.data
 }
 
 /**
@@ -295,6 +333,7 @@ async function addSummary(inputs, results, output) {
  * @property {String[]} files
  * @property {Number} rate
  * @property {Boolean} update
+ * @property {String} release_id
  * @property {Boolean} collapsed
  * @property {String} name
  * @property {String} heading
@@ -308,6 +347,7 @@ function getInputs() {
         files: core.getInput('file_globs').split('\n').filter(Boolean),
         rate: Number.parseInt(core.getInput('rate_limit', { required: true })),
         update: core.getBooleanInput('update_release'),
+        release_id: core.getInput('release_id'),
         collapsed: core.getBooleanInput('collapsed'),
         name: core.getInput('file_name').toLowerCase(),
         heading: core.getInput('release_heading'),
