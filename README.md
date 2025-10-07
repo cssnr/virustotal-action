@@ -21,9 +21,7 @@
 # VirusTotal Action
 
 - [Features](#Features)
-  - [Planned](#Planned)
 - [Inputs](#Inputs)
-  - [Release Notes](#Release-Notes)
   - [Permissions](#Permissions)
 - [Outputs](#Outputs)
 - [Examples](#Examples)
@@ -187,7 +185,7 @@ Set to `true` to collapse the result links by default. _Experimental._
 
 Customize the Release Notes File Name Display. This can be one of `name`, or `id`.
 
-### Example Release Notes Update
+### Example Release Notes
 
 ---
 
