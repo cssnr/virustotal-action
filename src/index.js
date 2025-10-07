@@ -176,9 +176,9 @@ async function processRelease(inputs, limiter, octokit, release) {
             page: ++page,
         })
         if (!assets.data.length) break
-        allAssets = all_assets.concat(assets.data)
+        allAssets = allAssets.concat(assets.data)
     }
-    if (!all_assets.length) {
+    if (!allAssets.length) {
         throw new Error(`No Assets Found for Release: ${release.id}`)
     }
 
