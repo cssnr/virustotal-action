@@ -44452,7 +44452,7 @@ const vtUpload = __nccwpck_require__(9431)
             }
             if (inputs.collapsed) {
                 body += '\n\n</details>'
-            } 
+            }
 
             console.log(`\n${body}\n`)
             await octokit.rest.repos.updateRelease({
