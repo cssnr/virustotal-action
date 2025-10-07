@@ -6,3 +6,5 @@ eslint_report.json
 .env
 .secrets
 .vars
+.github/workflows/local.yaml
+event.json

@@ -11,8 +11,8 @@
 [![GitHub Contributors](https://img.shields.io/github/contributors/cssnr/virustotal-action?logo=github)](https://github.com/cssnr/virustotal-action/graphs/contributors)
 [![GitHub Repo Size](https://img.shields.io/github/repo-size/cssnr/virustotal-action?logo=bookstack&logoColor=white&label=repo%20size)](https://github.com/cssnr/virustotal-action?tab=readme-ov-file#readme)
 [![GitHub Top Language](https://img.shields.io/github/languages/top/cssnr/virustotal-action?logo=htmx)](https://github.com/cssnr/virustotal-action)
-[![GitHub Forks](https://img.shields.io/github/forks/cssnr/virustotal-action?style=flat&logo=github)](https://github.com/cssnr/virustotal-action/forks)
 [![GitHub Discussions](https://img.shields.io/github/discussions/cssnr/virustotal-action?logo=github)](https://github.com/cssnr/virustotal-action/discussions)
+[![GitHub Forks](https://img.shields.io/github/forks/cssnr/virustotal-action?style=flat&logo=github)](https://github.com/cssnr/virustotal-action/forks)
 [![GitHub Repo Stars](https://img.shields.io/github/stars/cssnr/virustotal-action?style=flat&logo=github)](https://github.com/cssnr/virustotal-action/stargazers)
 [![GitHub Org Stars](https://img.shields.io/github/stars/cssnr?style=flat&logo=github&label=org%20stars)](https://cssnr.github.io/)
 [![Discord](https://img.shields.io/discord/899171661457293343?logo=discord&logoColor=white&label=discord&color=7289da)](https://discord.gg/wXy6m2X8wY)
@@ -20,14 +20,12 @@
 
 # VirusTotal Action
 
+- [Features](#Features)
 - [Inputs](#Inputs)
-  - [Release Notes](#Release-Notes)
   - [Permissions](#Permissions)
 - [Outputs](#Outputs)
 - [Examples](#Examples)
 - [Tags](#Tags)
-- [Features](#Features)
-  - [Planned](#Planned)
 - [Support](#Support)
 - [Contributing](#Contributing)
 
@@ -53,39 +51,65 @@ Make sure to review the [Inputs](#inputs) and checkout more [Examples](#examples
 
 This is a fairly simple action, for more details see [src/index.js](src/index.js) and [src/vt.js](src/vt.js).
 
+## Features
+
+- Supports files up to 650MB
+- Upload Release Assets or File Globs
+- Automatically add Results to Release Notes
+  - Customize Release Notes Heading
+- Rate Limited for Free Accounts
+- Option to specify the Release ID
+
+### Planned
+
+- Add options to customize release update/output format (next on the roadmap).
+- Add release body parsing to properly process new files on edited activity.
+- Add option to apply file_globs to release assets.
+- Refactor vt.js as a Class to clean up index.js.
+
 > [!NOTE]  
 > Please submit a [Feature Request](https://github.com/cssnr/virustotal-action/discussions/categories/feature-requests)
 > for new features or [Open an Issue](https://github.com/cssnr/virustotal-action/issues) if you find any bugs.
 
 ## Inputs
 
-| Input&nbsp;Name   | Default&nbsp;Value            | Description&nbsp;of&nbsp;Input&nbsp;Value              |
-| :---------------- | :---------------------------- | :----------------------------------------------------- |
-| `vt_api_key`      | **Required**                  | VirusTotal API Key \*                                  |
-| `file_globs`      | -                             | File Globs to Process \*                               |
-| `rate_limit`      | `4`                           | API Calls Per Minute \*                                |
-| `release_id`      | `''`                          | Release ID to Process                                  |
-| `update_release`  | `true`                        | Update the [Release Notes](#Release-Notes)             |
-| `release_heading` | _[see below](#Release-Notes)_ | Release Notes Heading [⤵️](#Release-Notes)             |
-| `collapsed`       | `false`                       | Show Links Collapsed. [⤵️](#Release-Notes)             |
-| `file_name`       | `name`                        | File Name Display: [`name`, `id`] [⤵️](#Release-Notes) |
-| `summary`         | `true`                        | Add Summary to Job \*                                  |
-| `github_token`    | `github.token`                | For use with a PAT                                     |
+| Input&nbsp;Name   | Default&nbsp;Value            | Description&nbsp;of&nbsp;the&nbsp;Input&nbsp;Value |
+| :---------------- | :---------------------------- | :------------------------------------------------- |
+| `vt_api_key`      | _Required_                    | VirusTotal API Key [⤵️](#vt_api_key)               |
+| `file_globs`      | -                             | File Globs to Process [⤵️](#file_globs)            |
+| `rate_limit`      | `4`                           | API Calls Per Minute [⤵️](#rate_limit)             |
+| `release_id`      | -                             | Release ID to Process [⤵️](#release_id)            |
+| `update_release`  | `true`                        | Update the [Release Notes](#Release-Notes)         |
+| `release_heading` | _[see below](#Release-Notes)_ | Release Notes Heading [⤵️](#release_heading)       |
+| `collapsed`       | `false`                       | Show Links Collapsed. [⤵️](#collapsed)             |
+| `file_name`       | `name`                        | File Name Display: [`name`, `id`] [⤵️](#file_name) |
+| `summary`         | `true`                        | Add Summary to Job [⤵️](#summary)                  |
+| `github_token`    | `github.token`                | For use with a PAT                                 |
 
 > For more details on inputs, see the VirusTotal API [documentation](https://docs.virustotal.com/reference/overview).
 
-**vt_api_key:** Get your API key from: https://www.virustotal.com/gui/my-apikey
+#### vt_api_key
 
-**file_globs:** If provided, will process matching files instead of release assets.  
+Get your API key from: https://www.virustotal.com/gui/my-apikey
+
+#### file_globs
+
+If provided, will process matching files instead of release assets.  
 For glob pattern, see [examples](#examples) and the [docs](https://github.com/actions/toolkit/tree/main/packages/glob#patterns).
 
-**release_id:** If provided, will process the corresponding release.
+#### rate_limit
+
+Rate limit for file uploads. Set to `0` to disable if you know what you are doing.
+
+#### release_id
+
+If provided, will process the corresponding release.
 The release ID can be generated from a previous step.
 By providing a release ID, this action does not need to run on a release event to process a release.
 
-**rate_limit:** Rate limit for file uploads. Set to `0` to disable if you know what you are doing.
+#### summary
 
-**summary:** Will add result details to the job summary in the workflow.
+Will add result details to the job summary in the workflow.
 
 <details><summary>👀 View Job Summary Example</summary>
 
@@ -144,16 +168,24 @@ See the [Examples](#Examples) section for more options.
 If run on a release event, the Release Notes are automatically updated with the results unless you set `update_release` to `false`.
 You can customize the heading or remove it by specifying an empty string.
 
-**update_release:** If triggered from a release workflow, will update the release notes and append the results.
+#### update_release
 
-**release_heading:** Customize the Release Notes Heading.  
+If triggered from a release workflow, will update the release notes and append the results.
+
+#### release_heading
+
+Customize the Release Notes Heading.  
 Default: `🛡️ **VirusTotal Results:**`
 
-**collapsed:** Set to `true` to collapse the result links by default. _Experimental._
+#### collapsed
 
-**file_name:** Customize the Release Notes File Name Display. This can be one of `name`, or `id`.
+Set to `true` to collapse the result links by default. _Experimental._
 
-#### Example Release Notes Update
+#### file_name
+
+Customize the Release Notes File Name Display. This can be one of `name`, or `id`.
+
+### Example Release Notes
 
 ---
 
@@ -178,10 +210,10 @@ Permissions documentation for [Workflows](https://docs.github.com/en/actions/wri
 
 ## Outputs
 
-| Output  | Output&nbsp;Description             |
-| :------ | :---------------------------------- |
-| results | Comma Seperated String of `file/id` |
-| json    | JSON Object List Results String     |
+| Output    | Output&nbsp;Description             |
+| :-------- | :---------------------------------- |
+| `results` | Comma Seperated String of `file/id` |
+| `json`    | JSON Object List Results String     |
 
 Web links can be generated by appending the ID to this URL:
 
@@ -420,23 +452,6 @@ You can view the release notes for each version on the [releases](https://github
 The **Major** tag is recommended. It is the most up-to-date and always backwards compatible.
 Breaking changes would result in a **Major** version bump. At a minimum you should use a **Minor** tag.
 
-## Features
-
-- Supports files up to 650MB
-- Upload Release Assets or File Globs
-- Automatically add Results to Release Notes
-  - Customize Release Notes Heading
-- Rate Limited for Free Accounts
-
-### Planned
-
-- Add options to customize release update/output format (next on the roadmap).
-- Add release body parsing to properly process new files on edited activity.
-- Add option to apply file_globs to release assets.
-- Refactor vt.js as a Class to clean up index.js.
-
-Don't see your feature here, or want to see one implemented? Let us know in the [Support](#Support) section.
-
 # Support
 
 For general help or to request a feature see:
@@ -464,19 +479,53 @@ If you would like to submit a PR, please review the [CONTRIBUTING.md](#contribut
 Additionally, you can support other GitHub Actions I have published:
 
 - [Stack Deploy Action](https://github.com/cssnr/stack-deploy-action?tab=readme-ov-file#readme)
-- [Portainer Stack Deploy](https://github.com/cssnr/portainer-stack-deploy-action?tab=readme-ov-file#readme)
+- [Portainer Stack Deploy Action](https://github.com/cssnr/portainer-stack-deploy-action?tab=readme-ov-file#readme)
+- [Docker Context Action](https://github.com/cssnr/docker-context-action?tab=readme-ov-file#readme)
 - [VirusTotal Action](https://github.com/cssnr/virustotal-action?tab=readme-ov-file#readme)
 - [Mirror Repository Action](https://github.com/cssnr/mirror-repository-action?tab=readme-ov-file#readme)
 - [Update Version Tags Action](https://github.com/cssnr/update-version-tags-action?tab=readme-ov-file#readme)
+- [Docker Tags Action](https://github.com/cssnr/docker-tags-action?tab=readme-ov-file#readme)
 - [Update JSON Value Action](https://github.com/cssnr/update-json-value-action?tab=readme-ov-file#readme)
+- [JSON Key Value Check Action](https://github.com/cssnr/json-key-value-check-action?tab=readme-ov-file#readme)
 - [Parse Issue Form Action](https://github.com/cssnr/parse-issue-form-action?tab=readme-ov-file#readme)
 - [Cloudflare Purge Cache Action](https://github.com/cssnr/cloudflare-purge-cache-action?tab=readme-ov-file#readme)
 - [Mozilla Addon Update Action](https://github.com/cssnr/mozilla-addon-update-action?tab=readme-ov-file#readme)
-- [Docker Tags Action](https://github.com/cssnr/docker-tags-action?tab=readme-ov-file#readme)
 - [Package Changelog Action](https://github.com/cssnr/package-changelog-action?tab=readme-ov-file#readme)
 - [NPM Outdated Check Action](https://github.com/cssnr/npm-outdated-action?tab=readme-ov-file#readme)
 - [Label Creator Action](https://github.com/cssnr/label-creator-action?tab=readme-ov-file#readme)
 - [Algolia Crawler Action](https://github.com/cssnr/algolia-crawler-action?tab=readme-ov-file#readme)
 - [Upload Release Action](https://github.com/cssnr/upload-release-action?tab=readme-ov-file#readme)
+- [Check Build Action](https://github.com/cssnr/check-build-action?tab=readme-ov-file#readme)
+- [Web Request Action](https://github.com/cssnr/web-request-action?tab=readme-ov-file#readme)
+- [Get Commit Action](https://github.com/cssnr/get-commit-action?tab=readme-ov-file#readme)
+
+<details><summary>❔ Unpublished Actions</summary>
+
+These actions are not published on the Marketplace, but may be useful.
+
+- [cssnr/draft-release-action](https://github.com/cssnr/draft-release-action?tab=readme-ov-file#readme) - Keep a draft release ready to publish.
+- [cssnr/env-json-action](https://github.com/cssnr/env-json-action?tab=readme-ov-file#readme) - Convert env file to json or vice versa.
+- [cssnr/push-artifacts-action](https://github.com/cssnr/push-artifacts-action?tab=readme-ov-file#readme) - Sync files to a remote host with rsync.
+- [smashedr/update-release-notes-action](https://github.com/smashedr/update-release-notes-action?tab=readme-ov-file#readme) - Update release notes.
+- [smashedr/combine-release-notes-action](https://github.com/smashedr/combine-release-notes-action?tab=readme-ov-file#readme) - Combine release notes.
+
+---
+
+</details>
+
+<details><summary>📝 Template Actions</summary>
+
+These are basic action templates that I use for creating new actions.
+
+- [js-test-action](https://github.com/smashedr/js-test-action?tab=readme-ov-file#readme) - JavaScript
+- [py-test-action](https://github.com/smashedr/py-test-action?tab=readme-ov-file#readme) - Python
+- [ts-test-action](https://github.com/smashedr/ts-test-action?tab=readme-ov-file#readme) - TypeScript
+- [docker-test-action](https://github.com/smashedr/docker-test-action?tab=readme-ov-file#readme) - Docker Image
+
+Note: The `docker-test-action` builds, runs and pushes images to [GitHub Container Registry](https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-container-registry).
+
+---
+
+</details>
 
 For a full list of current projects visit: [https://cssnr.github.io/](https://cssnr.github.io/)
