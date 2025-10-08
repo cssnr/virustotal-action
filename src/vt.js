@@ -14,11 +14,12 @@ class VTClient {
     #limiter = null
     constructor(apiKey, rate) {
         this.#apiKey = apiKey
-        if (rate)
+        if (rate) {
             this.#limiter = new RateLimiter({
                 tokensPerInterval: rate,
                 interval: 'minute',
             })
+        }
     }
 
     /**
