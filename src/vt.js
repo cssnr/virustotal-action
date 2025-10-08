@@ -88,7 +88,7 @@ class VTClient {
         core.endGroup() // Files
         const results = []
         for (const file of files) {
-            const name = file.split('\\').pop().split('/').pop()
+            const name = path.basename(file)
             core.startGroup(`Processing: \u001b[36m${name}`)
             results.push(await this.#process(name, file))
             core.endGroup() // Processing
