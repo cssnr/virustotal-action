@@ -44610,18 +44610,28 @@ async function getRelease(octokit, release_id) {
 
     core.info(`Getting Release: \u001b[32m${target_release_id}`)
 
-    let release = await octokit.rest.repos.getRelease({
-        ...github.context.repo,
-        release_id: target_release_id,
-    })
-    if (release) return release.data
+    try {
+        const release = await octokit.rest.repos.getRelease({
+            ...github.context.repo,
+            release_id: target_release_id,
+        })
+        return release.data
+    } catch (error) {
+        if (error.status !== 404) throw error
+    }
 
-    // try getting by tag name
-    release = await octokit.rest.repos.getReleaseByTag({
-        ...github.context.repo,
-        tag: target_release_id,
-    })
-    return release?.data
+    try {
+        // try getting by tag name
+        const release = await octokit.rest.repos.getReleaseByTag({
+            ...github.context.repo,
+            tag: target_release_id,
+        })
+        return release.data
+    } catch (error) {
+        if (error.status !== 404) throw error
+    }
+
+    return
 }
 
 /**
