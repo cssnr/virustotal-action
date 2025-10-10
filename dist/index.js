@@ -37014,13 +37014,16 @@ function wrappy (fn, cb) {
 /***/ 9431:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
+const fs = __nccwpck_require__(3024)
+const path = __nccwpck_require__(6760)
+const { createHash } = __nccwpck_require__(7598)
+const { createReadStream } = __nccwpck_require__(3024)
+
 const core = __nccwpck_require__(7484)
 const github = __nccwpck_require__(3228)
 const axios = __nccwpck_require__(7269)
 const FormData = __nccwpck_require__(6454)
 const { RateLimiter } = __nccwpck_require__(5157)
-const fs = __nccwpck_require__(3024)
-const path = __nccwpck_require__(6760)
 
 class VTClient {
     /**
@@ -37088,7 +37091,19 @@ class VTClient {
         console.log('response.data.id:', response.data.id)
         const link = `https://www.virustotal.com/gui/file-analysis/${response.data.id}`
         console.log('link:', link)
-        return { id: response.data.id, name, link }
+        const sha256 = await this.#getFileHash(filePath)
+        console.log('sha256:', sha256)
+        return { id: response.data.id, name, link, sha256 }
+    }
+
+    async #getFileHash(path) {
+        return new Promise((resolve, reject) => {
+            const hash = createHash('sha256')
+            const stream = createReadStream(path)
+            stream.on('error', reject)
+            stream.on('data', (chunk) => hash.update(chunk))
+            stream.on('end', () => resolve(hash.digest('hex')))
+        })
     }
 
     /**
@@ -44524,8 +44539,6 @@ const VTClient = __nccwpck_require__(9431)
                 let name = result.name
                 if (inputs.name === 'id') {
                     name = result.id
-                    // } else if (inputs.name === 'hash') {
-                    //     name = 'TODO: ADD HASH HERE'
                 }
                 console.log(`name: ${name}`)
                 if (inputs.name) {
@@ -44630,8 +44643,6 @@ async function getRelease(octokit, release_id) {
     } catch (error) {
         if (error.status !== 404) throw error
     }
-
-    return
 }
 
 /**

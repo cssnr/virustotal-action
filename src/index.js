@@ -66,8 +66,6 @@ const VTClient = require('./vt.js')
                 let name = result.name
                 if (inputs.name === 'id') {
                     name = result.id
-                    // } else if (inputs.name === 'hash') {
-                    //     name = 'TODO: ADD HASH HERE'
                 }
                 console.log(`name: ${name}`)
                 if (inputs.name) {
@@ -172,8 +170,6 @@ async function getRelease(octokit, release_id) {
     } catch (error) {
         if (error.status !== 404) throw error
     }
-
-    return
 }
 
 /**
