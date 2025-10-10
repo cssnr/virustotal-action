@@ -37091,9 +37091,19 @@ class VTClient {
         console.log('response.data.id:', response.data.id)
         const link = `https://www.virustotal.com/gui/file-analysis/${response.data.id}`
         console.log('link:', link)
-        const sha256 = await this.getFileHash(filePath)
+        const sha256 = await this.#getFileHash(filePath)
         console.log('sha256:', sha256)
         return { id: response.data.id, name, link, sha256 }
+    }
+
+    async #getFileHash(path) {
+        return new Promise((resolve, reject) => {
+            const hash = createHash('sha256')
+            const stream = createReadStream(path)
+            stream.on('error', reject)
+            stream.on('data', (chunk) => hash.update(chunk))
+            stream.on('end', () => resolve(hash.digest('hex')))
+        })
     }
 
     /**
@@ -37172,16 +37182,6 @@ class VTClient {
         core.endGroup() // Assets
 
         return await this.processFiles(files)
-    }
-
-    async getFileHash(path) {
-        return new Promise((resolve, reject) => {
-            const hash = createHash('sha256')
-            const stream = createReadStream(path)
-            stream.on('error', reject)
-            stream.on('data', (chunk) => hash.update(chunk))
-            stream.on('end', () => resolve(hash.digest('hex')))
-        })
     }
 }
 
