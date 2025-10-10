@@ -21,6 +21,7 @@
 # VirusTotal Action
 
 - [Features](#Features)
+  - [VirusTotal Badges](#virustotal-badges)
 - [Inputs](#Inputs)
   - [Permissions](#Permissions)
 - [Outputs](#Outputs)
@@ -51,6 +52,10 @@ Make sure to review the [Inputs](#inputs) and checkout more [Examples](#examples
 
 This is a fairly simple action, for more details see [src/index.js](src/index.js) and [src/vt.js](src/vt.js).
 
+> [!TIP]  
+> A new Documentation site is currently being developed:  
+> https://actions.cssnr.com/virustotal/
+
 ## Features
 
 - Supports files up to 650MB
@@ -65,11 +70,21 @@ This is a fairly simple action, for more details see [src/index.js](src/index.js
 - Add options to customize release update/output format (next on the roadmap).
 - Add release body parsing to properly process new files on edited activity.
 - Add option to apply file_globs to release assets.
-- Refactor vt.js as a Class to clean up index.js.
 
 > [!NOTE]  
 > Please submit a [Feature Request](https://github.com/cssnr/virustotal-action/discussions/categories/feature-requests)
 > for new features or [Open an Issue](https://github.com/cssnr/virustotal-action/issues) if you find any bugs.
+
+### VirusTotal Badges
+
+[![VT Release](https://badges.cssnr.com/vt/cssnr/zipline-android/app-release.apk)](https://badges.cssnr.com/vt/cssnr/zipline-android/app-release.apk)
+
+We are also working on a Badge Server (similar to [shields.io](https://shields.io/)) that supports VirusTotal Badges.
+For more details see the [Website](https://smashedr.github.io/node-badges-docs/guides/get-started) or [README.md](https://github.com/smashedr/node-badges?tab=readme-ov-file#virustotal-release-and-files).
+There is also a [Discussion](https://github.com/cssnr/virustotal-action/discussions/27) in this repo.
+Any feedback is helpful during this phase of development.
+
+These badges may be eventually added to this action as an option for release notes.
 
 ## Inputs
 

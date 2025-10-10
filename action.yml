@@ -11,38 +11,29 @@ inputs:
     required: true
   file_globs:
     description: "File Globs to Process"
-    required: false
   rate_limit:
     description: "API Calls Per Minute"
-    required: false
     default: "4"
   release_id:
     description: "Release ID to process"
-    required: false
     default: ""
   update_release:
     description: "Update Release Notes"
-    required: false
     default: "true"
   release_heading:
     description: "Release Notes Heading"
-    required: false
     default: "🛡️ **VirusTotal Results:**"
   collapsed:
     description: "Show Links Collapsed"
-    required: false
     default: "false"
   file_name:
     description: "File Name Display"
-    required: false
     default: "name"
   summary:
     description: "Add Summary to Job"
-    required: false
     default: "true"
   github_token:
     description: "Only for external or PAT"
-    required: false
     default: ${{ github.token }}
 
 outputs:

@@ -1,10 +1,13 @@
+const fs = require('node:fs')
+const path = require('node:path')
+const { createHash } = require('node:crypto')
+const { createReadStream } = require('node:fs')
+
 const core = require('@actions/core')
 const github = require('@actions/github')
 const axios = require('axios')
 const FormData = require('form-data')
 const { RateLimiter } = require('limiter')
-const fs = require('node:fs')
-const path = require('node:path')
 
 class VTClient {
     /**
@@ -72,7 +75,9 @@ class VTClient {
         console.log('response.data.id:', response.data.id)
         const link = `https://www.virustotal.com/gui/file-analysis/${response.data.id}`
         console.log('link:', link)
-        return { id: response.data.id, name, link }
+        const sha256 = await this.getFileHash(filePath)
+        console.log('sha256:', sha256)
+        return { id: response.data.id, name, link, sha256 }
     }
 
     /**
@@ -151,6 +156,16 @@ class VTClient {
         core.endGroup() // Assets
 
         return await this.processFiles(files)
+    }
+
+    async getFileHash(path) {
+        return new Promise((resolve, reject) => {
+            const hash = createHash('sha256')
+            const stream = createReadStream(path)
+            stream.on('error', reject)
+            stream.on('data', (chunk) => hash.update(chunk))
+            stream.on('end', () => resolve(hash.digest('hex')))
+        })
     }
 }
 
