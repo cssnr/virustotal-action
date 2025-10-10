@@ -15,8 +15,11 @@ inputs:
     description: "API Calls Per Minute"
     default: "4"
   release_id:
-    description: "Release ID to process"
+    description: "Release ID to Process"
     default: ""
+  sha256:
+    description: "Calculate sha256 Hash"
+    default: "false"
   update_release:
     description: "Update Release Notes"
     default: "true"

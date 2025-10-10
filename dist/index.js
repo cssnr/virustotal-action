@@ -37027,15 +37027,19 @@ const { RateLimiter } = __nccwpck_require__(5157)
 
 class VTClient {
     /**
-     * @param {String} apiKey
+     * @param {Inputs} inputs
      */
     #apiKey
+    #sha256 = false
     #limiter = null
-    constructor(apiKey, rate) {
-        this.#apiKey = apiKey
-        if (rate) {
+    constructor(inputs) {
+        console.log('constructor: inputs:', inputs)
+        console.log('inputs.key:', inputs.key)
+        this.#apiKey = inputs.key
+        this.#sha256 = inputs.sha256
+        if (inputs.rate) {
             this.#limiter = new RateLimiter({
-                tokensPerInterval: rate,
+                tokensPerInterval: inputs.rate,
                 interval: 'minute',
             })
         }
@@ -37091,9 +37095,13 @@ class VTClient {
         console.log('response.data.id:', response.data.id)
         const link = `https://www.virustotal.com/gui/file-analysis/${response.data.id}`
         console.log('link:', link)
-        const sha256 = await this.#getFileHash(filePath)
-        console.log('sha256:', sha256)
-        return { id: response.data.id, name, link, sha256 }
+        const data = { id: response.data.id, name, link }
+        if (this.#sha256) {
+            const sha256 = await this.#getFileHash(filePath)
+            console.log('sha256:', sha256)
+            data['sha256'] = sha256
+        }
+        return data
     }
 
     async #getFileHash(path) {
@@ -44489,7 +44497,7 @@ const VTClient = __nccwpck_require__(9431)
         // Set Variables
         const octokit = github.getOctokit(inputs.token)
         const release = await getRelease(octokit, inputs.release_id)
-        const client = new VTClient(inputs.key, inputs.rate)
+        const client = new VTClient(inputs)
 
         core.endGroup() // Inputs
 
@@ -44699,6 +44707,7 @@ async function addSummary(inputs, results, output) {
  * @property {Number} rate
  * @property {Boolean} update
  * @property {String} release_id
+ * @property {Boolean} sha256
  * @property {Boolean} collapsed
  * @property {String} name
  * @property {String} heading
@@ -44713,6 +44722,7 @@ function getInputs() {
         rate: Number.parseInt(core.getInput('rate_limit', { required: true })),
         update: core.getBooleanInput('update_release'),
         release_id: core.getInput('release_id'),
+        sha256: core.getBooleanInput('sha256'),
         collapsed: core.getBooleanInput('collapsed'),
         name: core.getInput('file_name').toLowerCase(),
         heading: core.getInput('release_heading'),

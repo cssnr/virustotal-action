@@ -93,6 +93,7 @@ Any feedback is helpful during this phase of development.
 | `file_globs`      | -                             | File Globs to Process [⤵️](#file_globs)            |
 | `rate_limit`      | `4`                           | API Calls Per Minute [⤵️](#rate_limit)             |
 | `release_id`      | -                             | Release ID to Process [⤵️](#release_id)            |
+| `sha256`          | `false`                       | Calculate File SHA256 [⤵️](#sha256)                |
 | `update_release`  | `true`                        | Update the [Release Notes](#Release-Notes)         |
 | `release_heading` | _[see below](#Release-Notes)_ | Release Notes Heading [⤵️](#release_heading)       |
 | `collapsed`       | `false`                       | Show Links Collapsed. [⤵️](#collapsed)             |
@@ -120,6 +121,10 @@ Rate limit for file uploads. Set to `0` to disable if you know what you are doin
 If provided, will process the corresponding release.
 The release ID can be generated from a previous step.
 By providing a release ID, this action does not need to run on a release event to process a release.
+
+#### sha256
+
+If enabled this will calculate the file's SHA256 hash, and include it in the output.
 
 #### summary
 
@@ -243,6 +248,8 @@ README.md/MGM1YTkxMzc5OGU3Y2UyNjViNTkxYzY5OTZmNTg3NjI6MTc2MDEyMzYzOA==,.gitignor
 ```
 
 #### json
+
+Note: `sha256` is only included if you set the input `sha256: true`.
 
 ```json
 [
