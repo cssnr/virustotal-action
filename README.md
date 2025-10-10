@@ -80,10 +80,9 @@ This is a fairly simple action, for more details see [src/index.js](src/index.js
 [![VT Release](https://badges.cssnr.com/vt/cssnr/zipline-android/app-release.apk)](https://badges.cssnr.com/vt/cssnr/zipline-android/app-release.apk)
 
 We are also working on a Badge Server (similar to [shields.io](https://shields.io/)) that supports VirusTotal Badges.
-For more details see the [Website](https://smashedr.github.io/node-badges-docs/guides/get-started) or [README.md](https://github.com/smashedr/node-badges?tab=readme-ov-file#virustotal-release-and-files).
-There is also a [Discussion](https://github.com/cssnr/virustotal-action/discussions/27) in this repo.
-Any feedback is helpful during this phase of development.
+For more details see the [Website](https://smashedr.github.io/node-badges-docs/guides/get-started), the [README.md](https://github.com/smashedr/node-badges?tab=readme-ov-file#virustotal-release-and-files) or the [Discussion](https://github.com/cssnr/virustotal-action/discussions/27) in this repo.
 
+Any feedback is helpful during this phase of development.
 These badges may be eventually added to this action as an option for release notes.
 
 ## Inputs
@@ -133,19 +132,21 @@ Will add result details to the job summary in the workflow.
 <table><tr><th>File</th><th>ID</th></tr><tr><td><a href="https://www.virustotal.com/gui/file-analysis/YmFmZTVlZjIzMDRkMjRlMTcwNjk1Yzg0MTgyN2FmMmM6MTc0MjExMjY5Mw==">README.md</a></td><td>YmFmZTVlZjIzMDRkMjRlMTcwNjk1Yzg0MTgyN2FmMmM6MTc0MjExMjY5Mw==</td></tr><tr><td><a href="https://www.virustotal.com/gui/file-analysis/ZTM4MjBkOGFhYmRhNjBiMTY0MTEwZjZkNDE1YjViODc6MTc0MjExMjY5Mw==">.gitignore</a></td><td>ZTM4MjBkOGFhYmRhNjBiMTY0MTEwZjZkNDE1YjViODc6MTc0MjExMjY5Mw==</td></tr></table><details><summary>Outputs</summary>
 <pre lang="json"><code>[
   {
-    "id": "YmFmZTVlZjIzMDRkMjRlMTcwNjk1Yzg0MTgyN2FmMmM6MTc0MjExMjY5Mw==",
+    "id": "MGM1YTkxMzc5OGU3Y2UyNjViNTkxYzY5OTZmNTg3NjI6MTc2MDEyMzYzOA==",
     "name": "README.md",
-    "link": "https://www.virustotal.com/gui/file-analysis/YmFmZTVlZjIzMDRkMjRlMTcwNjk1Yzg0MTgyN2FmMmM6MTc0MjExMjY5Mw=="
+    "link": "https://www.virustotal.com/gui/file-analysis/MGM1YTkxMzc5OGU3Y2UyNjViNTkxYzY5OTZmNTg3NjI6MTc2MDEyMzYzOA==",
+    "sha256": "75f762919859572abf753008cc5a1f5b75e05e9d0876080c0d28b2338ca46c26"
   },
   {
-    "id": "ZTM4MjBkOGFhYmRhNjBiMTY0MTEwZjZkNDE1YjViODc6MTc0MjExMjY5Mw==",
+    "id": "ZmIzNTcyMDI5NTAxN2VkYzRiZmRmMTg4NzhjNWJjY2Y6MTc2MDEyMzYzOQ==",
     "name": ".gitignore",
-    "link": "https://www.virustotal.com/gui/file-analysis/ZTM4MjBkOGFhYmRhNjBiMTY0MTEwZjZkNDE1YjViODc6MTc0MjExMjY5Mw=="
+    "link": "https://www.virustotal.com/gui/file-analysis/ZmIzNTcyMDI5NTAxN2VkYzRiZmRmMTg4NzhjNWJjY2Y6MTc2MDEyMzYzOQ==",
+    "sha256": "4c534768e93cc21269fecf0dea55eb9191ab649cb2fff8952f40cbf7a21057fe"
   }
 ]
 </code></pre>
-<pre lang="text"><code>README.md/YmFmZTVlZjIzMDRkMjRlMTcwNjk1Yzg0MTgyN2FmMmM6MTc0MjExMjY5Mw==
-.gitignore/ZTM4MjBkOGFhYmRhNjBiMTY0MTEwZjZkNDE1YjViODc6MTc0MjExMjY5Mw==</code></pre>
+<pre lang="text"><code>README.md/MGM1YTkxMzc5OGU3Y2UyNjViNTkxYzY5OTZmNTg3NjI6MTc2MDEyMzYzOA==
+.gitignore/ZmIzNTcyMDI5NTAxN2VkYzRiZmRmMTg4NzhjNWJjY2Y6MTc2MDEyMzYzOQ==</code></pre>
 </details><details><summary>Config</summary>
 <pre lang="yaml"><code>files: ["README.md",".gitignore"]
 rate: 4
