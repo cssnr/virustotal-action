@@ -37033,8 +37033,6 @@ class VTClient {
     #sha256 = false
     #limiter = null
     constructor(inputs) {
-        console.log('constructor: inputs:', inputs)
-        console.log('inputs.key:', inputs.key)
         this.#apiKey = inputs.key
         this.#sha256 = inputs.sha256
         if (inputs.rate) {
