@@ -11,15 +11,17 @@ const { RateLimiter } = require('limiter')
 
 class VTClient {
     /**
-     * @param {String} apiKey
+     * @param {Inputs} inputs
      */
     #apiKey
+    #sha256 = false
     #limiter = null
-    constructor(apiKey, rate) {
-        this.#apiKey = apiKey
-        if (rate) {
+    constructor(inputs) {
+        this.#apiKey = inputs.key
+        this.#sha256 = inputs.sha256
+        if (inputs.rate) {
             this.#limiter = new RateLimiter({
-                tokensPerInterval: rate,
+                tokensPerInterval: inputs.rate,
                 interval: 'minute',
             })
         }
@@ -75,9 +77,13 @@ class VTClient {
         console.log('response.data.id:', response.data.id)
         const link = `https://www.virustotal.com/gui/file-analysis/${response.data.id}`
         console.log('link:', link)
-        const sha256 = await this.#getFileHash(filePath)
-        console.log('sha256:', sha256)
-        return { id: response.data.id, name, link, sha256 }
+        const data = { id: response.data.id, name, link }
+        if (this.#sha256) {
+            const sha256 = await this.#getFileHash(filePath)
+            console.log('sha256:', sha256)
+            data['sha256'] = sha256
+        }
+        return data
     }
 
     async #getFileHash(path) {

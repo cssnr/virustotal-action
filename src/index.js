@@ -16,7 +16,7 @@ const VTClient = require('./vt.js')
         // Set Variables
         const octokit = github.getOctokit(inputs.token)
         const release = await getRelease(octokit, inputs.release_id)
-        const client = new VTClient(inputs.key, inputs.rate)
+        const client = new VTClient(inputs)
 
         core.endGroup() // Inputs
 
@@ -226,6 +226,7 @@ async function addSummary(inputs, results, output) {
  * @property {Number} rate
  * @property {Boolean} update
  * @property {String} release_id
+ * @property {Boolean} sha256
  * @property {Boolean} collapsed
  * @property {String} name
  * @property {String} heading
@@ -240,6 +241,7 @@ function getInputs() {
         rate: Number.parseInt(core.getInput('rate_limit', { required: true })),
         update: core.getBooleanInput('update_release'),
         release_id: core.getInput('release_id'),
+        sha256: core.getBooleanInput('sha256'),
         collapsed: core.getBooleanInput('collapsed'),
         name: core.getInput('file_name').toLowerCase(),
         heading: core.getInput('release_heading'),
