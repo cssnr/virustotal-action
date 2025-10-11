@@ -249,7 +249,7 @@ README.md/MGM1YTkxMzc5OGU3Y2UyNjViNTkxYzY5OTZmNTg3NjI6MTc2MDEyMzYzOA==,.gitignor
 
 #### json
 
-Note: `sha256` is only included if you set the input `sha256: true`.
+Note: The `sha256` is only included if you set the input `sha256: true`.
 
 ```json
 [
