@@ -121,7 +121,7 @@ class VTClient {
         console.log(files)
         core.endGroup() // Files
         const results = []
-        let failed = 0
+        // let failed = 0
 
         while (files.length > 0) {
             const file = files.shift()
@@ -155,7 +155,7 @@ class VTClient {
                     continue
                 }
 
-                failed++
+                // failed++
                 if (this.fail === 'any') {
                     console.log(`\u001b[35m Throw on FAIL: [any], all, none`)
                     throw new Error(e)
