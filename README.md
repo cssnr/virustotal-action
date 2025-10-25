@@ -94,6 +94,10 @@ Any feedback is helpful during this phase of development.
 | `rate_limit`      | `4`                           | API Calls Per Minute [⤵️](#rate_limit)             |
 | `release_id`      | -                             | Release ID to Process [⤵️](#release_id)            |
 | `sha256`          | `false`                       | Calculate File SHA256 [⤵️](#sha256)                |
+| `fail`            | `any`                         | Fail mode: [`any`, `all`, `none`] [⤵️](#fail)      |
+| `retries`         | `3`                           | Number of Retries for 409 [⤵️](#retries)           |
+| `cooldown`        | `30`                          | Number of Retries for 409 [⤵️](#cooldown)          |
+| `multiplier`      | `2`                           | Number of Retries for 409 [⤵️](#multiplier)        |
 | `update_release`  | `true`                        | Update the [Release Notes](#Release-Notes)         |
 | `release_heading` | _[see below](#Release-Notes)_ | Release Notes Heading [⤵️](#release_heading)       |
 | `collapsed`       | `false`                       | Show Links Collapsed. [⤵️](#collapsed)             |
@@ -124,7 +128,28 @@ By providing a release ID, this action does not need to run on a release event t
 
 #### sha256
 
+The SHA256 hash is not returned by the API; however, can be optionally calculated for additional overhead.
 If enabled this will calculate the file's SHA256 hash, and include it in the output.
+
+#### fail
+
+Fail mode: [`any`, `all`, `none`]
+
+- `any`: Fail the job if there are any failures.
+- `all`: Fail the job only if all files fail.
+- `none`: Don't fail for any failures.
+
+#### retries
+
+Number of Retries on a 409 error.
+
+#### cooldown
+
+Retry cooldown in seconds.
+
+#### multiplier
+
+Cooldown multiplier per retry.
 
 #### summary
 
@@ -484,12 +509,12 @@ For more information, see the CSSNR [SUPPORT.md](https://github.com/cssnr/.githu
 
 # Contributing
 
+If you would like to submit a PR, please review the [CONTRIBUTING.md](#contributing-ov-file).
+
 Please consider making a donation to support the development of this project
 and [additional](https://cssnr.com/) open source projects.
 
 [![Ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/cssnr)
-
-If you would like to submit a PR, please review the [CONTRIBUTING.md](#contributing-ov-file).
 
 Additionally, you can support other GitHub Actions I have published:
 
@@ -543,4 +568,4 @@ Note: The `docker-test-action` builds, runs and pushes images to [GitHub Contain
 
 </details>
 
-For a full list of current projects visit: [https://cssnr.github.io/](https://cssnr.github.io/)
+For a full list of current projects to support visit: [https://cssnr.github.io/](https://cssnr.github.io/)

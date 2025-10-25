@@ -18,6 +18,11 @@ const VTClient = require('./vt.js')
         const release = await getRelease(octokit, inputs.release_id)
         const client = new VTClient(inputs)
 
+        if (['any', 'all', 'none'].includes(inputs.fail)) {
+            core.warning(`Invalid fail mode: ${inputs.fail} - Using: any`)
+            inputs.fail = 'any'
+        }
+
         core.endGroup() // Inputs
 
         // Process
@@ -224,6 +229,10 @@ async function addSummary(inputs, results, output) {
  * @property {String} key
  * @property {String[]} files
  * @property {Number} rate
+ * @property {String} fail
+ * @property {Number} retries
+ * @property {Number} cooldown
+ * @property {Number} multiplier
  * @property {Boolean} update
  * @property {String} release_id
  * @property {Boolean} sha256
@@ -239,9 +248,13 @@ function getInputs() {
         key: core.getInput('vt_api_key', { required: true }),
         files: core.getInput('file_globs').split('\n').filter(Boolean),
         rate: Number.parseInt(core.getInput('rate_limit', { required: true })),
-        update: core.getBooleanInput('update_release'),
         release_id: core.getInput('release_id'),
         sha256: core.getBooleanInput('sha256'),
+        fail: core.getInput('fail').toLowerCase(),
+        retries: Number.parseInt(core.getInput('retries') || 0),
+        cooldown: Number.parseInt(core.getInput('cooldown') || 0),
+        multiplier: Number.parseInt(core.getInput('multiplier') || 0),
+        update: core.getBooleanInput('update_release'),
         collapsed: core.getBooleanInput('collapsed'),
         name: core.getInput('file_name').toLowerCase(),
         heading: core.getInput('release_heading'),

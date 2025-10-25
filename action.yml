@@ -20,6 +20,18 @@ inputs:
   sha256:
     description: "Calculate sha256 Hash"
     default: "false"
+  fail:
+    description: "Fail mode: any, all, none"
+    default: "any"
+  retries:
+    description: "Number of Retries for 409"
+    default: "3"
+  cooldown:
+    description: "Retry cooldown in seconds"
+    default: "30"
+  multiplier:
+    description: "Cooldown multiplier per retry"
+    default: "2"
   update_release:
     description: "Update Release Notes"
     default: "true"

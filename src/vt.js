@@ -16,9 +16,17 @@ class VTClient {
     #apiKey
     #sha256 = false
     #limiter = null
+    fail
+    retries
+    cooldown
+    multiplier
     constructor(inputs) {
         this.#apiKey = inputs.key
         this.#sha256 = inputs.sha256
+        this.fail = inputs.fail
+        this.retries = inputs.retries
+        this.cooldown = inputs.cooldown / inputs.multiplier
+        this.multiplier = inputs.multiplier
         if (inputs.rate) {
             this.#limiter = new RateLimiter({
                 tokensPerInterval: inputs.rate,
@@ -66,13 +74,17 @@ class VTClient {
      * Process a file
      * @param {String} name
      * @param {String} filePath
-     * @return {Promise<{name, link: string, id}>}
+     * @return {Promise<{Object}>}
      */
     async #process(name, filePath) {
         if (this.#limiter) {
             const remainingRequests = await this.#limiter.removeTokens(1)
             console.log('remainingRequests:', remainingRequests)
         }
+        // const error = new Error('Its Broken')
+        // error.status = 409
+        // throw error
+        // return { name: '', link: '', id: 1 }
         const response = await this.#upload(filePath)
         console.log('response.data.id:', response.data.id)
         const link = `https://www.virustotal.com/gui/file-analysis/${response.data.id}`
@@ -109,11 +121,50 @@ class VTClient {
         console.log(files)
         core.endGroup() // Files
         const results = []
-        for (const file of files) {
+        let failed = 0
+
+        while (files.length > 0) {
+            const file = files.shift()
             const name = path.basename(file)
             core.startGroup(`Processing: \u001b[36m${name}`)
-            results.push(await this.#process(name, file))
-            core.endGroup() // Processing
+            try {
+                const result = await this.#process(name, file)
+                results.push(result)
+                core.endGroup() // Processing
+            } catch (e) {
+                // NOTE: Need to use a limiter with ability to add tokens...
+
+                core.startGroup(`Error: ${e.status}`)
+                // console.log('e:', e)
+                console.log('e.message:', e.message)
+                console.log('e.status:', e.status) // number?
+                console.log('e.code:', e.code) // string?
+                console.log('e.response?.status:', e.response?.status)
+                console.log('e.response?.statusText:', e.response?.statusText)
+                console.log('e.response?.headers:', e.response?.headers)
+                console.log('e.response?.data:', e.response?.data)
+                core.endGroup() // Error
+
+                if (e.status === 409 && this.retries > 0) {
+                    this.retries--
+                    files.unshift(file) // NOTE: Consider adding to back of stack...
+                    console.log('this.retries:', this.retries)
+                    this.cooldown = this.cooldown * this.multiplier
+                    console.log('this.cooldown:', this.cooldown)
+                    await new Promise((r) => setTimeout(r, this.cooldown * 1000))
+                    continue
+                }
+
+                failed++
+                if (this.fail === 'any') {
+                    console.log(`\u001b[35m Throw on FAIL: [any], all, none`)
+                    throw new Error(e)
+                }
+            }
+            if (this.fail === 'all' && !results.length) {
+                console.log(`\u001b[35m Throw on FAIL: any, [all], none`)
+                throw new Error('All files failed and fail mode set to all.')
+            }
         }
         return results
     }
