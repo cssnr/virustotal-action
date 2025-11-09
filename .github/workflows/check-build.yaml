@@ -1,15 +1,22 @@
-name: "Pull"
+name: "Check Build"
 
 on:
+  push:
+    branches: [master]
   pull_request_target:
+    paths:
+      - "dist/**"
+      - "src/**"
+      - "package*.json"
+      - "rollup.config.*"
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
-  pull:
-    name: "Pull"
+  check-build:
+    name: "Check Build"
     runs-on: ubuntu-latest
     timeout-minutes: 5
 
@@ -33,18 +40,11 @@ jobs:
         continue-on-error: true
         run: |
           echo "::group::ls"
-          ls -lAh .
+          ls -lAh
           echo "::endgroup::"
           echo "::group::tree"
           tree .
           echo "::endgroup::"
 
-      - name: "NPM Outdated Check"
-        continue-on-error: true
-        uses: cssnr/npm-outdated-action@latest
-
-      - name: "Actions Up"
-        continue-on-error: true
-        uses: cssnr/actions-up-action@latest
-        with:
-          exclude: "cssnr/.*,actions/.*"
+      - name: "Check Build Action"
+        uses: cssnr/check-build-action@latest
