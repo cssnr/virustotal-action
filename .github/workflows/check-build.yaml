@@ -46,5 +46,6 @@ jobs:
           tree .
           echo "::endgroup::"
 
-      # - name: "Check Build Action"
-      #   uses: cssnr/check-build-action@latest
+      - name: "Check Build Action"
+        continue-on-error: true
+        uses: cssnr/check-build-action@latest
