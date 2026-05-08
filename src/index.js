@@ -1,6 +1,6 @@
-const core = require('./@actions/core')
-const github = require('./@actions/github')
-const glob = require('./@actions/glob')
+const core = require('@actions/core')
+const github = require('@actions/github')
+const glob = require('@actions/glob')
 
 const VTClient = require('./vt.js')
 
