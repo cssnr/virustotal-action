@@ -1,6 +1,7 @@
 {
   "name": "virustotal-action",
   "private": true,
+  "type": "module",
   "main": "dist/index.js",
   "scripts": {
     "build": "ncc build src/index.js",

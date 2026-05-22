@@ -1,13 +1,12 @@
-const fs = require('node:fs')
-const path = require('node:path')
-const { createHash } = require('node:crypto')
-const { createReadStream } = require('node:fs')
+import fs from 'node:fs'
+import path from 'node:path'
+import { createHash } from 'node:crypto'
 
-const core = require('@actions/core')
-const github = require('@actions/github')
-const axios = require('axios')
-const FormData = require('form-data')
-const { RateLimiter } = require('limiter')
+import * as core from '@actions/core'
+import * as github from '@actions/github'
+import axios from 'axios'
+import FormData from 'form-data'
+import { RateLimiter } from 'limiter'
 
 class VTClient {
     /**
@@ -89,7 +88,7 @@ class VTClient {
     async #getFileHash(path) {
         return new Promise((resolve, reject) => {
             const hash = createHash('sha256')
-            const stream = createReadStream(path)
+            const stream = fs.createReadStream(path)
             stream.on('error', reject)
             stream.on('data', (chunk) => hash.update(chunk))
             stream.on('end', () => resolve(hash.digest('hex')))
@@ -175,4 +174,4 @@ class VTClient {
     }
 }
 
-module.exports = VTClient
+export default VTClient
