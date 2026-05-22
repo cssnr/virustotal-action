@@ -3,7 +3,6 @@ import * as github from '@actions/github'
 import * as glob from '@actions/glob'
 
 import VTClient from './vt.js'
-
 ;(async () => {
     try {
         core.info('🏳️ Starting VirusTotal Action')
