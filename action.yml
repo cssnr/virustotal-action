@@ -1,3 +1,4 @@
+# https://www.schemastore.org/github-action.json
 name: "VirusTotal Action"
 description: "Scan Files for Malware using the Virus Total API"
 author: "Shane"
