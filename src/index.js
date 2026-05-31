@@ -1,9 +1,8 @@
-const core = require('@actions/core')
-const github = require('@actions/github')
-const glob = require('@actions/glob')
+import * as core from '@actions/core'
+import * as github from '@actions/github'
+import * as glob from '@actions/glob'
 
-const VTClient = require('./vt.js')
-
+import VTClient from './vt.js'
 ;(async () => {
     try {
         core.info('🏳️ Starting VirusTotal Action')
