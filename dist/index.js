@@ -51931,169 +51931,169 @@ class RateLimiter {
 
 
 class VTClient {
-    /**
-     * @param {Inputs} inputs
-     */
-    #apiKey
-    #sha256 = false
-    #limiter = null
-    constructor(inputs) {
-        this.#apiKey = inputs.key
-        this.#sha256 = inputs.sha256
-        if (inputs.rate) {
-            this.#limiter = new RateLimiter({
-                tokensPerInterval: inputs.rate,
-                interval: 'minute',
-            })
-        }
+  /**
+   * @param {Inputs} inputs
+   */
+  #apiKey
+  #sha256 = false
+  #limiter = null
+  constructor(inputs) {
+    this.#apiKey = inputs.key
+    this.#sha256 = inputs.sha256
+    if (inputs.rate) {
+      this.#limiter = new RateLimiter({
+        tokensPerInterval: inputs.rate,
+        interval: 'minute',
+      })
+    }
+  }
+
+  /**
+   * Get the correct upload URL for the file size
+   * @param {String} filePath
+   * @return {Promise<String>}
+   */
+  async #getUploadURL(filePath) {
+    const stats = external_node_fs_namespaceObject.statSync(filePath)
+    console.log('stats.size:', stats.size)
+    if (stats.size < 32000000) return 'https://www.virustotal.com/api/v3/files'
+    const response = await lib_axios.get(
+      'https://www.virustotal.com/api/v3/files/upload_url',
+      {
+        headers: { accept: 'application/json', 'x-apikey': this.#apiKey },
+      },
+    )
+    return response.data.data
+  }
+
+  /**
+   * Upload a file to VirusTotal
+   * @param {String} filePath
+   * @return {Promise<Object>}
+   */
+  async #upload(filePath) {
+    console.log('vtUpload:', filePath)
+    const form = new form_data()
+    form.append('file', external_node_fs_namespaceObject.createReadStream(filePath))
+    const url = await this.#getUploadURL(filePath)
+    console.log('url:', url)
+    const response = await lib_axios.post(url, form, {
+      headers: { 'x-apikey': this.#apiKey, ...form.getHeaders() },
+    })
+    return response.data
+  }
+
+  /**
+   * Process a file
+   * @param {String} name
+   * @param {String} filePath
+   * @return {Promise<{name, link: string, id}>}
+   */
+  async #process(name, filePath) {
+    if (this.#limiter) {
+      const remainingRequests = await this.#limiter.removeTokens(1)
+      console.log('remainingRequests:', remainingRequests)
+    }
+    const response = await this.#upload(filePath)
+    console.log('response.data.id:', response.data.id)
+    const link = `https://www.virustotal.com/gui/file-analysis/${response.data.id}`
+    console.log('link:', link)
+    const data = { id: response.data.id, name, link }
+    if (this.#sha256) {
+      const sha256 = await this.#getFileHash(filePath)
+      console.log('sha256:', sha256)
+      data['sha256'] = sha256
+    }
+    return data
+  }
+
+  async #getFileHash(path) {
+    return new Promise((resolve, reject) => {
+      const hash = (0,external_node_crypto_.createHash)('sha256')
+      const stream = external_node_fs_namespaceObject.createReadStream(path)
+      stream.on('error', reject)
+      stream.on('data', (chunk) => hash.update(chunk))
+      stream.on('end', () => resolve(hash.digest('hex')))
+    })
+  }
+
+  /**
+   * Process Files
+   * @param {String[]} files
+   * @return {Promise<Object[{id, name, link}]>}
+   */
+  async processFiles(files) {
+    if (!files.length) {
+      throw new Error('No files to process.')
+    }
+    startGroup('Processing Files')
+    console.log(files)
+    endGroup() // Files
+    const results = []
+    for (const file of files) {
+      const name = external_node_path_namespaceObject.basename(file)
+      startGroup(`Processing: \u001b[36m${name}`)
+      results.push(await this.#process(name, file))
+      endGroup() // Processing
+    }
+    return results
+  }
+
+  /**
+   * Process Release Assets
+   * @param {InstanceType<typeof github.GitHub>} octokit
+   * @param {String} release_id
+   * @return {Promise<Object[{id, name, link}]>}
+   */
+  async processRelease(octokit, release_id) {
+    startGroup('Processing Release Assets')
+
+    // Get Assets
+    let page = 0
+    const allAssets = []
+    const { data } = await octokit.rest.rateLimit.get()
+    const ghLimiter = new RateLimiter({
+      tokensPerInterval: data.resources.core.limit,
+      interval: 'hour',
+    })
+    while (true) {
+      await ghLimiter.removeTokens(1)
+      const assets = await octokit.rest.repos.listReleaseAssets({
+        ...github_context.repo,
+        release_id: release_id,
+        per_page: 100,
+        page: ++page,
+      })
+      if (!assets.data.length) break
+      allAssets.push(...assets.data)
+    }
+    if (!allAssets.length) {
+      throw new Error(`No Assets Found for Release: ${release_id}`)
     }
 
-    /**
-     * Get the correct upload URL for the file size
-     * @param {String} filePath
-     * @return {Promise<String>}
-     */
-    async #getUploadURL(filePath) {
-        const stats = external_node_fs_namespaceObject.statSync(filePath)
-        console.log('stats.size:', stats.size)
-        if (stats.size < 32000000) return 'https://www.virustotal.com/api/v3/files'
-        const response = await lib_axios.get(
-            'https://www.virustotal.com/api/v3/files/upload_url',
-            {
-                headers: { accept: 'application/json', 'x-apikey': this.#apiKey },
-            }
-        )
-        return response.data.data
+    // Create Temp
+    console.log('RUNNER_TEMP:', process.env.RUNNER_TEMP)
+    const assetsPath = external_node_path_namespaceObject.join(process.env.RUNNER_TEMP, 'assets')
+    console.log('assetsPath:', assetsPath)
+    if (!external_node_fs_namespaceObject.existsSync(assetsPath)) external_node_fs_namespaceObject.mkdirSync(assetsPath)
+
+    // Process Assets
+    const files = []
+    for (const asset of allAssets) {
+      const filePath = external_node_path_namespaceObject.join(assetsPath, asset.name)
+      const file = await octokit.rest.repos.getReleaseAsset({
+        ...github_context.repo,
+        asset_id: asset.id,
+        headers: { Accept: 'application/octet-stream' },
+      })
+      external_node_fs_namespaceObject.writeFileSync(filePath, Buffer.from(file.data))
+      files.push(filePath)
     }
 
-    /**
-     * Upload a file to VirusTotal
-     * @param {String} filePath
-     * @return {Promise<Object>}
-     */
-    async #upload(filePath) {
-        console.log('vtUpload:', filePath)
-        const form = new form_data()
-        form.append('file', external_node_fs_namespaceObject.createReadStream(filePath))
-        const url = await this.#getUploadURL(filePath)
-        console.log('url:', url)
-        const response = await lib_axios.post(url, form, {
-            headers: { 'x-apikey': this.#apiKey, ...form.getHeaders() },
-        })
-        return response.data
-    }
+    endGroup() // Assets
 
-    /**
-     * Process a file
-     * @param {String} name
-     * @param {String} filePath
-     * @return {Promise<{name, link: string, id}>}
-     */
-    async #process(name, filePath) {
-        if (this.#limiter) {
-            const remainingRequests = await this.#limiter.removeTokens(1)
-            console.log('remainingRequests:', remainingRequests)
-        }
-        const response = await this.#upload(filePath)
-        console.log('response.data.id:', response.data.id)
-        const link = `https://www.virustotal.com/gui/file-analysis/${response.data.id}`
-        console.log('link:', link)
-        const data = { id: response.data.id, name, link }
-        if (this.#sha256) {
-            const sha256 = await this.#getFileHash(filePath)
-            console.log('sha256:', sha256)
-            data['sha256'] = sha256
-        }
-        return data
-    }
-
-    async #getFileHash(path) {
-        return new Promise((resolve, reject) => {
-            const hash = (0,external_node_crypto_.createHash)('sha256')
-            const stream = external_node_fs_namespaceObject.createReadStream(path)
-            stream.on('error', reject)
-            stream.on('data', (chunk) => hash.update(chunk))
-            stream.on('end', () => resolve(hash.digest('hex')))
-        })
-    }
-
-    /**
-     * Process Files
-     * @param {String[]} files
-     * @return {Promise<Object[{id, name, link}]>}
-     */
-    async processFiles(files) {
-        if (!files.length) {
-            throw new Error('No files to process.')
-        }
-        startGroup('Processing Files')
-        console.log(files)
-        endGroup() // Files
-        const results = []
-        for (const file of files) {
-            const name = external_node_path_namespaceObject.basename(file)
-            startGroup(`Processing: \u001b[36m${name}`)
-            results.push(await this.#process(name, file))
-            endGroup() // Processing
-        }
-        return results
-    }
-
-    /**
-     * Process Release Assets
-     * @param {InstanceType<typeof github.GitHub>} octokit
-     * @param {String} release_id
-     * @return {Promise<Object[{id, name, link}]>}
-     */
-    async processRelease(octokit, release_id) {
-        startGroup('Processing Release Assets')
-
-        // Get Assets
-        let page = 0
-        const allAssets = []
-        const { data } = await octokit.rest.rateLimit.get()
-        const ghLimiter = new RateLimiter({
-            tokensPerInterval: data.resources.core.limit,
-            interval: 'hour',
-        })
-        while (true) {
-            await ghLimiter.removeTokens(1)
-            const assets = await octokit.rest.repos.listReleaseAssets({
-                ...github_context.repo,
-                release_id: release_id,
-                per_page: 100,
-                page: ++page,
-            })
-            if (!assets.data.length) break
-            allAssets.push(...assets.data)
-        }
-        if (!allAssets.length) {
-            throw new Error(`No Assets Found for Release: ${release_id}`)
-        }
-
-        // Create Temp
-        console.log('RUNNER_TEMP:', process.env.RUNNER_TEMP)
-        const assetsPath = external_node_path_namespaceObject.join(process.env.RUNNER_TEMP, 'assets')
-        console.log('assetsPath:', assetsPath)
-        if (!external_node_fs_namespaceObject.existsSync(assetsPath)) external_node_fs_namespaceObject.mkdirSync(assetsPath)
-
-        // Process Assets
-        const files = []
-        for (const asset of allAssets) {
-            const filePath = external_node_path_namespaceObject.join(assetsPath, asset.name)
-            const file = await octokit.rest.repos.getReleaseAsset({
-                ...github_context.repo,
-                asset_id: asset.id,
-                headers: { Accept: 'application/octet-stream' },
-            })
-            external_node_fs_namespaceObject.writeFileSync(filePath, Buffer.from(file.data))
-            files.push(filePath)
-        }
-
-        endGroup() // Assets
-
-        return await this.processFiles(files)
-    }
+    return await this.processFiles(files)
+  }
 }
 
 /* harmony default export */ const vt = (VTClient);
@@ -52103,139 +52103,130 @@ class VTClient {
 
 
 
-(async () => {
-    try {
-        info('🏳️ Starting VirusTotal Action')
 
-        // Get Inputs
-        startGroup('Inputs')
-        const inputs = getInputs()
-        console.log(inputs)
 
-        // Set Variables
-        const octokit = getOctokit(inputs.token)
-        const release = await getRelease(octokit, inputs.release_id)
-        const client = new vt(inputs)
+async function main() /* NOSONAR */ {
+  info('🏳️ Starting VirusTotal Action')
 
-        endGroup() // Inputs
+  // Get Inputs
+  startGroup('Inputs')
+  const inputs = getInputs()
+  console.log(inputs)
 
-        // Process
-        /** @type {Object[]} */
-        let results
-        if (inputs.files?.length) {
-            // core.info('📁 Processing File Globs')
-            const globber = await create(inputs.files.join('\n'), {
-                matchDirectories: false,
-            })
-            results = await client.processFiles(await globber.glob())
-        } else if (release) {
-            // core.info('🗄️ Processing Release Assets')
-            results = await client.processRelease(octokit, release.id)
-        } else {
-            return setFailed('No files or release to process.')
-        }
-        startGroup('Results')
-        console.log(results)
-        endGroup() // Results
+  // Set Variables
+  const octokit = getOctokit(inputs.token)
+  const release = await getRelease(octokit, inputs.release_id)
+  const client = new vt(inputs)
 
-        // Update Release
-        if (release && inputs.update) {
-            startGroup(`Updating Release ${release.id}`)
-            let body = release.body
+  endGroup() // Inputs
 
-            let existing_results = ''
-            if (inputs.heading) {
-                const heading_index = body.indexOf(inputs.heading)
-                if (heading_index > -1) {
-                    existing_results = body.slice(heading_index).trim()
-                    body = body.slice(0, heading_index).trim()
-                }
-            }
+  // Process
+  /** @type {Object[]} */
+  let results
+  if (inputs.files?.length) {
+    // core.info('📁 Processing File Globs')
+    const globber = await create(inputs.files.join('\n'), {
+      matchDirectories: false,
+    })
+    results = await client.processFiles(await globber.glob())
+  } else if (release) {
+    // core.info('🗄️ Processing Release Assets')
+    results = await client.processRelease(octokit, release.id)
+  } else {
+    return setFailed('No files or release to process.')
+  }
+  startGroup('Results')
+  console.log(results)
+  endGroup() // Results
 
-            let existing_results_list = []
-            if (existing_results) {
-                const matches = [...existing_results.matchAll(/- \[(.*?)\]\((.*?)\)/g)]
-                existing_results_list = matches.map((match) => ({
-                    name: match[1],
-                    link: match[2],
-                }))
-            }
+  // Update Release
+  if (release && inputs.update) {
+    startGroup(`Updating Release ${release.id}`)
+    let body = release.body
 
-            for (const result of results) {
-                let name = result.name
-                if (inputs.name === 'id') {
-                    name = result.id
-                }
-                console.log(`name: ${name}`)
-                if (inputs.name) {
-                    // remove existing entry and append new one
-                    existing_results_list = existing_results_list.filter(
-                        (r) => r.name !== name
-                    )
-                    existing_results_list.push({
-                        name,
-                        link: result.link,
-                    })
-                }
-            }
-
-            body += `\n`
-            if (inputs.heading) {
-                body += `\n${inputs.heading}\n`
-            }
-            if (inputs.collapsed) {
-                body += `\n<details><summary>Click Here to Show Scan Results</summary>\n`
-            }
-            // const collapsed = inputs.collapsed ? '' : ' open'
-            // body += `\n\n<details${collapsed}><summary>${inputs.heading}</summary>\n\n`
-            for (const result of existing_results_list) {
-                body += `\n- [${result.name}](${result.link})`
-            }
-            if (inputs.collapsed) {
-                body += '\n\n</details>'
-            }
-
-            console.log(`\n${body}\n`)
-            await octokit.rest.repos.updateRelease({
-                ...github_context.repo,
-                release_id: release.id,
-                body,
-            })
-            endGroup() // Release
-        } else {
-            info('⏩ \u001b[33mSkipping Release Update')
-        }
-
-        // Set Output
-        info('📩 Setting Outputs')
-        const output = []
-        for (const result of results) {
-            output.push(`${result.name}/${result.id}`)
-        }
-        setOutput('results', output.join(','))
-        setOutput('json', JSON.stringify(results))
-
-        // Summary
-        if (inputs.summary) {
-            info('📝 Writing Job Summary')
-            try {
-                await addSummary(inputs, results, output)
-            } catch (e) {
-                console.log(e)
-                error(`Error writing Job Summary ${e.message}`)
-            }
-        }
-
-        info('✅ \u001b[32;1mFinished Success')
-    } catch (e) {
-        console.log(e)
-        if (e.response) {
-            console.log(`\u001b[31m Error: ${e.response.statusText}`)
-            console.log(e.response.data)
-        }
-        setFailed(e.message)
+    let existing_results = ''
+    if (inputs.heading) {
+      const heading_index = body.indexOf(inputs.heading)
+      if (heading_index > -1) {
+        existing_results = body.slice(heading_index).trim()
+        body = body.slice(0, heading_index).trim()
+      }
     }
-})()
+
+    let existing_results_list = []
+    if (existing_results) {
+      const matches = [...existing_results.matchAll(/- \[(.*?)]\((.*?)\)/g)]
+      existing_results_list = matches.map((match) => ({
+        name: match[1],
+        link: match[2],
+      }))
+    }
+
+    for (const result of results) {
+      let name = result.name
+      if (inputs.name === 'id') {
+        name = result.id
+      }
+      console.log(`name: ${name}`)
+      if (inputs.name) {
+        // remove existing entry and append new one
+        existing_results_list = existing_results_list.filter((r) => r.name !== name)
+        existing_results_list.push({
+          name,
+          link: result.link,
+        })
+      }
+    }
+
+    body += `\n`
+    if (inputs.heading) {
+      body += `\n${inputs.heading}\n`
+    }
+    if (inputs.collapsed) {
+      body += `\n<details><summary>Click Here to Show Scan Results</summary>\n`
+    }
+    // const collapsed = inputs.collapsed ? '' : ' open'
+    // body += `\n\n<details${collapsed}><summary>${inputs.heading}</summary>\n\n`
+    for (const result of existing_results_list) {
+      body += `\n- [${result.name}](${result.link})`
+    }
+    if (inputs.collapsed) {
+      body += '\n\n</details>'
+    }
+
+    console.log(`\n${body}\n`)
+    await octokit.rest.repos.updateRelease({
+      ...github_context.repo,
+      release_id: release.id,
+      body,
+    })
+    endGroup() // Release
+  } else {
+    info('⏩ \u001b[33mSkipping Release Update')
+  }
+
+  // Set Output
+  info('📩 Setting Outputs')
+  const output = []
+  for (const result of results) {
+    output.push(`${result.name}/${result.id}`)
+  }
+  setOutput('results', output.join(','))
+  setOutput('json', JSON.stringify(results))
+
+  // Summary
+  if (inputs.summary) {
+    info('📝 Writing Job Summary')
+    try {
+      await addSummary(inputs, results, output)
+    } catch (e) {
+      console.log(e)
+      error(`Error writing Job Summary ${e.message}`)
+    }
+  }
+
+  info('✅ \u001b[32;1mFinished Success')
+}
 
 /**
  * Get Release
@@ -52244,31 +52235,31 @@ class VTClient {
  * @return {Promise<InstanceType<typeof github.GitHub>|Undefined>}
  */
 async function getRelease(octokit, release_id) {
-    const target_release_id = release_id || github_context.payload.release?.id
-    if (!target_release_id) return
+  const target_release_id = release_id || github_context.payload.release?.id
+  if (!target_release_id) return
 
-    info(`Getting Release: \u001b[32m${target_release_id}`)
+  info(`Getting Release: \u001b[32m${target_release_id}`)
 
-    try {
-        const release = await octokit.rest.repos.getRelease({
-            ...github_context.repo,
-            release_id: target_release_id,
-        })
-        return release.data
-    } catch (error) {
-        if (error.status !== 404) throw error
-    }
+  try {
+    const release = await octokit.rest.repos.getRelease({
+      ...github_context.repo,
+      release_id: target_release_id,
+    })
+    return release.data
+  } catch (error) {
+    if (error.status !== 404) throw error
+  }
 
-    try {
-        // try getting by tag name
-        const release = await octokit.rest.repos.getReleaseByTag({
-            ...github_context.repo,
-            tag: target_release_id,
-        })
-        return release.data
-    } catch (error) {
-        if (error.status !== 404) throw error
-    }
+  try {
+    // try getting by tag name
+    const release = await octokit.rest.repos.getReleaseByTag({
+      ...github_context.repo,
+      tag: target_release_id,
+    })
+    return release.data
+  } catch (error) {
+    if (error.status !== 404) throw error
+  }
 }
 
 /**
@@ -52279,41 +52270,41 @@ async function getRelease(octokit, release_id) {
  * @return {Promise<void>}
  */
 async function addSummary(inputs, results, output) {
-    summary.addRaw('## VirusTotal Action\n')
+  summary.addRaw('## VirusTotal Action\n')
 
-    const results_table = []
-    for (const result of results) {
-        results_table.push([
-            { data: `<a href="${result.link}">${result.name}</a>` },
-            { data: result.id },
-        ])
-    }
-    summary.addTable([
-        [
-            { data: 'File', header: true },
-            { data: 'ID', header: true },
-        ],
-        ...results_table,
+  const results_table = []
+  for (const result of results) {
+    results_table.push([
+      { data: `<a href="${result.link}">${result.name}</a>` },
+      { data: result.id },
     ])
+  }
+  summary.addTable([
+    [
+      { data: 'File', header: true },
+      { data: 'ID', header: true },
+    ],
+    ...results_table,
+  ])
 
-    summary.addRaw('<details><summary>Outputs</summary>')
-    summary.addCodeBlock(JSON.stringify(results, null, 2), 'json')
-    summary.addCodeBlock(output.join('\n'), 'text')
-    summary.addRaw('</details>\n')
+  summary.addRaw('<details><summary>Outputs</summary>')
+  summary.addCodeBlock(JSON.stringify(results, null, 2), 'json')
+  summary.addCodeBlock(output.join('\n'), 'text')
+  summary.addRaw('</details>\n')
 
-    delete inputs.token
-    delete inputs.key
-    const yaml = Object.entries(inputs)
-        .map(([k, v]) => `${k}: ${JSON.stringify(v)}`)
-        .join('\n')
-    summary.addRaw('<details><summary>Inputs</summary>')
-    summary.addCodeBlock(yaml, 'yaml')
-    summary.addRaw('</details>\n')
+  delete inputs.token
+  delete inputs.key
+  const yaml = Object.entries(inputs)
+    .map(([k, v]) => `${k}: ${JSON.stringify(v)}`)
+    .join('\n')
+  summary.addRaw('<details><summary>Inputs</summary>')
+  summary.addCodeBlock(yaml, 'yaml')
+  summary.addRaw('</details>\n')
 
-    const text = 'View Documentation, Report Issues or Request Features'
-    const link = 'https://github.com/cssnr/virustotal-action'
-    summary.addRaw(`\n[${text}](${link}?tab=readme-ov-file#readme)\n\n---`)
-    await summary.write()
+  const text = 'View Documentation, Report Issues or Request Features'
+  const link = 'https://github.com/cssnr/virustotal-action'
+  summary.addRaw(`\n[${text}](${link}?tab=readme-ov-file#readme)\n\n---`)
+  await summary.write()
 }
 
 /**
@@ -52333,18 +52324,27 @@ async function addSummary(inputs, results, output) {
  * @return {Inputs}
  */
 function getInputs() {
-    return {
-        token: getInput('github_token', { required: true }),
-        key: getInput('vt_api_key', { required: true }),
-        files: getInput('file_globs').split('\n').filter(Boolean),
-        rate: Number.parseInt(getInput('rate_limit', { required: true })),
-        update: getBooleanInput('update_release'),
-        release_id: getInput('release_id'),
-        sha256: getBooleanInput('sha256'),
-        collapsed: getBooleanInput('collapsed'),
-        name: getInput('file_name').toLowerCase(),
-        heading: getInput('release_heading'),
-        summary: getBooleanInput('summary'),
-    }
+  return {
+    token: getInput('github_token', { required: true }),
+    key: getInput('vt_api_key', { required: true }),
+    files: getInput('file_globs').split('\n').filter(Boolean),
+    rate: Number.parseInt(getInput('rate_limit', { required: true })),
+    update: getBooleanInput('update_release'),
+    release_id: getInput('release_id'),
+    sha256: getBooleanInput('sha256'),
+    collapsed: getBooleanInput('collapsed'),
+    name: getInput('file_name').toLowerCase(),
+    heading: getInput('release_heading'),
+    summary: getBooleanInput('summary'),
+  }
 }
+
+main().catch((e) => {
+  core_debug(e)
+  if (e.response) {
+    console.log(`\u001b[31m Error: ${e.response.statusText}`)
+    console.log(e.response.data)
+  }
+  setFailed(e.message)
+})
 
